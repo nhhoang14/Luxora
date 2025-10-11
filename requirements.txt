@@ -1,0 +1,7 @@
+asgiref==3.10.0
+Django==5.2.7
+django-browser-reload==1.21.0
+django-htmx==1.26.0
+django-tailwind==4.2.0
+sqlparse==0.5.3
+tzdata==2025.2

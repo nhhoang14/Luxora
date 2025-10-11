@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+
+{% block title %}Contact - Luxora{% endblock %}
+
+{% block content %}
+<h1 class="text-3xl font-bold mb-4">Contact Us</h1>
+<form class="max-w-md mx-auto space-y-4">
+    <input type="text" placeholder="Name" class="input input-bordered w-full">
+    <input type="email" placeholder="Email" class="input input-bordered w-full">
+    <textarea placeholder="Message" class="textarea textarea-bordered w-full"></textarea>
+    <button type="submit" class="btn btn-primary w-full">Send Message</button>
+</form>
+{% endblock %}

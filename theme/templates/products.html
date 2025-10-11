@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+
+{% block title %}Products - Luxora{% endblock %}
+
+{% block content %}
+<h1 class="text-3xl font-bold mb-4">Our Products</h1>
+<div class="grid grid-cols-3 gap-6">
+    {% for product in products %}
+    <div class="p-4 border rounded shadow hover:shadow-lg transition">
+        <h2 class="font-semibold">{{ product.name }}</h2>
+        <p class="text-gray-600">{{ product.description }}</p>
+        <p class="font-bold mt-2">${{ product.price }}</p>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}
