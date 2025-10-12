@@ -109,6 +109,7 @@ db.sqlite3-journal
 static/
 !static/core/images/
 media/
+staticfiles/
 
 # ========================
 # 🎨 Tailwind / Node

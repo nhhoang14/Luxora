@@ -1,32 +1,47 @@
 [
   {
-    "id": 4,
-    "name": "Đèn bàn",
-    "slug": "den-ban",
-    "order": 0
+    "model": "core.category",
+    "pk": 4,
+    "fields": {
+      "name": "Đèn bàn",
+      "slug": "den-ban",
+      "order": 0
+    }
   },
   {
-    "id": 5,
-    "name": "Đèn cây",
-    "slug": "den-cay",
-    "order": 0
+    "model": "core.category",
+    "pk": 5,
+    "fields": {
+      "name": "Đèn cây",
+      "slug": "den-cay",
+      "order": 0
+    }
   },
   {
-    "id": 2,
-    "name": "Đèn treo",
-    "slug": "den-treo",
-    "order": 1
+    "model": "core.category",
+    "pk": 2,
+    "fields": {
+      "name": "Đèn treo",
+      "slug": "den-treo",
+      "order": 1
+    }
   },
   {
-    "id": 3,
-    "name": "Đèn tường",
-    "slug": "den-tuong",
-    "order": 2
+    "model": "core.category",
+    "pk": 3,
+    "fields": {
+      "name": "Đèn tường",
+      "slug": "den-tuong",
+      "order": 2
+    }
   },
   {
-    "id": 6,
-    "name": "Đèn LED",
-    "slug": "den-led",
-    "order": 3
+    "model": "core.category",
+    "pk": 6,
+    "fields": {
+      "name": "Đèn LED",
+      "slug": "den-led",
+      "order": 3
+    }
   }
 ]
