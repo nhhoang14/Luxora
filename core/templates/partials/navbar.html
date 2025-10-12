@@ -1,19 +1,18 @@
-<!-- templates/components/navbar.html -->
-<header class="bg-white shadow w-full fixed top-0 left-0 z-50">
+<header class="bg-[#FAFAFA] shadow w-full fixed top-0 left-0 z-50">
   <div class="container mx-auto flex items-center justify-between py-3 px-6 relative">
-
-    <!-- Menu bên trái -->
+    
+    <!-- Left menu -->
     <nav class="hidden md:flex space-x-6">
       <a href="/products/" class="hover:text-blue-600 font-medium">Products</a>
       <a href="/contact/" class="hover:text-blue-600 font-medium">#Collab</a>
     </nav>
 
-    <!-- Logo ở giữa -->
+    <!-- Logo center -->
     <div class="absolute left-1/2 transform -translate-x-1/2">
       <a href="/" class="text-2xl font-bold text-blue-600">Luxora</a>
     </div>
 
-    <!-- Icons bên phải -->
+    <!-- Right icons -->
     <div class="flex items-center space-x-4">
 
       <!-- Search -->
@@ -39,30 +38,12 @@
         </ul>
       </div>
 
-      <!-- Cart icon -->
-      {% if request.path != '/cart/' %}
-      <!-- Drawer toggle -->
+      <!-- Cart icon (label toggle) -->
       <label for="cart-drawer" class="btn btn-ghost btn-circle">
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none"
+             viewBox="0 0 24 24" stroke="currentColor">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-            d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2 5h12l-2-5M5 21h14" />
-        </svg>
-      </label>
-      {% else %}
-      <!-- Scroll to top on cart page -->
-      <button onclick="window.scrollTo({top:0, behavior:'smooth'})" class="btn btn-ghost btn-circle">
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-            d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2 5h12l-2-5M5 21h14" />
-        </svg>
-      </button>
-      {% endif %}
-
-
-      <!-- Hamburger mobile -->
-      <label for="mobile-menu" class="md:hidden btn btn-ghost btn-circle">
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2 5h12l-2-5M5 21h14"/>
         </svg>
       </label>
 

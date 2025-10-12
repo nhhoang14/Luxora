@@ -9,32 +9,33 @@
     {% tailwind_css %}
 </head>
 
-<body class="bg-gray-50 text-black font-serif leading-normal tracking-normal">
+<body class="bg-gray-50 text-black font-semibold">
 
-    <!-- Cart Drawer Toggle -->
-    <input id="cart-drawer" type="checkbox" class="drawer-toggle" />
+    <!-- Drawer wrapper -->
+    <div class="drawer drawer-end z-50 min-h-screen">
 
-    <div class="drawer drawer-end min-h-screen flex flex-col">
+        <!-- Drawer toggle -->
+        <input id="cart-drawer" type="checkbox" class="drawer-toggle" />
 
-        <!-- Navbar + Page content -->
-        <div class="drawer-content flex-1 flex flex-col">
-            {% include "components/navbar.html" %}
+        <!-- Page content -->
+        <div class="drawer-content flex flex-col">
+
+            <!-- Navbar -->
+            {% include "partials/navbar.html" %}
 
             <!-- Main content -->
-            <main class="container mx-auto py-8 mt-20 flex-1">
+            <main class="w-full py-8 flex-1">
                 {% block content %}{% endblock %}
             </main>
 
             <!-- Footer -->
-            <footer class="p-4 text-center text-gray-500 bg-white">
-                &copy; 2025 Luxora. All rights reserved.
-            </footer>
+            {% include 'partials/footer.html' %}
         </div>
 
         <!-- Drawer side -->
-        <div class="drawer-side">
+        <div class="drawer-side z-50">
             <label for="cart-drawer" class="drawer-overlay"></label>
-            <div class="w-80 bg-white p-4 shadow-lg h-full overflow-y-auto">
+            <div class="w-[576px] bg-white p-4 shadow-lg h-full overflow-y-auto">
                 <h2 class="text-xl font-bold mb-4">Your Cart</h2>
                 <div class="space-y-4">
                     {% for item in cart %}

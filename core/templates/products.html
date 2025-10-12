@@ -1,16 +1,20 @@
 {% extends "base.html" %}
+{% load static %}
+{% load vn_currency %}
 
-{% block title %}Products - Luxora{% endblock %}
+{% block title %}{{ title }}{% endblock %}
 
 {% block content %}
-<h1 class="text-3xl font-bold mb-4">Our Products</h1>
-<div class="grid grid-cols-3 gap-6">
-    {% for product in products %}
-    <div class="p-4 border rounded shadow hover:shadow-lg transition">
-        <h2 class="font-semibold">{{ product.name }}</h2>
-        <p class="text-gray-600">{{ product.description }}</p>
-        <p class="font-bold mt-2">${{ product.price }}</p>
+<h1 class="text-2xl font-bold mb-6">{{ title }}</h1>
+<div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+  {% for product in products %}
+    <div class="bg-white p-4 rounded-xl shadow hover:shadow-lg transition">
+      {% if product.image %}
+        <img src="{{ product.image.url }}" alt="{{ product.name }}" class="rounded-lg mb-3 h-48 w-full object-cover">
+      {% endif %}
+      <h3 class="font-semibold text-lg">{{ product.name }}</h3>
+      <p class="text-gray-600">{{ product.price|vnd }} VND</p>
     </div>
-    {% endfor %}
+  {% endfor %}
 </div>
 {% endblock %}

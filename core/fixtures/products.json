@@ -1,0 +1,11 @@
+[
+  {
+    "id": 1,
+    "name": "Bloomie",
+    "slug": "bloomie",
+    "description": "Sắc hồng dịu ngọt hòa cùng những đường cong mềm mại, mang đến cảm giác vừa đáng yêu, vừa hiện đại.\r\nPhiên bản đặc biệt này không chỉ là một thiết kế, mà còn là lời chào mùa mới – nhẹ nhàng, tươi tắn và đầy cảm hứng.",
+    "price": 169000,
+    "image": "products/bloomie.jpg",
+    "created_at": "2025-10-12T10:56:43.254546+00:00"
+  }
+]

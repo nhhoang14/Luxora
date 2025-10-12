@@ -1,0 +1,32 @@
+[
+  {
+    "id": 4,
+    "name": "Đèn bàn",
+    "slug": "den-ban",
+    "order": 0
+  },
+  {
+    "id": 5,
+    "name": "Đèn cây",
+    "slug": "den-cay",
+    "order": 0
+  },
+  {
+    "id": 2,
+    "name": "Đèn treo",
+    "slug": "den-treo",
+    "order": 1
+  },
+  {
+    "id": 3,
+    "name": "Đèn tường",
+    "slug": "den-tuong",
+    "order": 2
+  },
+  {
+    "id": 6,
+    "name": "Đèn LED",
+    "slug": "den-led",
+    "order": 3
+  }
+]
