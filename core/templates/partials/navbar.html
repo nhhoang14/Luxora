@@ -1,19 +1,43 @@
-<header class="bg-[#FAFAFA] shadow w-full fixed top-0 left-0 z-50">
-  <div class="container mx-auto flex items-center justify-between py-3 px-6 relative">
+<header class="bg-[#FAFAFA] shadow w-full fixed top-0 left-0 z-50 h-20">
+  <div class="container mx-auto flex items-center justify-between h-20 px-6 relative">
     
     <!-- Left menu -->
-    <nav class="hidden md:flex space-x-6">
-      <a href="/products/" class="hover:text-blue-600 font-medium">Products</a>
-      <a href="/contact/" class="hover:text-blue-600 font-medium">#Collab</a>
+    <nav class="hidden md:flex space-x-2 h-full items-center">
+      <a href="/products/"
+         class="font-medium relative rounded-full px-4 py-2 group overflow-hidden">
+        <!-- Chữ đen mặc định -->
+        <span class="block text-black transition-opacity duration-200 group-hover:opacity-0">
+          Products
+        </span>
+        <!-- Chữ trắng nền đen trượt lên khi hover -->
+        <span class="absolute inset-0 flex items-center justify-center
+                     bg-black text-white rounded-full
+                     translate-y-full group-hover:translate-y-0
+                     transition-transform duration-200">
+          Products
+        </span>
+      </a>
+      <a href="/contact/"
+         class="font-medium relative rounded-full px-4 py-2 group overflow-hidden">
+        <span class="block text-black transition-opacity duration-200 group-hover:opacity-0">
+          #Collab
+        </span>
+        <span class="absolute inset-0 flex items-center justify-center
+                     bg-black text-white rounded-full
+                     translate-y-full group-hover:translate-y-0
+                     transition-transform duration-200">
+          #Collab
+        </span>
+      </a>
     </nav>
 
     <!-- Logo center -->
-    <div class="absolute left-1/2 transform -translate-x-1/2">
-      <a href="/" class="text-2xl font-bold text-blue-600">Luxora</a>
+    <div class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+      <a href="/" class="text-2xl font-bold text-[#FF5532]">Luxora</a>
     </div>
 
     <!-- Right icons -->
-    <div class="flex items-center space-x-4">
+    <div class="flex items-center space-x-4 h-full">
 
       <!-- Search -->
       <a href="/search/" class="btn btn-ghost btn-circle">
