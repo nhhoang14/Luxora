@@ -7,17 +7,17 @@
 {% block content %}
 
 <!-- banner section -->
-<section class="flex flex-col items-center justify-center w-full h-[70vh] bg-cover bg-center text-white"
+<section class="flex flex-col items-center justify-center w-full aspect-[8/3] bg-cover bg-center text-white"
   style="background-image: url({% static 'core/images/banner.png' %});">
 </section>
 
 <!-- Danh mục (Category Slider) -->
-<section class="max-w-7xl mx-auto px-4 py-10">
+<section class="max-w-screen-2xl mx-auto px-4 py-10">
   <h2 class="text-2xl font-bold mb-6 text-center">Danh mục sản phẩm</h2>
 
   <div class="flex space-x-6 overflow-x-auto pb-4 scrollbar-hide">
     <!-- All Products -->
-    <div class="min-w-[280px] md:min-w-[350px] lg:min-w-[380px] max-h-[480px] flex-shrink-0 relative aspect-[2/3]">
+    <div class="w-[76%] sm:w-[38%] md:w-[36%] lg:w-[24%] flex-shrink-0 relative aspect-[2/3]">
       <a href="{% url 'products' %}"
         class="block bg-white rounded-2xl overflow-hidden shadow-md hover:shadow-lg transition duration-300 relative h-full">
         <img src="{% static 'core/images/default-category.jpg' %}" class="w-full h-full object-cover"
@@ -31,7 +31,7 @@
 
     <!-- Các category còn lại -->
     {% for category in categories %}
-    <div class="min-w-[280px] md:min-w-[350px] lg:min-w-[380px] max-h-[480px] flex-shrink-0 relative aspect-[2/3]">
+    <div class="w-[76%] sm:w-[38%] md:w-[36%] lg:w-[24%] flex-shrink-0 relative aspect-[2/3]">
       <a href="{% url 'category_products' category.slug %}"
         class="block bg-white rounded-2xl overflow-hidden shadow-md hover:shadow-lg transition duration-300 relative h-full">
 
@@ -47,23 +47,27 @@
   </div>
 </section>
 
+<div class="px-4">
+  <hr class="max-w-screen-2xl mx-auto my-12 border-t border-gray-200">
+</div>
 
 
 <!-- Sản phẩm mới lên kệ -->
-<section class="max-w-7xl mx-auto px-4 py-10">
-  <h2 class="text-2xl font-bold mb-6">Mới lên kệ</h2>
+<section class="max-w-screen-2xl mx-auto px-4 py-10">
+  <h2 class="text-2xl font-bold mb-8">Mới lên kệ</h2>
 
   <!-- Slider container -->
   <div class="relative">
-    <div class="flex gap-6 overflow-x-auto pb-2 scrollbar-hide">
+    <div class="flex gap-6 overflow-x-auto scrollbar-hide">
       {% for product in new_products %}
-      <div class="min-w-[280px] md:min-w-[350px] lg:min-w-[380px] max-h-[480px] flex-shrink-0 flex flex-col aspect-[2/3] bg-transition">
+      <div class="w-[76%] sm:w-[38%] md:w-[36%] lg:w-[24%] flex-shrink-0 flex flex-col aspect-[3/4] bg-transition">
         <!-- Ảnh vuông ở trên, căn giữa card -->
         <div class="w-full aspect-square rounded-2xl overflow-hidden flex-shrink-0">
           {% if product.image %}
           <img src="{{ product.image.url }}" alt="{{ product.name }}" class="w-full h-full object-cover" />
           {% else %}
-          <img src="{% static 'core/images/default-category.jpg' %}" alt="{{ product.name }}" class="w-full h-full object-cover" />
+          <img src="{% static 'core/images/default-category.jpg' %}" alt="{{ product.name }}"
+            class="w-full h-full object-cover" />
           {% endif %}
         </div>
         <!-- Thông tin sản phẩm ở dưới -->
@@ -77,8 +81,9 @@
     </div>
 
     <!-- Xem thêm button -->
-    <div class="mt-6 text-left">
-      <a href="{% url 'products' %}" class="inline-flex items-center px-6 py-3 bg-black text-white rounded-full font-semibold hover:bg-gray-800 transition">
+    <div class="mt-2 text-left">
+      <a href="{% url 'products' %}"
+        class="inline-flex items-center px-6 py-3 bg-black text-white rounded-full font-semibold hover:bg-gray-800 transition">
         Xem thêm <span class="ml-2">→</span>
       </a>
     </div>

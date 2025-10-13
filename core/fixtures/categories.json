@@ -12,8 +12,8 @@
     "model": "core.category",
     "pk": 5,
     "fields": {
-      "name": "Đèn cây",
-      "slug": "den-cay",
+      "name": "Đèn đứng",
+      "slug": "den-dung",
       "order": 0
     }
   },
