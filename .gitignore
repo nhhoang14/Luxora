@@ -106,8 +106,9 @@ db.sqlite3
 db.sqlite3-journal
 
 # Static & media files (generated)
-static/
-!static/core/images/
+static/*
+!core/static/core/images/
+!core/static/core/images/*
 media/
 staticfiles/
 
