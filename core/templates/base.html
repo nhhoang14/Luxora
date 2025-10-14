@@ -6,10 +6,11 @@
     <title>{% block title %}Luxora{% endblock %}</title>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;700&display=swap" rel="stylesheet">
     {% tailwind_css %}
 </head>
 
-<body class="bg-gray-50 text-black font-semibold">
+<body class="bg-gray-50 text-black" style="font-family: 'Plus Jakarta Sans', sans-serif;">
 
     <!-- Drawer wrapper -->
     <div class="drawer drawer-end z-50 min-h-screen">
@@ -33,28 +34,10 @@
         </div>
 
         <!-- Drawer side -->
-        <div class="drawer-side z-50">
-            <label for="cart-drawer" class="drawer-overlay"></label>
-            <div class="w-[576px] bg-white p-4 shadow-lg h-full overflow-y-auto">
-                <h2 class="text-xl font-bold mb-4">Your Cart</h2>
-                <div class="space-y-4">
-                    {% for item in cart %}
-                    <div class="flex justify-between items-center">
-                        <div>
-                            <p class="font-semibold">{{ item.name }}</p>
-                            <p class="text-sm text-gray-500">${{ item.price }} x {{ item.quantity }}</p>
-                        </div>
-                        <p class="font-bold">${{ item.total }}</p>
-                    </div>
-                    {% empty %}
-                    <p>Your cart is empty.</p>
-                    {% endfor %}
-                </div>
-                <a href="/cart/" class="btn btn-primary mt-4 w-full">View Cart</a>
-            </div>
-        </div>
+        {% include "partials/drawer.html" %}
 
     </div>
 
 </body>
+
 </html>

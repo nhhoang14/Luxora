@@ -35,3 +35,11 @@ def contact(request):
 
 def cart(request):
     return render(request, 'cart.html', {'cart': []})
+
+def cart_partial(request):
+    cart = [...]  # dữ liệu giỏ hàng
+    return render(request, 'partials/mini_cart.html', {'cart': cart})
+
+def viewed_partial(request):
+    viewed = [...]  # sản phẩm đã xem
+    return render(request, 'partials/viewed.html', {'viewed': viewed})

@@ -21,6 +21,10 @@ urlpatterns = [
 
     # Trang giỏ hàng
     path('cart/', views.cart, name='cart'),
+
+    # Partial views
+    path('cart-partial/', views.cart_partial, name='cart_partial'),
+    path('viewed-partial/', views.viewed_partial, name='viewed_partial'),
 ]
 
 if settings.DEBUG:

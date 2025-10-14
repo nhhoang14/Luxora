@@ -1,0 +1,13 @@
+<div class="space-y-4">
+  {% for item in cart %}
+  <div class="flex justify-between items-center">
+    <div>
+      <p class="font-semibold">{{ item.name }}</p>
+      <p class="text-sm text-gray-500">${{ item.price }} x {{ item.quantity }}</p>
+    </div>
+    <p class="font-bold">${{ item.total }}</p>
+  </div>
+  {% empty %}
+  <p>Your cart is empty.</p>
+  {% endfor %}
+</div>
