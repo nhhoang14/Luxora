@@ -1,6 +1,5 @@
 {% extends "base.html" %}
 {% load static %}
-{% load vn_currency %}
 
 {% block title %}Home - Luxora{% endblock %}
 
@@ -18,7 +17,7 @@
   <div class="flex space-x-6 overflow-x-auto pb-4 scrollbar-hide">
     <!-- All Products -->
     <div class="w-[76%] sm:w-[38%] md:w-[36%] lg:w-[24%] flex-shrink-0 relative aspect-[2/3]">
-      <a href="{% url 'products' %}"
+      <a href="{% url 'products:list' %}"
         class="block bg-white rounded-2xl overflow-hidden shadow-md hover:shadow-lg transition duration-300 relative h-full">
         <img src="{% static 'core/images/default-category.jpg' %}" class="w-full h-full object-cover"
           alt="All Products">
@@ -32,7 +31,7 @@
     <!-- Các category còn lại -->
     {% for category in categories %}
     <div class="w-[76%] sm:w-[38%] md:w-[36%] lg:w-[24%] flex-shrink-0 relative aspect-[2/3]">
-      <a href="{% url 'category_products' category.slug %}"
+      <a href="{% url 'products:category_products' category.slug %}"
         class="block bg-white rounded-2xl overflow-hidden shadow-md hover:shadow-lg transition duration-300 relative h-full">
 
         <img src="{% static category.get_image %}" class="w-full h-full object-cover" alt="{{ category.name }}">
@@ -60,29 +59,13 @@
   <div class="relative">
     <div class="flex gap-6 overflow-x-auto scrollbar-hide">
       {% for product in new_products %}
-      <div class="w-[76%] sm:w-[38%] md:w-[36%] lg:w-[24%] flex-shrink-0 flex flex-col aspect-[3/4] bg-transition">
-        <!-- Ảnh vuông ở trên, căn giữa card -->
-        <div class="w-full aspect-square rounded-2xl overflow-hidden flex-shrink-0">
-          {% if product.image %}
-          <img src="{{ product.image.url }}" alt="{{ product.name }}" class="w-full h-full object-cover" />
-          {% else %}
-          <img src="{% static 'core/images/default-category.jpg' %}" alt="{{ product.name }}"
-            class="w-full h-full object-cover" />
-          {% endif %}
-        </div>
-        <!-- Thông tin sản phẩm ở dưới -->
-        <div class="p-4 flex-1 flex flex-col justify-between">
-          <span class="text-gray-400 text-xs uppercase mb-1">LUXORA</span>
-          <h3 class="font-semibold text-lg mb-1">{{ product.name }}</h3>
-          <p class="text-gray-600 font-medium">{{ product.price|vnd }} VND</p>
-        </div>
-      </div>
+        {% include 'products/partials/product_card.html' with product=product %}
       {% endfor %}
     </div>
 
     <!-- Xem thêm button -->
     <div class="mt-2 text-left">
-      <a href="{% url 'products' %}"
+      <a href="{% url 'products:list' %}"
         class="inline-flex items-center px-6 py-3 bg-black text-white rounded-full font-semibold hover:bg-gray-800 transition">
         Xem thêm <span class="ml-2">→</span>
       </a>

@@ -1,31 +1,27 @@
 from django.contrib import admin
-from django.urls import path
+from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
-from core import views
+from core import views as core_views
 
 urlpatterns = [
+    # Trang admin
     path('admin/', admin.site.urls),
 
-    # Trang chủ
-    path('', views.home_view, name='home'),
+    # Trang chủ & các trang chung
+    path('', core_views.home_view, name='home'),
+    path('contact/', core_views.contact_view, name='contact'),
 
-    # Trang tất cả sản phẩm
-    path('products/', views.all_products, name='products'),
+    # Quick View
+    path('quick-view/<int:pk>/', core_views.quick_view, name='quick_view'),
 
-    # Trang sản phẩm theo danh mục
-    path('category/<slug:slug>/', views.category_products, name='category_products'),
-
-    # Trang liên hệ
-    path('contact/', views.contact, name='contact'),
-
-    # Trang giỏ hàng
-    path('cart/', views.cart, name='cart'),
-
-    # Partial views
-    path('cart-partial/', views.cart_partial, name='cart_partial'),
-    path('viewed-partial/', views.viewed_partial, name='viewed_partial'),
+    # Ứng dụng con
+    path('products/', include(('products.urls', 'products'), namespace='products')),
+    path('cart/', include(('cart.urls', 'cart'), namespace='cart')),
+    path('orders/', include(('orders.urls', 'orders'), namespace='orders')),
+    path('accounts/', include(('accounts.urls', 'accounts'), namespace='accounts')),
 ]
 
+# Cấu hình hiển thị ảnh & media trong môi trường DEBUG
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

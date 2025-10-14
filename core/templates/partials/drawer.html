@@ -1,45 +1,52 @@
+<!-- partials/drawer.html -->
 <div class="drawer-side z-50">
+    <!-- Overlay khi click ra ngoài sẽ tự tắt drawer -->
     <label for="cart-drawer" class="drawer-overlay"></label>
-    <div class="w-[576px] bg-white px-10 py-8 shadow-lg h-full overflow-y-auto relative">
-        <!-- Nút đóng (dấu X) -->
-        <label for="cart-drawer" 
-            class="absolute top-4 right-6 cursor-pointer text-2xl hover:text-white hover:bg-black transition-colors duration-200 w-10 
-            h-10 flex items-center justify-center rounded-full border border-gray-300 shadow btn-ghost" title="Đóng">
-            &times;
+
+    <!-- Thân drawer -->
+    <div class="w-full max-w-[576px] bg-white px-10 py-8 shadow-lg h-full flex flex-col relative">
+
+        <!-- Nút đóng -->
+        <label for="cart-drawer"
+               class="absolute top-6 right-6 cursor-pointer hover:text-white hover:bg-black transition-colors duration-200 
+                      w-10 h-10 flex items-center justify-center rounded-full border border-gray-300 shadow btn-ghost"
+               title="Đóng">
+            <span class="material-symbols-outlined text-3xl">close</span>
         </label>
-        <nav
-            class="border-b border-gray-300 pb-4 lg:text-3xl text-2xl font-medium mb-4 flex gap-8 leading-none tracking-tight">
-            <button id="tab-cart" class="tab-btn pb-1 transition-colors text-black hover:text-black duration-300"
-                hx-get="{% url 'cart_partial' %}" hx-target="#tab-content" hx-swap="innerHTML"
-                onclick="setActiveTab('cart')">
+
+        <!-- Tabs tiêu đề -->
+        <nav class="border-b border-gray-300 pb-4 lg:text-3xl text-2xl font-medium mb-4 flex gap-8 leading-none tracking-tight">
+            <button id="cart-tab"
+                    class="tab-btn pb-1 transition-colors cursor-pointer text-black hover:text-black duration-300"
+                    hx-get="{% url 'cart:cart_tab' %}"
+                    hx-target="#tab-content"
+                    hx-swap="innerHTML"
+                    onclick="setActiveTab('cart')">
                 Cart
             </button>
 
-            <button id="tab-viewed" class="tab-btn pb-1 transition-colors text-gray-400 hover:text-black duration-300"
-                hx-get="{% url 'viewed_partial' %}" hx-target="#tab-content" hx-swap="innerHTML"
-                onclick="setActiveTab('viewed')">
+            <button id="viewed-tab"
+                    class="tab-btn pb-1 transition-colors cursor-pointer text-gray-400 hover:text-black duration-300"
+                    hx-get="{% url 'cart:viewed_tab' %}"
+                    hx-target="#tab-content"
+                    hx-swap="innerHTML"
+                    onclick="setActiveTab('viewed')">
                 Sản phẩm đã xem
             </button>
         </nav>
 
-        <div id="tab-content">
-            {% include 'partials/mini_cart.html' %}
+        <!-- Nội dung Drawer -->
+        <div id="tab-content" class="flex-1 min-h-0 overflow-y-auto">
+            {% include 'cart/partials/cart_tab.html' %}
         </div>
-        <div class="mt-6 pt-4 flex gap-4">
-            <a href="/cart/" class="bg-black hover:bg-white text-white text-lg hover:text-black duration-300 rounded-full 
-                        btn btn-lg mt-4 flex-[3] focus:outline-none focus:ring-0 border border-black shadow-none">
-                Check out
-            </a>
-            <a href="/products/" class="bg-white hover:bg-black text-black text-lg hover:text-white duration-300 rounded-full
-                        btn btn-lg mt-4 flex-[2] focus:outline-none focus:ring-0 border border-black shadow-none">
-                View Cart
-            </a>
-        </div>
+
     </div>
+
+    <!-- Script xử lý tab -->
     <script>
         function setActiveTab(tab) {
-            const cart = document.getElementById('tab-cart');
-            const viewed = document.getElementById('tab-viewed');
+            const cart = document.getElementById('cart-tab');
+            const viewed = document.getElementById('viewed-tab');
             if (tab === 'cart') {
                 cart.classList.add('text-black');
                 cart.classList.remove('text-gray-400');

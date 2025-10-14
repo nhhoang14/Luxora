@@ -1,6 +1,6 @@
 [
   {
-    "model": "core.category",
+    "model": "products.category",
     "pk": 4,
     "fields": {
       "name": "Đèn bàn",
@@ -9,7 +9,7 @@
     }
   },
   {
-    "model": "core.category",
+    "model": "products.category",
     "pk": 5,
     "fields": {
       "name": "Đèn đứng",
@@ -18,7 +18,7 @@
     }
   },
   {
-    "model": "core.category",
+    "model": "products.category",
     "pk": 2,
     "fields": {
       "name": "Đèn treo",
@@ -27,7 +27,7 @@
     }
   },
   {
-    "model": "core.category",
+    "model": "products.category",
     "pk": 3,
     "fields": {
       "name": "Đèn tường",
@@ -36,7 +36,7 @@
     }
   },
   {
-    "model": "core.category",
+    "model": "products.category",
     "pk": 6,
     "fields": {
       "name": "Đèn LED",

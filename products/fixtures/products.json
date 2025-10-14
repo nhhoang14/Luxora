@@ -1,6 +1,6 @@
 [
   {
-    "model": "core.product",
+    "model": "products.product",
     "pk": 2,
     "fields": {
       "name": "Donut",
@@ -12,7 +12,7 @@
     }
   },
   {
-    "model": "core.product",
+    "model": "products.product",
     "pk": 1,
     "fields": {
       "name": "Bloomie",
