@@ -1,59 +1,164 @@
 {% load vn_currency %}
-<div class="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-[100]"
-     onclick="if(event.target === this){document.getElementById('modal').classList.add('hidden');}">
-    <div class="relative bg-white rounded-2xl shadow-xl w-full max-w-4xl flex flex-col md:flex-row p-4 md:p-8"
-         style="min-width:340px;">
-        <!-- Nút đóng -->
-        <button type="button"
-            class="absolute top-4 right-4 w-10 h-10 flex items-center justify-center rounded-full bg-gray-100 hover:bg-black hover:text-white text-2xl font-bold transition"
-            onclick="document.getElementById('modal').classList.add('hidden')">
-            &times;
-        </button>
-        
-        <!-- Ảnh bên trái -->
-        <div class="flex-1 flex items-center justify-center md:pr-8">
-            {% if product.image and product.image.url %}
-                <img src="{{ product.image.url }}" alt="{{ product.name }}" class="w-full max-w-xs rounded-xl object-contain" />
-            {% else %}
-                <div class="w-full max-w-xs h-64 bg-gray-100 flex items-center justify-center rounded-xl text-gray-400">
-                    Không có ảnh
-                </div>
-            {% endif %}
-        </div>
 
-        <!-- Thông tin bên phải -->
-        <div class="flex-1 flex flex-col justify-between mt-6 md:mt-0">
-            <h2 class="text-2xl font-bold mb-2">{{ product.name }}</h2>
-            <p class="mb-2 text-gray-600">{{ product.description }}</p>
-            <p class="font-semibold text-xl text-[#FF5532] mb-4">{{ product.price|vnd }} VND</p>
-            <form>
-                <div class="mb-3">
-                    <label class="block mb-1 font-medium">Số lượng</label>
-                    <input type="number" min="1" value="1" class="w-20 border rounded px-2 py-1" />
-                </div>
-                <div class="mb-3">
-                    <label class="block mb-1 font-medium">Màu sắc</label>
-                    <select class="border rounded px-2 py-1 w-32">
-                        {% for color in product.colors.all %}
-                            <option>{{ color.name }}</option>
-                        {% empty %}
-                            <option>Không có</option>
-                        {% endfor %}
-                    </select>
-                </div>
-                <div class="mb-4">
-                    <span class="font-medium">Tình trạng:</span>
-                    {% if product.stock > 0 %}
-                        <span class="text-green-600 font-semibold ml-2">Còn hàng</span>
-                    {% else %}
-                        <span class="text-red-600 font-semibold ml-2">Hết hàng</span>
+<div id="quickview-modal" class="fixed inset-0 z-[70] hidden items-center justify-center bg-black/40 backdrop-blur-sm">
+
+    <!-- Overlay -->
+    <div class="absolute inset-0 bg-black/40 cursor-pointer"
+        onclick="document.getElementById('quickview-modal').remove()"></div>
+
+    <!-- Modal box -->
+    <div class="relative bg-white rounded-3xl w-4/6 h-[80%] shadow-xl flex flex-col md:flex-row gap-8">
+        <!-- Nút đóng -->
+        <button
+            class="absolute top-4 right-4 w-10 h-10 flex items-center justify-center rounded-full bg-gray-100 hover:bg-black hover:text-white transition"
+            onclick="document.getElementById('quickview-modal').remove()">
+            <span class="material-symbols-outlined text-3xl">close</span>
+        </button>
+
+        <!-- Ảnh -->
+        <div class="flex-1 flex items-center justify-center">
+            <div
+                class="aspect-square w-full max-w-sm bg-gray-100 rounded-xl flex items-center justify-center overflow-hidden">
+                {% if product.image %}
+                <img src="{{ product.image.url }}" alt="{{ product.name }}" class="object-cover w-full h-full" />
+                {% else %}
+                <span class="text-gray-400">Không có ảnh</span>
+                {% endif %}
+            </div>
+        </div>
+        <!-- Thông tin sản phẩm -->
+        <div class="flex-1 flex flex-col justify-between text-gray-800">
+
+            <!-- Thông tin cơ bản -->
+            <div class="p-12 flex flex-col">
+                <h2 class="text-3xl font-bold mb-4">{{ product.name }}</h2>
+
+                <!-- Giá -->
+                <div class="flex items-baseline gap-3 mb-4">
+                    <p class="text-2xl text-[#FF5532]">{{ product.price|vnd }} VND</p>
+                    {% if product.old_price %}
+                    <p class="text-gray-400 line-through">{{ product.old_price|vnd }} VND</p>
                     {% endif %}
                 </div>
-                <button type="submit"
-                    class="w-full bg-black text-white py-2 rounded-lg font-bold hover:bg-[#FF5532] transition">
-                    Thêm vào giỏ hàng
-                </button>
-            </form>
+
+                <!-- Màu sắc -->
+                <div class="mb-4">
+                    <div class="flex gap-3">
+                        {% for color in product.colors.all %}
+                        <button class="w-8 h-8 rounded-full border-2 border-gray-300"
+                            style="background-color: {{ color.hex_code }};"></button>
+                        {% empty %}
+                        <span class="text-gray-500">Không có màu</span>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <!-- Tình trạng -->
+                <div class="flex items-center gap-2 mb-8">
+                    {% if product.stock > 0 %}
+                    <div class="inline-flex items-center gap-2 bg-green-100 text-green-700 px-5 py-3 rounded-full text-sm font-semibold">
+
+                        <span class="relative flex items-center justify-center w-4 h-4">
+                            <span class="absolute w-4 h-4 rounded-full border-1 border-green-400"></span>
+                            <span class="w-3 h-3 bg-green-500 rounded-full"></span>
+                        </span>
+                        In stock, ready to ship
+                    </div>
+                    {% else %}
+                    <div class="inline-flex items-center gap-2 bg-red-100 text-red-600 px-5 py-3 rounded-full text-sm font-semibold">
+                        <span class="relative flex items-center justify-center w-4 h-4">
+                            <span class="absolute w-4 h-4 rounded-full border-1 border-red-400"></span>
+                            <span class="w-3 h-3 bg-red-500 rounded-full"></span>
+                        </span>
+                        Out of stock
+                    </div>
+                    {% endif %}
+                </div>
+
+
+                <form class="flex flex-col gap-4">
+                    <div class="flex items-center gap-3">
+                        <!-- Bộ chọn số lượng -->
+                        <div class="flex h-full items-center justify-between border border-gray-300 rounded-full px-6 flex-[1]">
+                            <button type="button" class="flex items-center cursor-pointer justify-center"
+                                onclick="changeQty(this, -1)">
+                                <span class="material-symbols-outlined !text-sm leading-none">arrow_back_ios_new</span>
+                            </button>
+
+                            <input id="qty-input" type="number" min="1" value="1"
+                                class="w-10 text-center outline-none border-none bg-transparent text-base font-medium" />
+
+                            <button type="button" class="flex items-center cursor-pointer justify-center"
+                                onclick="changeQty(this, 1)">
+                                <span class="material-symbols-outlined !text-sm leading-none">arrow_forward_ios</span>
+                            </button>
+                        </div>
+
+                        <!-- Nút thêm vào giỏ -->
+                        <button type="submit" class="flex-1 bg-black text-white hover:bg-white hover:text-black
+                                    transition py-4 rounded-full border-2 border-black font-semibold flex-[3]">
+                            Add to cart
+                        </button>
+                    </div>
+
+                    <!-- Nút mua ngay -->
+                    <button type="button"
+                        class="w-full border-2 border-black text-black py-4 rounded-full font-semibold hover:bg-black hover:text-white transition">
+                        Buy it now
+                    </button>
+                </form>
+
+
+                <!-- Thường mua kèm -->
+                <div class="mt-8">
+                    <div class="flex items-center justify-between mb-3 gap-4">
+                        <h3 class="flex-1 text-lg font-semibold border-b border-gray-200 pb-2">Thường mua kèm</h3>
+                        <div class="flex gap-2">
+                            <button class="w-8 h-8 border rounded-full flex items-center justify-center hover:bg-black hover:text-white transition">
+                                <span class="material-symbols-outlined !text-sm leading-none">arrow_back_ios_new</span>
+                            </button>
+                            <button class="w-8 h-8 border rounded-full flex items-center justify-center hover:bg-black hover:text-white transition">
+                                <span class="material-symbols-outlined !text-sm leading-none">arrow_forward_ios</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="flex items-center gap-4">
+                        <div class="w-20 h-20 bg-gray-100 rounded-lg flex items-center justify-center overflow-hidden">
+                            <img src="{{ related_product.image.url }}" alt="{{ related_product.name }}"
+                                class="object-cover w-full h-full">
+                        </div>
+                        <div class="flex-1">
+                            <p class="font-medium">{{ related_product.name }}</p>
+                            <p class="text-[#FF5532] font-semibold text-sm">
+                                From {{ related_product.price|vnd }} VND
+                                <span class="text-gray-400 line-through ml-1">{{ related_product.old_price|vnd }}
+                                    VND</span>
+                            </p>
+                        </div>
+                        <button
+                            class="border border-black rounded-full px-4 py-1 hover:bg-black hover:text-white transition">
+                            + View
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+
+            <!-- Xem chi tiết -->
+            <div class="mt-6 border-t border-gray-200 py-4 px-8">
+                <a href="{% url 'products:detail' product.slug %}"
+                    class="text-sm text-black inline-flex items-center w-full justify-between">
+                    <span class="font-medium text-base">View full details</span>
+                    <span class="material-symbols-outlined align-middle text-sm">arrow_forward</span>
+                </a>
+            </div>
         </div>
+        <script>
+            function changeQty(btn, delta) {
+                const input = btn.closest('div').querySelector('input[type=number]');
+                const current = parseInt(input.value) || 1;
+                input.value = Math.max(1, current + delta);
+            }
+        </script>
     </div>
-</div>

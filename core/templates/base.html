@@ -12,7 +12,7 @@
     {% tailwind_css %}
 </head>
 
-<body class="bg-gray-50 text-black font-[Plus Jakarta Sans]">
+<body class="bg-gray-50 text-black" style="font-family: 'Plus Jakarta Sans', sans-serif;">
 
     <!-- Drawer wrapper -->
     <div class="drawer drawer-end z-50 min-h-screen">
@@ -36,30 +36,20 @@
         </div>
 
         <!-- Quick View Modal -->
-        <div id="modal" class="hidden fixed inset-0 bg-black bg-opacity-20 justify-center items-center z-[70]"
-            hx-target="this" hx-swap="outerHTML"
-            _="on click if event.target is me add .hidden to me then remove .flex from me">
-            <div id="modal-content" class="bg-white rounded-2xl p-6 max-w-lg w-[90%]"></div>
-        </div>
+        <div id="quickview-container"></div>
+
 
         <!-- Drawer side -->
         {% include "partials/drawer.html" %}
 
     </div>
-
     <script>
-        // Khi HTMX load nội dung vào modal-content
-        document.body.addEventListener('htmx:afterSwap', (e) => {
-            if (e.detail.target.id === "modal-content") {
-                document.getElementById("modal").classList.remove("hidden");
-            }
-        });
-
-        // Click ra ngoài để đóng modal
-        document.getElementById("modal").addEventListener("click", (e) => {
-            if (e.target.id === "modal") {
-                e.target.classList.add("hidden");
-                document.getElementById("modal-content").innerHTML = "";
+        // Sau khi HTMX load modal, thêm class "flex" để hiển thị
+        document.body.addEventListener("htmx:afterSwap", (e) => {
+            if (e.detail.target.id === "quickview-container") {
+                const modal = document.getElementById("quickview-modal");
+                if (modal) modal.classList.remove("hidden");
+                if (modal) modal.classList.add("flex");
             }
         });
     </script>
