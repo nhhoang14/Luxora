@@ -1,7 +1,59 @@
-<div>
-    <h2 class="text-xl font-bold mb-2">{{ product.name }}</h2>
-    <img src="{{ product.image.url }}" alt="{{ product.name }}" class="w-full rounded mb-4" />
-    <p class="mb-2">{{ product.description }}</p>
-    <p class="font-semibold text-lg text-[#FF5532]">{{ product.price|vnd }} VND</p>
-    <!-- Thêm nút Đóng nếu muốn -->
+{% load vn_currency %}
+<div class="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-[100]"
+     onclick="if(event.target === this){document.getElementById('modal').classList.add('hidden');}">
+    <div class="relative bg-white rounded-2xl shadow-xl w-full max-w-4xl flex flex-col md:flex-row p-4 md:p-8"
+         style="min-width:340px;">
+        <!-- Nút đóng -->
+        <button type="button"
+            class="absolute top-4 right-4 w-10 h-10 flex items-center justify-center rounded-full bg-gray-100 hover:bg-black hover:text-white text-2xl font-bold transition"
+            onclick="document.getElementById('modal').classList.add('hidden')">
+            &times;
+        </button>
+        
+        <!-- Ảnh bên trái -->
+        <div class="flex-1 flex items-center justify-center md:pr-8">
+            {% if product.image and product.image.url %}
+                <img src="{{ product.image.url }}" alt="{{ product.name }}" class="w-full max-w-xs rounded-xl object-contain" />
+            {% else %}
+                <div class="w-full max-w-xs h-64 bg-gray-100 flex items-center justify-center rounded-xl text-gray-400">
+                    Không có ảnh
+                </div>
+            {% endif %}
+        </div>
+
+        <!-- Thông tin bên phải -->
+        <div class="flex-1 flex flex-col justify-between mt-6 md:mt-0">
+            <h2 class="text-2xl font-bold mb-2">{{ product.name }}</h2>
+            <p class="mb-2 text-gray-600">{{ product.description }}</p>
+            <p class="font-semibold text-xl text-[#FF5532] mb-4">{{ product.price|vnd }} VND</p>
+            <form>
+                <div class="mb-3">
+                    <label class="block mb-1 font-medium">Số lượng</label>
+                    <input type="number" min="1" value="1" class="w-20 border rounded px-2 py-1" />
+                </div>
+                <div class="mb-3">
+                    <label class="block mb-1 font-medium">Màu sắc</label>
+                    <select class="border rounded px-2 py-1 w-32">
+                        {% for color in product.colors.all %}
+                            <option>{{ color.name }}</option>
+                        {% empty %}
+                            <option>Không có</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="mb-4">
+                    <span class="font-medium">Tình trạng:</span>
+                    {% if product.stock > 0 %}
+                        <span class="text-green-600 font-semibold ml-2">Còn hàng</span>
+                    {% else %}
+                        <span class="text-red-600 font-semibold ml-2">Hết hàng</span>
+                    {% endif %}
+                </div>
+                <button type="submit"
+                    class="w-full bg-black text-white py-2 rounded-lg font-bold hover:bg-[#FF5532] transition">
+                    Thêm vào giỏ hàng
+                </button>
+            </form>
+        </div>
+    </div>
 </div>

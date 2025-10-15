@@ -36,7 +36,7 @@
         </div>
 
         <!-- Quick View Modal -->
-        <div id="modal" class="hidden fixed inset-0 bg-black bg-opacity-50 justify-center items-center z-[70]"
+        <div id="modal" class="hidden fixed inset-0 bg-black bg-opacity-20 justify-center items-center z-[70]"
             hx-target="this" hx-swap="outerHTML"
             _="on click if event.target is me add .hidden to me then remove .flex from me">
             <div id="modal-content" class="bg-white rounded-2xl p-6 max-w-lg w-[90%]"></div>
@@ -45,13 +45,6 @@
         <!-- Drawer side -->
         {% include "partials/drawer.html" %}
 
-    </div>
-
-    <!-- Quick View Modal -->
-    <div id="modal" class="hidden fixed inset-0 bg-black/50 flex items-center justify-center z-[60]">
-        <div id="modal-content" class="bg-white p-6 rounded-2xl shadow-lg max-w-lg w-full relative">
-            <!-- nội dung Quick View sẽ được load ở đây -->
-        </div>
     </div>
 
     <script>
