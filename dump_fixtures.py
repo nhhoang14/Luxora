@@ -11,8 +11,7 @@ django.setup()
 
 from django.apps import apps
 
-
-def serialize_objects_for_fixture(objects, model_name):
+def serialize_objects_for_fixture(objects, model, model_name):
     fixtures = []
     for obj in objects:
         pk = obj.pop("id", None)
@@ -23,6 +22,13 @@ def serialize_objects_for_fixture(objects, model_name):
             elif isinstance(v, datetime):
                 v = v.isoformat()
             fields[k] = v
+
+        # Lấy dữ liệu ManyToMany
+        if hasattr(model, "_meta"):
+            for field in model._meta.many_to_many:
+                m2m_values = list(getattr(model.objects.get(pk=pk), field.name).values_list('pk', flat=True))
+                fields[field.name] = m2m_values
+
         fixtures.append({"model": model_name, "pk": pk, "fields": fields})
     return fixtures
 
@@ -37,25 +43,19 @@ def dump_model(model_label):
     app_label = model._meta.app_label
     model_name = model._meta.model_name
 
-    # Nếu app không nằm trong project (như 'auth', 'sessions'), lưu về core/fixtures
+    # Nếu app không tồn tại thư mục, lưu vào core/fixtures
     app_path = Path(app_label)
-    if not app_path.exists():
-        fixtures_dir = Path("core") / "fixtures"
-    else:
-        fixtures_dir = app_path / "fixtures"
-
+    fixtures_dir = app_path / "fixtures" if app_path.exists() else Path("core") / "fixtures"
     fixtures_dir.mkdir(exist_ok=True, parents=True)
 
-    # Tạo file JSON
     file_path = fixtures_dir / f"{model_name}s.json"
 
-    # Lấy dữ liệu
     objects = list(model.objects.all().values())
     if not objects:
         print(f"{model_label} không có dữ liệu, bỏ qua.")
         return
 
-    serialized = serialize_objects_for_fixture(objects, f"{app_label}.{model_name}")
+    serialized = serialize_objects_for_fixture(objects, model, f"{app_label}.{model_name}")
     with open(file_path, "w", encoding="utf-8") as f:
         json.dump(serialized, f, ensure_ascii=False, indent=2)
 
@@ -64,11 +64,10 @@ def dump_model(model_label):
 
 # --- Danh sách model muốn dump ---
 MODELS_TO_DUMP = [
-    "auth.User",          # user mặc định của Django → sẽ lưu vào core/fixtures
+    "auth.User",
     "products.Category",
     "products.Product",
 ]
-
 
 def main():
     print("Bắt đầu dump fixtures...\n")
@@ -78,7 +77,6 @@ def main():
         except Exception as e:
             print(f"Lỗi khi dump {model_label}: {e}")
     print("\nHoàn tất dump fixtures!")
-
 
 if __name__ == "__main__":
     main()

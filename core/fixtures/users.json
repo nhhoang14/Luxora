@@ -12,7 +12,27 @@
       "email": "admin_test@gmail.com",
       "is_staff": true,
       "is_active": true,
-      "date_joined": "2025-10-12T14:26:56.781000+00:00"
+      "date_joined": "2025-10-12T14:26:56.781000+00:00",
+      "groups": [],
+      "user_permissions": []
+    }
+  },
+  {
+    "model": "auth.user",
+    "pk": 3,
+    "fields": {
+      "password": "pbkdf2_sha256$1000000$XZrdT4fTWD5LWmI7JKkzsO$O8ApCPmam9Ddj43Mbcy/vw0QaC7Ow+PbDuR9TrsZsxU=",
+      "last_login": "2025-10-12T18:01:08.461220+00:00",
+      "is_superuser": true,
+      "username": "admin",
+      "first_name": "",
+      "last_name": "",
+      "email": "admin@gmail.com",
+      "is_staff": true,
+      "is_active": true,
+      "date_joined": "2025-10-12T17:56:21.131576+00:00",
+      "groups": [],
+      "user_permissions": []
     }
   }
 ]
