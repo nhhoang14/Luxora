@@ -1,0 +1,18 @@
+[
+  {
+    "model": "products.color",
+    "pk": 1,
+    "fields": {
+      "name": "Hồng",
+      "hex_code": "#FFC0CB"
+    }
+  },
+  {
+    "model": "products.color",
+    "pk": 2,
+    "fields": {
+      "name": "Cam",
+      "hex_code": "#FFA500"
+    }
+  }
+]

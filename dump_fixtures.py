@@ -16,6 +16,8 @@ def serialize_objects_for_fixture(objects, model, model_name):
     for obj in objects:
         pk = obj.pop("id", None)
         fields = {}
+
+        # Chuyển đổi giá trị về dạng có thể JSON hóa
         for k, v in obj.items():
             if isinstance(v, Decimal):
                 v = int(v) if v % 1 == 0 else float(v)
@@ -23,13 +25,21 @@ def serialize_objects_for_fixture(objects, model, model_name):
                 v = v.isoformat()
             fields[k] = v
 
-        # Lấy dữ liệu ManyToMany
-        if hasattr(model, "_meta"):
-            for field in model._meta.many_to_many:
-                m2m_values = list(getattr(model.objects.get(pk=pk), field.name).values_list('pk', flat=True))
-                fields[field.name] = m2m_values
+        # Lấy dữ liệu ManyToMany (ví dụ: categories, colors)
+        m2m_fields = getattr(model._meta, "many_to_many", [])
+        if pk:
+            instance = model.objects.get(pk=pk)
+            for field in m2m_fields:
+                fields[field.name] = list(
+                    getattr(instance, field.name).values_list('pk', flat=True)
+                )
 
-        fixtures.append({"model": model_name, "pk": pk, "fields": fields})
+        fixtures.append({
+            "model": model_name,
+            "pk": pk,
+            "fields": fields
+        })
+
     return fixtures
 
 
@@ -43,7 +53,7 @@ def dump_model(model_label):
     app_label = model._meta.app_label
     model_name = model._meta.model_name
 
-    # Nếu app không tồn tại thư mục, lưu vào core/fixtures
+    # Tạo thư mục fixtures
     app_path = Path(app_label)
     fixtures_dir = app_path / "fixtures" if app_path.exists() else Path("core") / "fixtures"
     fixtures_dir.mkdir(exist_ok=True, parents=True)
@@ -52,7 +62,7 @@ def dump_model(model_label):
 
     objects = list(model.objects.all().values())
     if not objects:
-        print(f"{model_label} không có dữ liệu, bỏ qua.")
+        print(f"⏭️  {model_label} không có dữ liệu, bỏ qua.")
         return
 
     serialized = serialize_objects_for_fixture(objects, model, f"{app_label}.{model_name}")
@@ -65,6 +75,7 @@ def dump_model(model_label):
 # --- Danh sách model muốn dump ---
 MODELS_TO_DUMP = [
     "auth.User",
+    "products.Color", 
     "products.Category",
     "products.Product",
 ]

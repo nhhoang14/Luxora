@@ -7,10 +7,14 @@
       "slug": "donut",
       "description": "",
       "price": 169000,
+      "stock": 1,
       "image": "products/donut.jpg",
       "created_at": "2025-10-13T03:24:53.893269+00:00",
       "categories": [
         4,
+        2
+      ],
+      "colors": [
         2
       ]
     }
@@ -23,10 +27,15 @@
       "slug": "bloomie",
       "description": "Sắc hồng dịu ngọt hòa cùng những đường cong mềm mại, mang đến cảm giác vừa đáng yêu, vừa hiện đại.\r\nPhiên bản đặc biệt này không chỉ là một thiết kế, mà còn là lời chào mùa mới – nhẹ nhàng, tươi tắn và đầy cảm hứng.",
       "price": 169000,
+      "stock": 1,
       "image": "products/bloomie_jmoPrt4.jpg",
       "created_at": "2025-10-12T10:56:43.254546+00:00",
       "categories": [
         4
+      ],
+      "colors": [
+        1,
+        2
       ]
     }
   }
