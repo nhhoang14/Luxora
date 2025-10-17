@@ -1,6 +1,7 @@
 import os
 import django
 import json
+from django.apps import apps
 from decimal import Decimal
 from datetime import datetime
 from pathlib import Path
@@ -8,8 +9,6 @@ from pathlib import Path
 # --- Thiết lập Django ---
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'luxora.settings')
 django.setup()
-
-from django.apps import apps
 
 def serialize_objects_for_fixture(objects, model, model_name):
     fixtures = []
