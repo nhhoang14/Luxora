@@ -1,91 +1,88 @@
 <header class="bg-[#FAFAFA] shadow w-full fixed top-0 left-0 z-50 h-20">
-  <div class="w-full mx-auto flex items-center justify-between h-20 px-12 relative">
+  <div class="container mx-auto flex items-center justify-between h-20 relative">
+
     <!-- Left menu -->
     <nav class="hidden md:flex space-x-2 h-full items-center relative">
       <!-- Products Mega Menu -->
       <div class="group relative">
         <!-- Nút Products -->
-        <a href="/products/"
-          class="font-medium relative rounded-full px-5 py-2 group/btn overflow-hidden block">
+        <a href="/products/" class="font-medium relative rounded-full px-5 py-2 group/btn overflow-hidden block">
           <span class="block text-black transition-opacity duration-200 group-hover/btn:opacity-0">
             Products
           </span>
           <span class="absolute inset-0 flex items-center justify-center
-                      bg-black text-white rounded-full
-                      translate-y-full group-hover/btn:translate-y-0
-                      transition-transform duration-300">
+                        bg-black text-white rounded-full
+                        translate-y-full group-hover/btn:translate-y-0
+                        transition-transform duration-300">
             Products
           </span>
         </a>
 
         <!-- Dropdown full width -->
-        <div
-          class="absolute left-0 top-full w-screen bg-white shadow-lg rounded-b-2xl mt-2
-                opacity-0 invisible group-hover:opacity-100 group-hover:visible -translate-x-12
-                translate-y-2 group-hover:translate-y-0 transition-all duration-300 z-40">
-          
-          <div class="w-full mx-auto px-8 py-8 grid grid-cols-5 gap-6">
-            
-            <!-- Cột 1 (1/5) -->
-            <div class="col-span-1">
-              <h4 class="font-semibold text-lg mb-3">Shop by Category</h4>
-              <ul class="space-y-2 text-gray-700">
-                <li><a href="/products/category/skincare/" class="hover:text-black">Skincare</a></li>
-                <li><a href="/products/category/makeup/" class="hover:text-black">Makeup</a></li>
-                <li><a href="/products/category/haircare/" class="hover:text-black">Haircare</a></li>
-                <li><a href="/products/category/body/" class="hover:text-black">Body</a></li>
-              </ul>
-            </div>
+        <div class="fixed left-0 top-20 w-full bg-[#FAFAFA] shadow-lg rounded-b-2xl opacity-0 invisible group-hover:opacity-100 group-hover:visible
+          -translate-y-3 group-hover:translate-y-0 transition-all duration-300 z-40 py-4">
 
-            <!-- Cột 2 (3/5) -->
-            <div class="col-span-3 border-x px-8">
-              <h4 class="font-semibold text-lg mb-3">Top Products</h4>
-              <div class="grid grid-cols-3 gap-6">
-                <!-- Mỗi sản phẩm -->
-                <a href="/products/serum-vitc/" class="group block">
-                  <div class="aspect-square bg-gray-100 rounded-xl overflow-hidden mb-2">
-                    <img src="/media/products/serum-vitc.jpg" alt="Serum" class="object-cover w-full h-full group-hover:scale-105 transition-transform duration-300">
-                  </div>
-                  <p class="text-gray-800 font-medium group-hover:text-black">Vitamin C Serum</p>
-                </a>
+          <div class="container mx-auto pb-4 grid grid-cols-5 gap-10 min-h-[560px] items-stretch">
 
-                <a href="/products/matte-lipstick/" class="group block">
-                  <div class="aspect-square bg-gray-100 rounded-xl overflow-hidden mb-2">
-                    <img src="/media/products/matte-lipstick.jpg" alt="Lipstick" class="object-cover w-full h-full group-hover:scale-105 transition-transform duration-300">
-                  </div>
-                  <p class="text-gray-800 font-medium group-hover:text-black">Matte Lipstick</p>
-                </a>
-
-                <a href="/products/hydra-cream/" class="group block">
-                  <div class="aspect-square bg-gray-100 rounded-xl overflow-hidden mb-2">
-                    <img src="/media/products/hydra-cream.jpg" alt="Cream" class="object-cover w-full h-full group-hover:scale-105 transition-transform duration-300">
-                  </div>
-                  <p class="text-gray-800 font-medium group-hover:text-black">Hydra Cream</p>
-                </a>
-              </div>
-            </div>
-
-            <!-- Cột 3 (1/5) -->
-            <div class="col-span-1 flex flex-col items-start justify-between">
-              <div>
-                <h4 class="font-semibold text-lg mb-3">Special</h4>
-                <ul class="space-y-2 text-gray-700">
-                  <li><a href="/products/new/" class="hover:text-black">New Arrivals</a></li>
-                  <li><a href="/products/sale/" class="hover:text-black">On Sale</a></li>
+            <!-- Cột 1: Danh mục -->
+            <div class="flex flex-col col-span-1">
+              <div class="flex-1">
+                <h4 class="font-semibold text-lg mb-6">Danh mục sản phẩm</h4>
+                <ul class="space-y-2 text-gray-700 text-2xl">
+                  <!-- sửa nút trong loop: thêm data-slug và class category-btn -->
+                  {% for category in categories %}
+                  <li>
+                    <button hx-get="{% url 'nav_category_products' category.slug %}" hx-target="#category-products-list"
+                      hx-swap="innerHTML" data-slug="{{ category.slug }}"
+                      class="category-btn block text-left w-full hover:text-black transition {% if forloop.first %}font-semibold text-black{% else %}text-gray-500{% endif %}">
+                      {{ category.name }}
+                    </button>
+                  </li>
+                  {% endfor %}
                 </ul>
               </div>
 
-              <a href="/products/"
-                class="inline-block mt-4 bg-black text-white rounded-full px-6 py-2 text-sm font-medium hover:bg-gray-800 transition">
-                View All →
-              </a>
+              <div class="border-t border-black py-4">
+                <a href="{% url 'products:list' %}"
+                  class="text-sm text-black inline-flex items-center w-full justify-between">
+                  <span class="font-medium text-lg">Xem tất cả sản phẩm</span>
+                  <span class="material-symbols-outlined align-middle text-sm">arrow_forward</span>
+                </a>
+              </div>
             </div>
+
+            <!-- Cột 2: Sản phẩm HTMX load -->
+            <div class="col-span-3">
+              <div class="w-full flex items-baseline justify-between mb-6">
+                <h4 class="text-gray-700 text-sm uppercase">Phổ biến nhất</h4>
+                <a id="category-link" href="#" class="text-lg text-black font-semibold inline-flex items-center">
+                  <span>All <span id="category-name"></span>
+                    <span class="material-symbols-outlined align-middle text-sm">arrow_forward</span>
+                  </span>
+                </a>
+              </div>
+
+              <!-- HTMX inject tại đây -->
+              <div id="category-products-list" class="grid grid-cols-3 gap-6">
+                <p class="text-gray-400">Đang tải sản phẩm...</p>
+              </div>
+            </div>
+
+            <!-- Cột 3: Special -->
+            <div class="col-span-1 flex flex-col items-start justify-between">
+              <h4 class="font-semibold text-lg mb-3">Special</h4>
+              <ul class="space-y-2 text-gray-700">
+                <li><a href="/products/new/" class="hover:text-black">New Arrivals</a></li>
+                <li><a href="/products/sale/" class="hover:text-black">On Sale</a></li>
+              </ul>
+            </div>
+
           </div>
         </div>
       </div>
 
-      <a href="/contact/"
-         class="font-medium relative rounded-full px-5 py-2 group overflow-hidden">
+      <!-- Collab -->
+      <a href="/contact/" class="font-medium relative rounded-full px-5 py-2 group overflow-hidden">
         <span class="block text-black transition-opacity duration-200 group-hover:opacity-0">
           #Collab
         </span>
@@ -105,20 +102,15 @@
 
     <!-- Right icons -->
     <div class="flex items-center space-x-4 h-full">
-
       <!-- Search -->
       <a href="/search/" class="btn btn-xl btn-ghost btn-circle">
-        <span class="material-symbols-outlined">
-          search
-        </span>
+        <span class="material-symbols-outlined">search</span>
       </a>
 
       <!-- User dropdown -->
       <div class="dropdown dropdown-end">
         <label tabindex="0" class="btn btn-xl btn-ghost btn-circle">
-          <span class="material-symbols-outlined">
-            person
-          </span> 
+          <span class="material-symbols-outlined">person</span>
         </label>
         <ul tabindex="0" class="dropdown-content menu p-2 shadow bg-white rounded-box w-52 mt-2">
           <li><a href="/profile/">Profile</a></li>
@@ -127,20 +119,56 @@
         </ul>
       </div>
 
-      <!-- Cart icon (label toggle) -->
+      <!-- Cart -->
       <label for="cart-drawer" class="btn btn-xl btn-ghost btn-circle">
-        <span class="material-symbols-outlined">
-          shopping_cart
-        </span>
+        <span class="material-symbols-outlined">shopping_cart</span>
       </label>
-
     </div>
   </div>
-      
-  <!-- Mobile menu -->
-  <input id="mobile-menu" type="checkbox" class="hidden" />
-  <div class="md:hidden bg-white shadow mt-16 p-4 space-y-2 w-full absolute">
-    <a href="/products/" class="block">Products</a>
-    <a href="/contact/" class="block">#Collab</a>
-  </div>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const group = document.querySelector('.group.relative');
+      const buttons = Array.from(document.querySelectorAll('.category-btn'));
+      const list = document.getElementById('category-products-list');
+      const categoryName = document.getElementById('category-name');
+      const categoryLink = document.getElementById('category-link');
+
+      function clearActive() {
+        buttons.forEach(b => {
+          b.classList.remove('font-semibold', 'text-black');
+          b.classList.add('text-gray-500');
+        });
+      }
+
+      // cập nhật UI khi nhấn nút (HTMX sẽ load nội dung)
+      buttons.forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          clearActive();
+          btn.classList.add('font-semibold', 'text-black');
+          btn.classList.remove('text-gray-500');
+          categoryName.textContent = btn.textContent.trim();
+          categoryLink.href = `/products/category/${btn.dataset.slug}/`;
+        });
+      });
+
+      // Mặc định: chọn mục đầu khi tải trang
+      if (buttons.length > 0) {
+        buttons[0].click();
+      }
+
+      // Khi mở dropdown (hover/pointerenter) chọn lại mục đầu nếu chưa có
+      if (group) {
+        group.addEventListener('pointerenter', () => {
+          if (!categoryName.textContent && buttons.length > 0) buttons[0].click();
+        });
+        // Khi rời (đóng dropdown) reset nội dung
+        group.addEventListener('pointerleave', () => {
+          list.innerHTML = '<p class="text-gray-400">Đang tải sản phẩm...</p>';
+          categoryName.textContent = '';
+          categoryLink.href = '#';
+          clearActive();
+        });
+      }
+    });
+  </script>
 </header>
