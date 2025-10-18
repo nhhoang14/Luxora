@@ -33,7 +33,7 @@
                   {% for category in categories %}
                   <li>
                     <button hx-get="{% url 'nav_category_products' category.slug %}" hx-target="#category-products-list"
-                      hx-swap="innerHTML" data-slug="{{ category.slug }} hx-trigger="mouseenter once""
+                      hx-swap="innerHTML" data-slug="{{ category.slug }}"
                       class="category-btn block text-left w-full hover:text-black transition {% if forloop.first %}font-semibold text-black{% else %}text-gray-500{% endif %}">
                       {{ category.name }}
                     </button>
@@ -119,6 +119,7 @@
       </label>
     </div>
   </div>
+  
   <script>
     document.addEventListener('DOMContentLoaded', () => {
       const group = document.querySelector('.group.relative');
