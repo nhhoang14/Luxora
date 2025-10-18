@@ -1,6 +1,63 @@
 [
   {
     "model": "products.product",
+    "pk": 6,
+    "fields": {
+      "name": "Lunetra",
+      "slug": "lunetra",
+      "description": "",
+      "price": 136000,
+      "stock": 2,
+      "image": "products/lunetra.png",
+      "created_at": "2025-10-18T03:12:45.208814+00:00",
+      "categories": [
+        5
+      ],
+      "colors": [
+        2
+      ]
+    }
+  },
+  {
+    "model": "products.product",
+    "pk": 4,
+    "fields": {
+      "name": "Square",
+      "slug": "square",
+      "description": "",
+      "price": 200000,
+      "stock": 3,
+      "image": "products/square_OnkRnEc.jpg",
+      "created_at": "2025-10-18T02:55:30.244559+00:00",
+      "categories": [
+        4
+      ],
+      "colors": [
+        2
+      ]
+    }
+  },
+  {
+    "model": "products.product",
+    "pk": 3,
+    "fields": {
+      "name": "Horn",
+      "slug": "horn",
+      "description": "",
+      "price": 189000,
+      "stock": 5,
+      "image": "products/horn_dWsU7Wt.jpg",
+      "created_at": "2025-10-18T02:51:01.217823+00:00",
+      "categories": [
+        2
+      ],
+      "colors": [
+        2
+      ]
+    }
+  },
+  {
+    "model": "products.product",
     "pk": 2,
     "fields": {
       "name": "Donut",
@@ -12,7 +69,7 @@
       "created_at": "2025-10-13T03:24:53.893269+00:00",
       "categories": [
         4,
-        2
+        3
       ],
       "colors": [
         2

@@ -33,7 +33,7 @@
                   {% for category in categories %}
                   <li>
                     <button hx-get="{% url 'nav_category_products' category.slug %}" hx-target="#category-products-list"
-                      hx-swap="innerHTML" data-slug="{{ category.slug }}"
+                      hx-swap="innerHTML" data-slug="{{ category.slug }} hx-trigger="mouseenter once""
                       class="category-btn block text-left w-full hover:text-black transition {% if forloop.first %}font-semibold text-black{% else %}text-gray-500{% endif %}">
                       {{ category.name }}
                     </button>
@@ -63,18 +63,12 @@
               </div>
 
               <!-- HTMX inject tại đây -->
-              <div id="category-products-list" class="grid grid-cols-3 gap-6">
-                <p class="text-gray-400">Đang tải sản phẩm...</p>
-              </div>
+              <div id="category-products-list" class="grid grid-cols-3 gap-6"></div>
             </div>
 
             <!-- Cột 3: Special -->
             <div class="col-span-1 flex flex-col items-start justify-between">
-              <h4 class="font-semibold text-lg mb-3">Special</h4>
-              <ul class="space-y-2 text-gray-700">
-                <li><a href="/products/new/" class="hover:text-black">New Arrivals</a></li>
-                <li><a href="/products/sale/" class="hover:text-black">On Sale</a></li>
-              </ul>
+              
             </div>
 
           </div>
