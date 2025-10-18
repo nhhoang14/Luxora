@@ -15,6 +15,9 @@ urlpatterns = [
     # Quick View
     path('quick-view/<int:pk>/', core_views.quick_view, name='quick_view'),
 
+    # Navbar
+    path('nav/category/<slug:slug>/', core_views.nav_category_products, name='nav_category_products'),
+
     # Ứng dụng con
     path('products/', include(('products.urls', 'products'), namespace='products')),
     path('cart/', include(('cart.urls', 'cart'), namespace='cart')),

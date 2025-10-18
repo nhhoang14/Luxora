@@ -1,10 +1,9 @@
 {% load static %}
 {% load vn_currency %}
 
-<div
-    class="{% if list_page %}w-full{% else %}w-[76%] sm:w-[38%] md:w-[36%] lg:w-[24%] flex-shrink-0{% endif %} flex-col aspect-[3/4] bg-transition group">
+<div class="w-full flex-col aspect-[3/4] bg-transition group"> <!-- thay đổi ở đây: w-full -->
     <!-- Ảnh sản phẩm -->
-    <div class="relative w-full aspect-square rounded-2xl overflow-hidden flex-shrink-0">
+    <div class="relative w-full aspect-square rounded-2xl overflow-hidden">
         <a href="{% url 'products:detail' product.slug %}">
             {% if product.image %}
             <img src="{{ product.image.url }}" alt="{{ product.name }}" class="w-full h-full object-cover" />
@@ -14,7 +13,8 @@
             {% endif %}
         </a>
         <!-- Icon Quick View -->
-        <button hx-get="{% url 'quick_view' product.pk %}" hx-target="#quickview-container" hx-swap="innerHTML" class="absolute top-2 right-2 z-10 bg-white/80 hover:bg-black hover:text-white text-gray-600 rounded-full w-10 h-10 flex items-center justify-center
+        <button hx-get="{% url 'quick_view' product.pk %}" hx-target="#quickview-container" hx-swap="innerHTML"
+            class="absolute top-2 right-2 z-10 bg-white/80 hover:bg-black hover:text-white text-gray-600 rounded-full w-10 h-10 flex items-center justify-center
                    opacity-0 group-hover:opacity-100 cursor-pointer duration-300" title="Xem nhanh"
             onclick="event.stopPropagation(); event.preventDefault();">
             <span class="material-symbols-outlined text-lg">visibility</span>

@@ -15,3 +15,11 @@ def contact_view(request):
 def quick_view(request, pk):
     product = get_object_or_404(Product, pk=pk)
     return render(request, 'partials/quickview_modal.html', {'product': product})
+
+def nav_category_products(request, slug):
+    category = get_object_or_404(Category.objects.prefetch_related('products'), slug=slug)
+    products = category.products.all()[:3]
+    return render(request, 'products/partials/category_products.html', {
+        'category': category,
+        'products': products,
+    })

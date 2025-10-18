@@ -1,0 +1,5 @@
+{% for product in products %}
+  {% include 'products/partials/product_card.html' with product=product %}
+{% empty %}
+  <p class="text-gray-500">Không có sản phẩm nào trong danh mục này.</p>
+{% endfor %}
