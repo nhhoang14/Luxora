@@ -1,0 +1,30 @@
+{% load vn_currency %}
+
+<div class="fixed inset-0 flex items-center justify-center bg-black/40 z-50" id="added-popup">
+  <div class="bg-white p-8 rounded-3xl w-[420px] flex flex-col items-center text-center space-y-4">
+    <span class="material-symbols-outlined text-green-500 text-5xl">check_circle</span>
+    <p class="text-lg font-medium text-gray-700">Đã thêm vào giỏ hàng!</p>
+
+    <img src="{{ product.image.url }}" alt="{{ product.name }}" class="w-24 h-24 object-cover rounded-xl">
+    <p class="text-base font-semibold">{{ product.name }}</p>
+    <p class="text-gray-600">{{ product.price|vnd }}</p>
+
+    <div class="flex gap-4 w-full mt-4">
+      <a href="{% url 'cart:cart' %}" 
+         class="flex-1 bg-[#FF5532] text-white py-3 rounded-full hover:opacity-80 duration-300">
+         Xem giỏ hàng
+      </a>
+      <a href="{% url 'checkout:payment' %}" 
+         class="flex-1 bg-black text-white py-3 rounded-full hover:opacity-80 duration-300">
+         Thanh toán
+      </a>
+    </div>
+
+    <button hx-get="{% url 'cart:cart_tab' %}" 
+            hx-target="#tab-content" 
+            class="mt-4 text-gray-500 hover:text-black duration-200"
+            onclick="document.getElementById('added-popup').remove()">
+      Tiếp tục mua sắm
+    </button>
+  </div>
+</div>
