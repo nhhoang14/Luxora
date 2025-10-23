@@ -1,9 +1,9 @@
 {% load static %}
 {% load vn_currency %}
 
-<div class="w-full flex-col aspect-[3/4] bg-transition group"> <!-- thay đổi ở đây: w-full -->
+<div class="w-full flex-col aspect-[3/4] bg-transition group">
     <!-- Ảnh sản phẩm -->
-    <div class="relative w-full aspect-square rounded-2xl overflow-hidden">
+    <div class="relative w-full aspect-square rounded-2xl overflow-hidden group">
         <a href="{% url 'products:detail' product.slug %}">
             {% if product.image %}
             <img src="{{ product.image.url }}" alt="{{ product.name }}" class="w-full h-full object-cover" />
@@ -12,14 +12,23 @@
                 class="w-full h-full object-cover" />
             {% endif %}
         </a>
-        <!-- Icon Quick View -->
-        <button hx-get="{% url 'quick_view' product.pk %}" hx-target="#quickview-container" hx-swap="innerHTML"
-            class="absolute top-2 right-2 z-10 bg-white/80 hover:bg-black hover:text-white text-gray-600 rounded-full w-10 h-10 flex items-center justify-center
-                   opacity-0 group-hover:opacity-100 cursor-pointer duration-300" title="Xem nhanh"
-            onclick="event.stopPropagation(); event.preventDefault();">
-            <span class="material-symbols-outlined text-lg">visibility</span>
-        </button>
+
+        <!-- Nút Thêm vào giỏ hàng -->
+        <form hx-post="{% url 'cart:add' %}" hx-target="#tab-content" hx-swap="innerHTML"
+            class="absolute bottom-4 right-4 z-10" onclick="event.stopPropagation();">
+            {% csrf_token %}
+            <input type="hidden" name="product" value="{{ product.pk }}">
+            <input type="hidden" name="qty" value="1">
+
+            <button type="submit"
+                class="bg-black hover:opacity-80 text-white rounded-full btn btn-lg
+                   flex items-center justify-center gap-2 opacity-0 group-hover:opacity-100 cursor-pointer duration-300">
+                <span class="material-symbols-outlined" style="font-size: 1rem;">add_2</span>
+                <span class="text-sm font-medium">Thêm nhanh</span>
+            </button>
+        </form>
     </div>
+
     <!-- Thông tin sản phẩm -->
     <div class="py-4 flex-1 flex flex-col justify-between">
         <span class="text-gray-400 text-xs uppercase mb-1">LUXORA</span>

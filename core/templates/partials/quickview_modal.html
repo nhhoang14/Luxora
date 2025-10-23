@@ -7,7 +7,8 @@
         onclick="document.getElementById('quickview-modal').remove()"></div>
 
     <!-- Modal box -->
-    <div class="relative bg-white rounded-2xl w-[95%] max-w-[1280px] lg:w-2/3 min-w-[320px] lg:min-w-[976px] h-[80%] max-h-[768px] shadow-xl flex flex-col lg:flex-row overflow-auto lg:overflow-hidden">
+    <div
+        class="relative bg-white rounded-2xl w-[95%] max-w-[1280px] lg:w-2/3 min-w-[320px] lg:min-w-[976px] h-[80%] max-h-[768px] shadow-xl flex flex-col lg:flex-row overflow-auto lg:overflow-hidden">
         <!-- Nút đóng -->
         <button
             class="absolute top-4 right-4 w-10 h-10 flex items-center justify-center rounded-full bg-gray-100 hover:bg-black hover:text-white transition"
@@ -77,31 +78,34 @@
                 </div>
 
 
-                <form class="flex flex-col gap-4">
+                <form hx-post="{% url 'cart:add' %}" hx-target="#cart-badge" hx-swap="outerHTML"
+                    class="flex flex-col gap-4">
+                    {% csrf_token %}
+                    <input type="hidden" name="product" value="{{ product.pk }}">
+
                     <div class="flex items-center gap-3">
-                        <!-- Bộ chọn số lượng -->
+                        <!-- Bộ chọn số lượng (đảm bảo input name="qty") -->
                         <div
-                            class="flex h-full items-center justify-between border border-gray-300 rounded-full px-6 flex-[1]">
-                            <button type="button" class="flex items-center cursor-pointer justify-center"
-                                onclick="changeQty(this, -1)">
-                                <span class="material-symbols-outlined !text-sm leading-none">arrow_back_ios_new</span>
+                            class="flex h-full items-center justify-between border-2 border-gray-300 rounded-full px-6 flex-[1]">
+                            <button type="button" onclick="changeQty(this, -1)">
+                                <span class="material-symbols-outlined !text-sm leading-none cursor-pointer">arrow_back_ios_new</span>
                             </button>
 
-                            <input id="qty-input" type="number" min="1" value="1"
+                            <input id="qty-input" name="qty" type="number" min="1" value="1"
                                 class="w-10 text-center outline-none border-none bg-transparent text-base font-medium" />
 
-                            <button type="button" class="flex items-center cursor-pointer justify-center"
-                                onclick="changeQty(this, 1)">
-                                <span class="material-symbols-outlined !text-sm leading-none">arrow_forward_ios</span>
+                            <button type="button" onclick="changeQty(this, 1)">
+                                <span class="material-symbols-outlined !text-sm leading-none cursor-pointer">arrow_forward_ios</span>
                             </button>
                         </div>
 
-                        <!-- Nút thêm vào giỏ -->
+                        <!-- Nút thêm vào giỏ (dùng qty từ input) -->
                         <button type="submit" class="flex-1 bg-black text-white hover:bg-white hover:text-black
                                     transition py-4 rounded-full border-2 border-black font-semibold flex-[3]">
                             Add to cart
                         </button>
                     </div>
+
 
                     <!-- Nút mua ngay -->
                     <button type="button"
@@ -122,7 +126,7 @@
                             </button>
                             <button
                                 class="w-8 h-8 border rounded-full flex items-center justify-center hover:bg-black hover:text-white transition">
-                                <span class="material-symbols-outlined !text-sm leading-none">arrow_forward_ios</span>
+                                <span class="material-symbols-outlined !text-sm leading_none">arrow_forward_ios</span>
                             </button>
                         </div>
                     </div>

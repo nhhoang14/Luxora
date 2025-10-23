@@ -1,30 +1,68 @@
-<div class="h-full flex flex-col p-4 space-y-4">
-  <div class="flex-1">
-    {% if cart.items %}
-      {% for item in cart.items %}
-        <div class="flex items-center gap-4">
-          <img src="{{ item.product.image.url }}" alt="{{ item.product.name }}" class="w-16 h-16 rounded-md object-cover">
-          <div class="flex-1">
-            <p class="font-medium">{{ item.product.name }}</p>
-            <p class="text-sm text-gray-500">{{ item.quantity }} × {{ item.product.price }}₫</p>
-          </div>
-          <button class="text-gray-400 hover:text-red-500" hx-delete="{% url 'cart_remove' item.product.id %}"
-            hx-target="#drawer-content" hx-swap="outerHTML">✕</button>
-        </div>
-      {% endfor %}
-    {% else %}
-      <p class="text-center text-gray-500">Your cart is empty.</p>
-    {% endif %}
+{% load vn_currency %}
+
+{% if cart.items.all %}
+<!-- Có sản phẩm trong giỏ hàng -->
+<div class="flex flex-col h-full">
+
+  <!-- Tiêu đề -->
+  <div class="text-left pt-8 pb-6 px-10 flex items-center gap-2">
+    <h2 class="text-xl font-normal tracking-tight text-black">
+      Giỏ hàng
+    </h2>
+    <span
+      class="bg-black text-white font-semibold rounded-full h-6 w-6 flex items-center justify-center text-xs leading-none">
+      {{ cart.items.count }}
+    </span>
   </div>
-  <!-- Nút điều hướng luôn ở dưới cùng -->
-  <div class="mt-6 pt-4 flex gap-4 border-t border-gray-200">
-    <a href="{% url 'cart:cart' %}" class="bg-black hover:bg-white text-white text-lg hover:text-black duration-300 rounded-full 
-              btn btn-lg mt-4 flex-[3] focus:outline-none border border-black shadow-none">
-      Check out
-    </a>
-    <a href="{% url 'products:list' %}" class="bg-white hover:bg-black text-black text-lg hover:text-white duration-300 rounded-full
-              btn btn-lg mt-4 flex-[2] focus:outline-none border border-black shadow-none">
-      View Cart
-    </a>
+
+  <!-- Danh sách sản phẩm -->
+  <div class="flex-1 overflow-y-auto px-10 py-4 space-y-6">
+    {% for item in cart.items.all %}
+    {% include 'cart/partials/cart_item.html' with item=item %}
+    {% endfor %}
+  </div>
+
+  <!-- Footer: Tổng cộng & nút hành động -->
+  <div class="border-t border-gray-200 px-10 py-8">
+    <!-- Tổng cộng -->
+    <div class="flex justify-between items-center text-lg font-bold text-[#333] mb-6">
+      <span>Tổng cộng</span>
+      <span>{{ cart.total_price|vnd }}</span>
+    </div>
+
+    <!-- Hai nút -->
+    <div class="flex gap-4">
+      <!-- Nút Xem giỏ hàng -->
+      <a href="{% url 'cart:cart' %}" class="flex items-center justify-center flex-1 bg-[#FF5532] text-white text-base font-medium 
+                rounded-full py-4 hover:opacity-80 duration-300">
+        Xem giỏ hàng
+      </a>
+
+      <!-- Nút Thanh toán -->
+      <a href="{% url 'products:list' %}" class="flex items-center justify-center flex-1 bg-black text-white text-base font-medium 
+                rounded-full py-4 hover:opacity-80 duration-300 gap-2">
+        <span class="material-symbols-outlined text-lg">lock</span>
+        <span>Thanh toán</span>
+      </a>
+    </div>
   </div>
 </div>
+{% else %}
+<!-- Giỏ hàng đang trống -->
+<div class="flex flex-col items-center justify-center space-y-6 h-full">
+  <span class="relative">
+    <span class="material-symbols-outlined" style="font-size: 3rem;">
+      shopping_basket
+    </span>
+    <span
+      class="absolute top-1 -right-2 bg-black text-white rounded-full h-6 w-6 flex items-center justify-center text-xs leading-none">
+      0
+    </span>
+  </span>
+  <p class="text-center text-gray-500 text-xl">Giỏ hàng đang trống</p>
+  <a href="{% url 'products:list' %}"
+    class="bg-black hover:opacity-80 text-white text-base px-8 py-5 duration-300 rounded-full cursor-pointer">
+    Tiếp tục mua sắm
+  </a>
+</div>
+{% endif %}

@@ -8,13 +8,13 @@
         <!-- Nút Products -->
         <a href="/products/" class="font-medium relative rounded-full px-5 py-2 group/btn overflow-hidden block">
           <span class="block text-black transition-opacity duration-200 group-hover/btn:opacity-0">
-            Products
+            Sản phẩm
           </span>
           <span class="absolute inset-0 flex items-center justify-center
                         bg-black text-white rounded-full
                         translate-y-full group-hover/btn:translate-y-0
                         transition-transform duration-300">
-            Products
+            Sản phẩm
           </span>
         </a>
 
@@ -56,7 +56,7 @@
               <div class="w-full flex items-baseline justify-between mb-6">
                 <h4 class="text-gray-700 text-sm uppercase">Phổ biến nhất</h4>
                 <a id="category-link" href="#" class="text-lg text-black font-semibold inline-flex items-center">
-                  <span>All <span id="category-name"></span>
+                  <span>Tất cả <span id="category-name" class="lowercase"></span>
                     <span class="material-symbols-outlined align-middle text-sm">arrow_forward</span>
                   </span>
                 </a>
@@ -68,7 +68,6 @@
 
             <!-- Cột 3: Special -->
             <div class="col-span-1 flex flex-col items-start justify-between">
-              
             </div>
 
           </div>
@@ -115,11 +114,13 @@
 
       <!-- Cart -->
       <label for="cart-drawer" class="btn btn-xl btn-ghost btn-circle">
-        <span class="material-symbols-outlined">shopping_cart</span>
+        <span class="material-symbols-outlined">
+          local_mall
+        </span>
       </label>
     </div>
   </div>
-  
+
   <script>
     document.addEventListener('DOMContentLoaded', () => {
       const group = document.querySelector('.group.relative');
@@ -141,7 +142,7 @@
           clearActive();
           btn.classList.add('font-semibold', 'text-black');
           btn.classList.remove('text-gray-500');
-          categoryName.textContent = btn.textContent.trim();
+          categoryName.textContent = btn.textContent.trim().toLocaleLowerCase();
           categoryLink.href = `/products/category/${btn.dataset.slug}/`;
         });
       });
@@ -150,7 +151,6 @@
       if (buttons.length > 0) {
         buttons[0].click();
       }
-
       // Khi mở dropdown (hover/pointerenter) chọn lại mục đầu nếu chưa có
       if (group) {
         group.addEventListener('pointerenter', () => {
