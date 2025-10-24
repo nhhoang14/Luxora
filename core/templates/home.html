@@ -11,28 +11,15 @@
 </section>
 
 <!-- Danh mục (Category Slider) -->
-<section class="max-w-screen-2xl mx-auto px-4 py-10">
-  <h2 class="text-2xl font-bold mb-6 text-center">Danh mục sản phẩm</h2>
+<section class="max-w-screen-2xl mx-auto px-4 py-8 mt-4">
+  <p class="text-base font-bold mb-4 text-gray-800">Chúng tôi có gì?</p>
+  <h2 class="text-4xl font-bold mb-10 text-gray-800">Danh mục sản phẩm</h2>
 
-  <div class="flex space-x-6 overflow-x-auto pb-4 scrollbar-hide">
-    <!-- All Products -->
-    <div class="w-[76%] sm:w-[38%] md:w-[36%] lg:w-[24%] flex-shrink-0 relative aspect-[2/3]">
-      <a href="{% url 'products:list' %}"
-        class="block bg-white rounded-2xl overflow-hidden shadow-md hover:shadow-lg transition duration-300 relative h-full">
-        <img src="{% static 'core/images/default-category.jpg' %}" class="w-full h-full object-cover"
-          alt="All Products">
-        <div class="absolute bottom-4 left-4 text-white font-bold text-2xl drop-shadow-lg">
-          All Products <span class="text-sm ml-1">91</span>
-        </div>
-        <div class="absolute bottom-4 right-4 text-white text-2xl">→</div>
-      </a>
-    </div>
-
-    <!-- Các category còn lại -->
+  <div class="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 gap-6">
     {% for category in categories %}
-    <div class="w-[76%] sm:w-[38%] md:w-[36%] lg:w-[24%] flex-shrink-0 relative aspect-[2/3]">
+    <div class="relative aspect-[2/3]">
       <a href="{% url 'products:category_products' category.slug %}"
-        class="block bg-white rounded-2xl overflow-hidden shadow-md hover:shadow-lg transition duration-300 relative h-full">
+        class="block bg-white rounded-2xl overflow-hidden shadow-md hover:shadow-lg transition duration-300 h-full">
 
         <img src="{% static category.get_image %}" class="w-full h-full object-cover" alt="{{ category.name }}">
 
@@ -46,30 +33,29 @@
   </div>
 </section>
 
-<div class="px-4">
-  <hr class="max-w-screen-2xl mx-auto my-12 border-t border-gray-200">
-</div>
-
-
 <!-- Sản phẩm mới lên kệ -->
-<section class="max-w-screen-2xl mx-auto px-4 py-10">
-  <h2 class="text-2xl font-bold mb-8">Mới lên kệ</h2>
+<section class="max-w-screen-2xl mx-auto px-4 py-8">
+  <!-- Xem thêm button -->
+  <div class="flex justify-between items-center mb-10">
+    <h2 class="text-4xl font-bold text-gray-800">Sản phẩm mới ra mắt</h2>
+    <a href="{% url 'products:list' %}" class="text-gray-600 font-bold flex items-center gap-2 group">
+      <span class="relative group-hover:text-gray-800 transition duration-300">
+        Xem tất cả
+        <span class="absolute bottom-0 left-0 w-0 h-[1px] bg-gray-800 group-hover:w-full transition-all duration-300"></span>
+      </span>
+      <span
+        class="material-symbols-outlined !font-extrabold group-hover:text-white p-2 bg-gray-200 rounded-full group-hover:bg-gray-800 transition duration-300"
+        style="font-size: 0.5rem;">
+        arrow_forward_ios
+      </span>
+    </a>
+  </div>
 
   <!-- Slider container -->
-  <div class="relative">
-    <div class="flex gap-6 overflow-x-auto scrollbar-hide">
-      {% for product in new_products %}
-        {% include 'products/partials/product_card.html' with product=product %}
-      {% endfor %}
-    </div>
-
-    <!-- Xem thêm button -->
-    <div class="mt-2 text-left">
-      <a href="{% url 'products:list' %}"
-        class="inline-flex items-center px-6 py-3 bg-black text-white rounded-full font-semibold hover:bg-gray-800 transition">
-        Xem thêm <span class="ml-2">→</span>
-      </a>
-    </div>
+  <div class="grid grid-cols-5 gap-6">
+    {% for product in new_products|slice:":10" %}
+    {% include 'products/partials/product_card.html' with product=product %}
+    {% endfor %}
   </div>
 </section>
 
