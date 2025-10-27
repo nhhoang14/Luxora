@@ -77,6 +77,7 @@ MODELS_TO_DUMP = [
     "products.Color", 
     "products.Category",
     "products.Product",
+    "core.ContactMessage",
 ]
 
 def main():
