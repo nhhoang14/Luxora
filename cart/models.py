@@ -1,6 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
-from products.models import Product, Color
+from products.models import Product
 
 
 # Giỏ hàng
@@ -19,12 +19,8 @@ class Cart(models.Model):
 class CartItem(models.Model):
     cart = models.ForeignKey(Cart, on_delete=models.CASCADE, related_name='items')
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
-    color = models.ForeignKey(Color, on_delete=models.SET_NULL, null=True, blank=True)
+    color = models.ForeignKey('products.Color', on_delete=models.CASCADE, null=True, blank=True)
     quantity = models.PositiveIntegerField(default=1)
-
-    class Meta:
-        # ✅ Ràng buộc để không trùng sản phẩm cùng màu trong 1 giỏ
-        unique_together = ('cart', 'product', 'color')
 
     def subtotal(self):
         return self.product.price * self.quantity
@@ -33,3 +29,4 @@ class CartItem(models.Model):
         if self.color:
             return f"{self.product.name} ({self.color.name}) x {self.quantity}"
         return f"{self.product.name} x {self.quantity}"
+

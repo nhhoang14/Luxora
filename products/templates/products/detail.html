@@ -1,120 +1,15 @@
-{% extends "base.html" %}
-{% load static %}
+{% extends 'base.html' %}
+
 {% block content %}
-
-<div class="container mx-auto py-12 px-4 md:flex gap-10">
-
-    <!-- Ảnh sản phẩm -->
-    <div class="md:w-1/2 flex justify-center">
-        {% if product.image %}
-            <img src="{{ product.image.url }}" alt="{{ product.name }}" class="rounded-2xl shadow-md max-h-[600px] object-contain">
-        {% else %}
-            <img src="{% static 'core/images/default-product.jpg' %}" alt="{{ product.name }}" class="rounded-2xl shadow-md">
-        {% endif %}
+<section class="max-w-5xl mx-auto px-4 py-10">
+  <div class="grid md:grid-cols-2 gap-8">
+    <img src="{{ product.image.url }}" alt="{{ product.name }}" class="w-full rounded-xl object-cover">
+    <div>
+      <h1 class="text-2xl font-bold mb-2">{{ product.name }}</h1>
+      <p class="text-gray-600 mb-4">{{ product.price|floatformat:0 }}₫</p>
+      <p>{{ product.description }}</p>
+      <button class="mt-4 bg-black text-white px-4 py-2 rounded hover:bg-gray-800">Thêm vào giỏ</button>
     </div>
-
-    <!-- Thông tin sản phẩm -->
-    <div class="md:w-1/2 mt-8 md:mt-0">
-        <h1 class="text-4xl font-semibold mb-3">{{ product.name }}</h1>
-        <p class="text-2xl font-semibold text-gray-800 mb-6">{{ product.price|floatformat:0 }}đ</p>
-
-        <!-- Màu sắc -->
-        {% if product.colors.all %}
-        <div class="mb-4">
-            <h3 class="font-semibold mb-2">Màu sắc:</h3>
-            <div class="flex gap-2">
-                {% for color in product.colors.all %}
-                <label class="cursor-pointer">
-                    <input type="radio" name="color" value="{{ color.id }}" class="hidden peer">
-                    <div class="w-8 h-8 rounded-full border-2 border-gray-400 peer-checked:ring-2 ring-black"
-                         style="background-color: {{ color.hex_code }}"></div>
-                </label>
-                {% endfor %}
-            </div>
-        </div>
-        {% endif %}
-
-        <!-- Loại sản phẩm -->
-        {% if product.categories.all %}
-        <div class="mb-4">
-            <h3 class="font-semibold mb-2">Loại sản phẩm:</h3>
-            <p class="text-gray-600">
-                {% for cat in product.categories.all %}
-                    {{ cat.name }}{% if not forloop.last %}, {% endif %}
-                {% endfor %}
-            </p>
-        </div>
-        {% endif %}
-
-        <!-- Form thêm vào giỏ hàng -->
-        <form
-            hx-post="{% url 'cart:add' %}"
-            hx-target="#cart-tab"
-            hx-swap="innerHTML"
-            hx-on::after-request="document.getElementById('cart-drawer').checked = true"
-            class="mt-6 flex flex-col gap-4"
-        >
-            {% csrf_token %}
-            <input type="hidden" name="product" value="{{ product.id }}">
-            <input type="hidden" name="color" id="selected-color">
-
-            <!-- Số lượng -->
-            <div class="flex items-center gap-4">
-                <label class="font-semibold">Số lượng:</label>
-                <div class="flex items-center border rounded-md">
-                    <button type="button" class="px-3 py-1 cursor-pointer select-none" onclick="changeQty(-1)">−</button>
-                    <input type="number" id="qty-input" name="qty" value="1" min="1"
-                           class="w-14 text-center border-none focus:ring-0">
-                    <button type="button" class="px-3 py-1 cursor-pointer select-none" onclick="changeQty(1)">+</button>
-                </div>
-            </div>
-
-
-            <button type="submit"
-                class="bg-black text-white px-6 py-3 rounded-lg hover:bg-gray-800 transition-all w-max cursor-pointer">
-                Thêm vào giỏ hàng
-            </button>
-        </form>
-    </div>
-</div>
-
-<!-- Thường mua kèm -->
-{% if recommended_products %}
-<div class="container mx-auto mt-16 px-4">
-    <h2 class="text-2xl font-semibold mb-6">Thường mua kèm</h2>
-    <div class="grid grid-cols-2 md:grid-cols-3 gap-6">
-        {% for item in recommended_products %}
-        <a href="{% url 'products:detail' item.slug %}" class="block">
-            <div class="rounded-xl overflow-hidden shadow hover:shadow-lg transition-all">
-                <img src="{{ item.image.url }}" alt="{{ item.name }}" class="object-cover w-full h-64">
-                <div class="p-4">
-                    <h3 class="font-semibold">{{ item.name }}</h3>
-                    <p class="text-gray-600">{{ item.price|floatformat:0 }}đ</p>
-                </div>
-            </div>
-        </a>
-        {% endfor %}
-    </div>
-</div>
-{% endif %}
-
-<script>
-    // Chọn màu
-    const radios = document.querySelectorAll('input[name="color"]');
-    const colorInput = document.getElementById('selected-color');
-    radios.forEach(r => {
-        r.addEventListener('change', () => {
-            colorInput.value = r.value;
-        });
-    });
-
-    // Số lượng
-    function changeQty(delta) {
-        const input = document.getElementById('qty-input');
-        let val = parseInt(input.value) || 1;
-        val = Math.max(1, val + delta);
-        input.value = val;
-    }
-</script>
-
+  </div>
+</section>
 {% endblock %}

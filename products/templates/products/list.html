@@ -1,104 +1,12 @@
 {% extends 'base.html' %}
-{% load static %}
 
 {% block content %}
-
-<!-- 🔹 Banner động theo danh mục -->
-<div class="relative w-full h-64 md:h-80 lg:h-96 mb-10">
-  <img src="{% static banner_image %}"
-       alt="Banner sản phẩm"
-       class="w-full h-full object-cover rounded-xl shadow-md">
-  <div class="absolute inset-0 bg-black bg-opacity-40 flex flex-col justify-center items-center text-center text-white">
-    <h1 class="text-3xl md:text-5xl font-bold">{{ title }}</h1>
-    <p class="mt-2 text-lg md:text-xl">Khám phá những thiết kế nổi bật nhất của chúng tôi</p>
+<section class="max-w-7xl mx-auto px-4 py-10">
+  <h1 class="text-2xl font-bold mb-6">Tất cả sản phẩm</h1>
+  <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+    {% for product in products %}
+      {% include 'products/partials/product_card.html' with product=product list_page=True %}
+    {% endfor %}
   </div>
-</div>
-
-<!-- 🔹 Phần nội dung sản phẩm -->
-<section class="max-w-7xl mx-auto px-4 py-10 flex flex-col md:flex-row gap-8">
-
-  <!-- Sidebar bộ lọc -->
-  <aside class="w-full md:w-64 space-y-6">
-    <h2 class="text-2xl font-semibold flex items-center gap-2">
-      <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h8m-8 6h16" />
-      </svg>
-      Bộ lọc
-    </h2>
-
-    <!-- Lọc theo loại sản phẩm -->
-    <div x-data="{ open: true }" class="border-b pb-4">
-      <button @click="open = !open"
-              class="flex justify-between items-center w-full font-medium text-gray-700 hover:text-black transition-colors">
-        Loại sản phẩm
-        <svg :class="{'rotate-180': open}"
-             xmlns="http://www.w3.org/2000/svg"
-             class="w-4 h-4 transition-transform duration-200"
-             fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
-        </svg>
-      </button>
-
-      <div x-show="open" x-transition class="mt-3 space-y-2 pl-2">
-        <!-- Giữ màu khi nhấn “Tất cả sản phẩm” -->
-        <a href="{% url 'products:list' %}{% if selected_color_id %}?color={{ selected_color_id }}{% endif %}"
-           class="block px-2 py-1 rounded-md text-[15px] {% if not selected_category %}bg-black text-white{% else %}hover:bg-gray-100{% endif %} cursor-pointer">
-          Tất cả sản phẩm
-        </a>
-
-        {% for c in categories %}
-          <a href="{% url 'products:category_products' c.slug %}{% if selected_color_id %}?color={{ selected_color_id }}{% endif %}"
-             class="block px-2 py-1 rounded-md text-[15px] {% if selected_category and selected_category.id == c.id %}bg-black text-white{% else %}hover:bg-gray-100{% endif %} cursor-pointer">
-            {{ c.name }}
-          </a>
-        {% endfor %}
-      </div>
-    </div>
-
-    <!-- Lọc theo màu -->
-    <div x-data="{ open: true }" class="border-b pb-4">
-      <button @click="open = !open"
-              class="flex justify-between items-center w-full font-medium text-gray-700 hover:text-black transition-colors">
-        Màu sắc
-        <svg :class="{'rotate-180': open}"
-             xmlns="http://www.w3.org/2000/svg"
-             class="w-4 h-4 transition-transform duration-200"
-             fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
-        </svg>
-      </button>
-
-      <div x-show="open" x-transition class="mt-3 grid grid-cols-5 gap-2 pl-2">
-        <!-- ✅ Giữ loại khi chọn “Tất cả màu” -->
-        <a href="{% if selected_category %}{% url 'products:category_products' selected_category.slug %}{% else %}{% url 'products:list' %}{% endif %}"
-           class="flex items-center justify-center w-6 h-6 rounded-full border {% if not selected_color_id %}ring-2 ring-black{% endif %} cursor-pointer"
-           title="Tất cả"></a>
-
-        {% for color in colors %}
-          <a href="?color={{ color.id }}{% if selected_category %}&category={{ selected_category.slug }}{% endif %}"
-             class="w-6 h-6 rounded-full border cursor-pointer {% if selected_color_id == color.id %}ring-2 ring-black{% endif %}"
-             style="background-color: {{ color.hex_code }}"
-             title="{{ color.name }}"></a>
-        {% endfor %}
-      </div>
-    </div>
-  </aside>
-
-  <!-- Danh sách sản phẩm -->
-  <div class="flex-1">
-    <h1 class="text-2xl font-bold mb-6">{{ title }}</h1>
-
-    <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-      {% for product in products %}
-        {% include 'products/partials/product_card.html' with product=product list_page=True %}
-      {% empty %}
-        <p class="text-gray-500">Không có sản phẩm nào phù hợp với bộ lọc.</p>
-      {% endfor %}
-    </div>
-  </div>
-
 </section>
-
-<!-- Alpine.js -->
-<script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
 {% endblock %}

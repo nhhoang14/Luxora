@@ -1,57 +1,49 @@
-{% load static %}
-{% load vn_currency %}
+  {% load static %}
+  {% load vn_currency %}
 
-<div class="w-full h-24 flex items-center gap-4 bg-white overflow-hidden">
-  <div class="w-24 h-24 overflow-hidden rounded flex-shrink-0">
-    {% if item.product and item.product.image %}
-      <img src="{{ item.product.image.url }}" alt="{{ item.product.name }}" class="w-full h-full object-cover">
-    {% elif item.image %}
-      <img src="{{ item.image }}" alt="{{ item.name }}" class="w-full h-full object-cover">
-    {% else %}
-      <img src="{% static 'core/images/default-category.jpg' %}" alt="no image" class="w-full h-full object-cover">
-    {% endif %}
-  </div>
+  <div id="cart-item-{{ item.id }}" class="w-full h-24 flex items-center gap-4 bg-white overflow-hidden">
+    <div class="w-24 h-24 overflow-hidden rounded flex-shrink-0">
+      {% if item.product and item.product.image %}
+        <img src="{{ item.product.image.url }}" alt="{{ item.product.name }}" class="w-full h-full object-cover">
+      {% elif item.image %}
+        <img src="{{ item.image }}" alt="{{ item.name }}" class="w-full h-full object-cover">
+      {% else %}
+        <img src="{% static 'core/images/default-category.jpg' %}" alt="no image" class="w-full h-full object-cover">
+      {% endif %}
+    </div>
 
-  <div class="flex-1 flex flex-col gap-2 min-w-0">
-    <h3 class="font-semibold text-lg mt-1 line-clamp-1 truncate">
-      {% if item.product %}{{ item.product.name }}{% else %}{{ item.name }}{% endif %}
-    </h3>
-    <p class="text-gray-800 font-medium">
-      {% if item.product %}{{ item.product.price|vnd }}{% else %}{{ item.price|vnd }}{% endif %} VND
-    </p>
-    {% if item.color %}
-      <span class="w-5 h-5 rounded-full border border-gray-300 shadow-sm"
-        style="background-color: {{ item.color.hex_code }};">
-      </span>
-    {% endif %}
-  </div>
+    <!-- Tên & Giá -->
+    <div class="flex-1 flex flex-col gap-2 min-w-0">
+      <h3 class="font-semibold text-lg mt-1 line-clamp-1 truncate">
+        {% if item.product %}{{ item.product.name }}{% else %}{{ item.name }}{% endif %}
+      </h3>
+      <p class="text-gray-800 font-medium">
+        {% if item.product %}{{ item.product.price|vnd }}{% else %}{{ item.price|vnd }}{% endif %} VND
+      </p>
+      {% if item.color %}
+        <span class="w-5 h-5 rounded-full border border-gray-300 shadow-sm"
+              style="background-color: {{ item.color.hex_code }};">
+        </span>
+      {% endif %}
+    </div>
 
+    <!-- Số lượng & Xóa -->
   <div class="flex flex-col gap-2 items-center">
-    <form hx-post="{% url 'cart:update' %}" hx-trigger="change from:input[name='qty']"
-          hx-target="#cart-tab" hx-swap="innerHTML">
+    <form hx-post="{% url 'cart:cart_tab_update' %}" hx-trigger="change from:input[name='qty']" hx-target="#tab-content"
+      hx-swap="innerHTML">
       {% csrf_token %}
       <input type="hidden" name="product" value="{{ item.product.id }}">
-      {% if item.color %}
-        <input type="hidden" name="color" value="{{ item.color.id }}">
-      {% else %}
-        <input type="hidden" name="color" value="">
-      {% endif %}
       <input type="number" name="qty" min="0" value="{{ item.quantity }}"
-             class="w-12 h-10 border border-gray-300 rounded-lg text-center text-xs focus:outline-none focus:ring focus:ring-gray-200">
+        class="w-12 h-10 border border-gray-300 rounded-lg text-center text-xs focus:outline-none focus:ring focus:ring-gray-200">
     </form>
 
-    <form hx-post="{% url 'cart:remove' %}" hx-target="#cart-tab" hx-swap="innerHTML">
+    <form hx-post="{% url 'cart:cart_tab_remove' %}" hx-target="#tab-content" hx-swap="innerHTML">
       {% csrf_token %}
       <input type="hidden" name="product" value="{{ item.product.id }}">
-      {% if item.color %}
-        <input type="hidden" name="color" value="{{ item.color.id }}">
-      {% else %}
-        <input type="hidden" name="color" value="">
-      {% endif %}
       <button type="submit"
-        class="text-xs cursor-pointer font-semibold text-gray-600 hover:text-gray-900 transition duration-200">
+        class="text-xs cursor-pointer font-semibold text-gray-600 hover:text-gray-900 transition duration-200 border-gray-300 border-b-1 hover:border-none">
         Loại bỏ
       </button>
     </form>
   </div>
-</div>
+  </div>

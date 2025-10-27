@@ -1,79 +1,80 @@
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404, redirect
 from django.http import HttpResponse, HttpResponseBadRequest
+from django.contrib import messages
 from products.models import Product
-from .models import Cart, CartItem
+from .models import CartItem
 from .utils import get_cart
+from django.http import JsonResponse
 
 
+# 🛒 Trang giỏ hàng chính
 def cart(request):
-    cart = get_cart(request, create_if_missing=True)
-    return render(request, 'cart.html', {"cart": cart})
+    cart_obj = get_cart(request, create_if_missing=True)
+    return render(request, 'cart/cart.html', {"cart": cart_obj})
 
 
+# 🧩 Tab giỏ hàng mini (HTMX)
 def cart_tab(request):
-    cart = get_cart(request, create_if_missing=True)
-    return render(request, 'cart/partials/cart_tab.html', {"cart": cart})
+    cart_obj = get_cart(request, create_if_missing=True)
+    return render(request, 'cart/partials/cart_tab.html', {"cart": cart_obj})
 
 
+# ➕ Thêm sản phẩm vào giỏ
 def cart_add(request):
+    if request.method != "POST":
+        return HttpResponse(status=405)
+
+    product_id = request.POST.get("product")
+    color = request.POST.get("color") or None
+    try:
+        color_id = int(color) if color not in (None, '', 'None') else None
+    except (ValueError, TypeError):
+        color_id = None
+
+    qty = int(request.POST.get("qty", 1))
+    product = get_object_or_404(Product, pk=product_id)
+    cart_obj = get_cart(request, create_if_missing=True)
+
+    item, created = CartItem.objects.get_or_create(cart=cart_obj, product=product, color_id=color_id)
+    if not created:
+        item.quantity += qty
+    item.save()
+
+    if request.headers.get('HX-Request'):  
+        return render(request, "cart/partials/cart_tab.html", {"cart": cart_obj})
+    
+    return render(request, "cart/cart.html", {"cart": cart_obj})
+
+# ❌ Xóa sản phẩm
+def cart_remove(request):
+    if request.method != "POST":
+        return HttpResponse(status=405)
+
+    cart_obj = get_cart(request, create_if_missing=True)
+
+    product_id = request.POST.get("product")
+    item_id = request.POST.get("item_id")
+
+    if product_id and product_id.isdigit():
+        item = CartItem.objects.filter(cart=cart_obj, product_id=product_id).first()
+    elif item_id and item_id.isdigit():
+        item = CartItem.objects.filter(cart=cart_obj, id=item_id).first()
+    else:
+        return HttpResponse("Invalid item", status=400)
+
+    if item:
+        item.delete()
+    return render(request, "cart/cart.html", {"cart": cart_obj})
+
+def cart_tab_remove(request):
     if request.method == "POST":
-        product_id = request.POST.get("product")
-        color = request.POST.get("color")
-
-        # 🔹 Chuẩn hóa color_id (tránh trường hợp 'None', '', 'null')
-        try:
-            color_id = int(color) if color and color.lower() not in ["none", "null", ""] else None
-        except (ValueError, TypeError, AttributeError):
-            color_id = None
-
-        # 🔹 Lấy sản phẩm
-        product = get_object_or_404(Product, pk=product_id)
-        cart = get_cart(request, create_if_missing=True)
-
-        # 🔹 Lấy số lượng (mặc định = 1)
-        try:
-            qty = int(request.POST.get("qty", 1))
-        except (ValueError, TypeError):
-            qty = 1
-
-        # 🔹 Nếu sản phẩm này đã có trong giỏ (cùng color_id), tăng số lượng
-        item, created = CartItem.objects.get_or_create(
-            cart=cart,
-            product=product,
-            color_id=color_id,
-            defaults={"quantity": qty}
-        )
-
-        if not created:
-            item.quantity += qty
-            item.save()
-
-        # ✅ Cập nhật lại giao diện drawer
-        return render(request, "cart/partials/cart_tab.html", {"cart": cart})
-
-    return HttpResponse(status=405)
-
-
-
-def remove_from_cart(request):
-    if request.method == "POST":
         cart = get_cart(request, create_if_missing=True)
         product_id = request.POST.get("product")
-        color = request.POST.get("color")
-
-        try:
-            color_id = int(color) if color and color.lower() != "none" else None
-        except (ValueError, TypeError, AttributeError):
-            color_id = None
 
         if not product_id or not product_id.isdigit():
-            return HttpResponseBadRequest("Invalid product ID")
+            return HttpResponse("Invalid product ID", status=400)
 
-        qs = CartItem.objects.filter(cart=cart, product_id=int(product_id))
-        if color_id is not None:
-            qs = qs.filter(color_id=color_id)
-
-        item = qs.first()
+        item = CartItem.objects.filter(cart=cart, product_id=product_id).first()
         if item:
             item.delete()
 
@@ -81,35 +82,25 @@ def remove_from_cart(request):
 
     return HttpResponse(status=405)
 
-
+# 🔁 Cập nhật số lượng
 def cart_update(request):
-    if request.method != "POST":
+    if request.method != 'POST':
         return HttpResponse(status=405)
 
     product_id = request.POST.get("product")
-    color = request.POST.get("color")
-
     if not product_id:
         return HttpResponseBadRequest("Missing product")
-
-    try:
-        color_id = int(color) if color and color.lower() != "none" else None
-    except (ValueError, TypeError, AttributeError):
-        color_id = None
 
     try:
         qty = int(request.POST.get("qty", 1))
     except (ValueError, TypeError):
         qty = 1
 
-    cart = get_cart(request, create_if_missing=True)
-    request.session["cart_id"] = cart.id
+    cart_obj = get_cart(request, create_if_missing=True)
+    if not request.user.is_authenticated:
+        request.session["cart_id"] = cart_obj.id
 
-    qs = CartItem.objects.filter(cart=cart, product_id=product_id)
-    if color_id is not None:
-        qs = qs.filter(color_id=color_id)
-
-    item = qs.first()
+    item = CartItem.objects.filter(cart=cart_obj, product_id=product_id).first()
 
     if qty <= 0:
         if item:
@@ -120,6 +111,74 @@ def cart_update(request):
             item.save()
         else:
             product = get_object_or_404(Product, pk=product_id)
-            CartItem.objects.create(cart=cart, product=product, color_id=color_id, quantity=qty)
+            CartItem.objects.create(cart=cart_obj, product=product, quantity=qty)
+    return render(request, "cart/partials/cart_tab.html", {"cart": cart})
+
+def cart_tab_update(request):
+    if request.method != 'POST':
+        return HttpResponse(status=405)
+
+    product_id = request.POST.get("product")
+    if not product_id:
+        return HttpResponseBadRequest("Missing product")
+
+    try:
+        qty = int(request.POST.get("qty", 1))
+    except (ValueError, TypeError):
+        qty = 1
+
+    cart = get_cart(request, create_if_missing=True)
+    if not request.user.is_authenticated:
+        request.session["cart_id"] = cart.id
+
+    item = CartItem.objects.filter(cart=cart, product_id=product_id).first()
+
+    if qty <= 0:
+        if item:
+            item.delete()
+    else:
+        if item:
+            item.quantity = qty
+            item.save()
+        else:
+            product = get_object_or_404(Product, pk=product_id)
+            CartItem.objects.create(cart=cart, product=product, quantity=qty)
 
     return render(request, "cart/partials/cart_tab.html", {"cart": cart})
+
+# 🧾 Trang thanh toán (checkout)
+def cart_checkout(request):
+    cart_obj = get_cart(request, create_if_missing=True)
+
+    if not cart_obj.items.exists():
+        messages.error(request, "Giỏ hàng của bạn đang trống.")
+        return redirect("cart:cart")
+
+    return render(request, "cart/cart_checkout.html", {"cart": cart_obj})
+
+
+def cart_checkout_confirm(request):
+    if request.method != "POST":
+        return JsonResponse({"success": False, "message": "❌ Phương thức không hợp lệ."}, status=405)
+
+    cart = get_cart(request, create_if_missing=True)
+    payment = request.POST.get("payment_method")
+
+    # Kiểm tra giỏ hàng
+    if not cart.items.exists():
+        return JsonResponse({"success": False, "message": "🛒 Giỏ hàng của bạn đang trống."})
+
+    # Kiểm tra phương thức thanh toán
+    if payment not in ["cash", "qr"]:
+        return JsonResponse({"success": False, "message": "⚠️ Vui lòng chọn phương thức thanh toán hợp lệ."})
+
+    # Xử lý thanh toán
+    messages = {
+        "cash": "💵 Đơn hàng đã được xác nhận! Thanh toán khi nhận hàng.",
+        "qr": "✅ Thanh toán qua mã QR thành công! Cảm ơn bạn đã mua hàng."
+    }
+
+    # Xóa giỏ hàng sau khi thanh toán
+    cart.items.all().delete()
+
+    return JsonResponse({"success": True, "message": messages[payment]})
