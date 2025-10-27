@@ -13,15 +13,23 @@
         </a>
 
         <!-- Nút Thêm vào giỏ hàng -->
-        <form hx-post="{% url 'cart:add' %}" hx-target="#tab-content" hx-swap="innerHTML"
-            class="absolute bottom-4 right-4 z-10" onclick="event.stopPropagation();">
+        <form
+            hx-post="{% url 'cart:add' %}"
+            hx-target="#cart-tab"
+            hx-swap="innerHTML"
+            hx-on::after-request="document.getElementById('cart-drawer').checked = true"
+            class="absolute bottom-4 right-4 z-10"
+            onclick="event.stopPropagation();">
+
             {% csrf_token %}
             <input type="hidden" name="product" value="{{ product.pk }}">
-            {% with only_color=product.colors.all|first %}
+
+            {% with first_color=product.colors.first %}
                 {% if product.colors.count == 1 %}
-                    <input type="hidden" id="selected-color-input-{{ product.pk }}" name="color" value="{{ only_color.id }}">
+                    <!-- Nếu sản phẩm chỉ có 1 màu, gán luôn -->
+                    <input type="hidden" name="color" value="{{ first_color.id }}">
                 {% else %}
-                    <input type="hidden" id="selected-color-input-{{ product.pk }}" name="color" value="">
+                    <input type="hidden" name="color" value="">
                 {% endif %}
             {% endwith %}
 
@@ -30,7 +38,7 @@
             <button type="submit"
                 class="bg-black hover:opacity-80 text-white rounded-full btn btn-lg
                    flex items-center justify-center gap-2 opacity-0 group-hover:opacity-100 cursor-pointer duration-300">
-                <span class="material-symbols-outlined" style="font-size: 1rem;">add_2</span>
+                <span class="material-symbols-outlined text-sm">add_2</span>
                 <span class="text-sm font-medium">Thêm nhanh</span>
             </button>
         </form>
@@ -39,22 +47,23 @@
     <!-- Thông tin sản phẩm -->
     <div class="py-4 flex-1 flex flex-col justify-between">
         <span class="text-gray-400 text-xs uppercase mb-1">LUXORA</span>
-        <h3 class="font-semibold text-lg mb-1">
+
+        <h3 class="font-semibold text-lg mb-2 line-clamp-1">
             <a href="{% url 'products:detail' product.slug %}" class="cursor-pointer">{{ product.name }}</a>
         </h3>
-        <p class="text-gray-600 font-medium">{{ product.price|vnd }} VND</p>
+
         {% if product.colors.all %}
-            <div class="flex flex-wrap gap-2 mt-3" data-product="{{ product.pk }}">
-                {% with only_color=product.colors.all|first %}
-                    {% for color in product.colors.all %}
-                        <button type="button"
-                            class="color-btn w-5 h-5 rounded-full border border-gray-300 shadow-sm {% if product.colors.count == 1 %}ring-2 ring-black{% endif %}"
-                            style="background-color: {{ color.hex_code }};" data-color-id="{{ color.id }}"
-                            aria-label="{{ color.name }}">
-                        </button>
-                    {% endfor %}
-                {% endwith %}
+            <div class="flex justify-start items-center gap-2 mb-3" data-product="{{ product.pk }}">
+                {% for color in product.colors.all %}
+                    <span
+                        class="w-4 h-4 rounded-full border border-gray-300 shadow-sm"
+                        style="background-color: {{ color.hex_code }};"
+                        title="{{ color.name }}">
+                    </span>
+                {% endfor %}
             </div>
         {% endif %}
+
+        <p class="text-gray-700 font-medium">{{ product.price|vnd }} VND</p>
     </div>
 </div>
