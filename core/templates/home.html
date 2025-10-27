@@ -33,15 +33,39 @@
   </div>
 </section>
 
+<!-- Special Offer Section -->
+<section class="max-w-screen-2xl mx-auto px-8 py-20 rounded-3xl mt-16 text-center 
+                bg-gradient-to-r from-[#111111] via-[#1a1a1a] to-[#000000] text-white shadow-lg relative overflow-hidden">
+
+  <div class="absolute inset-0 bg-[radial-gradient(circle_at_center,_rgba(255,255,255,0.1)_0%,_transparent_70%)]"></div>
+
+  <div class="relative z-10">
+    <h2 class="text-4xl md:text-5xl font-bold mb-6 tracking-tight">
+      Ưu đãi đặc biệt trong tháng
+    </h2>
+
+    <p class="text-gray-300 mb-10 max-w-2xl mx-auto text-lg leading-relaxed">
+      Mua sắm thông minh cùng <span class="text-[#FF5532] font-semibold">Luxora</span> — nhận ngay
+      <span class="font-semibold text-white">ưu đãi hấp dẫn</span> cho đơn hàng đầu tiên!
+    </p>
+
+    <a href="{% url 'products:list' %}"
+      class="inline-block bg-[#FF5532] hover:bg-[#e24c2c] text-white font-semibold py-3 px-10 rounded-full shadow-md transition-all duration-300 transform hover:scale-110">
+      Khám phá ngay
+    </a>
+  </div>
+</section>
+
 <!-- Sản phẩm mới lên kệ -->
 <section class="max-w-screen-2xl mx-auto px-4 py-8">
   <!-- Xem thêm button -->
   <div class="flex justify-between items-center mb-10">
-    <h2 class="text-4xl font-bold text-gray-800">Sản phẩm mới ra mắt</h2>
+    <h2 class="text-4xl font-bold text-gray-800">Mới lên kệ</h2>
     <a href="{% url 'products:list' %}" class="text-gray-600 font-bold flex items-center gap-2 group">
       <span class="relative group-hover:text-gray-800 transition duration-300">
         Xem tất cả
-        <span class="absolute bottom-0 left-0 w-0 h-[1px] bg-gray-800 group-hover:w-full transition-all duration-300"></span>
+        <span
+          class="absolute bottom-0 left-0 w-0 h-[1px] bg-gray-800 group-hover:w-full transition-all duration-300"></span>
       </span>
       <span
         class="material-symbols-outlined !font-extrabold group-hover:text-white p-2 bg-gray-200 rounded-full group-hover:bg-gray-800 transition duration-300"
@@ -59,4 +83,37 @@
   </div>
 </section>
 
-{% endblock %}
+<!-- Contact section -->
+<section
+  class="max-w-screen-2xl mx-auto px-12 py-16 bg-gradient-to-r from-[#FDF2EF] to-[#F3F4F6] rounded-3xl grid md:grid-cols-[6fr_4fr] items-center gap-10">
+
+  <!-- Bên trái: nội dung -->
+  <div class="space-y-6">
+    <h2 class="text-4xl font-bold text-gray-900 leading-tight">
+      Bạn cần <span class="text-[#FF5532]">hỗ trợ</span>?
+    </h2>
+
+    <p class="text-gray-600 text-lg leading-relaxed">
+      Đội ngũ <span class="font-semibold text-[#FF5532]">Luxora</span> luôn sẵn sàng lắng nghe và giúp đỡ bạn.
+      Chúng tôi hiểu rằng mỗi thắc mắc hay phản hồi của bạn đều rất quan trọng để cải thiện trải nghiệm mua sắm ngày một
+      tốt hơn.
+    </p>
+
+    <p class="text-gray-600 text-lg leading-relaxed">
+      Dù bạn cần hỗ trợ về sản phẩm, đơn hàng hay chính sách đổi trả,
+      hãy liên hệ ngay để được đội ngũ chăm sóc khách hàng của chúng tôi phản hồi nhanh chóng và tận tâm.
+    </p>
+
+    <a href="{% url 'contact' %}"
+      class="inline-block bg-[#FF5532] hover:bg-[#e24c2c] active:opacity-90 text-white font-semibold py-3 px-8 rounded-full shadow-md transition-all duration-300 transform hover:scale-105">
+      Liên hệ ngay
+    </a>
+  </div>
+
+  <!-- Bên phải: hình minh họa -->
+  <div class="flex justify-center md:justify-end relative overflow-visible">
+    <img src="{% static 'core/images/contact_illustration.svg' %}" alt="Liên hệ Luxora"
+      class="w-full max-w-sm h-auto object-contain drop-shadow-lg transform transition-transform duration-500 hover:-translate-y-6">
+  </div>
+
+  {% endblock %}

@@ -1,0 +1,106 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Liên hệ | Luxora{% endblock %}
+
+{% block content %}
+
+<!-- Banner nhẹ nhàng -->
+<section class="relative w-full h-[320px] flex items-center justify-center bg-cover"
+  style="background-image: url(/static/core/images/contact.png); background-position: center 25%">
+  <div class="absolute inset-0 bg-black/40"></div>
+  <div class="relative text-center text-white z-10">
+    <h1 class="text-5xl font-bold mb-3">Liên hệ với chúng tôi</h1>
+    <p class="text-lg text-gray-200">Chúng tôi luôn sẵn sàng lắng nghe và hỗ trợ bạn</p>
+  </div>
+</section>
+
+<!-- Nội dung chính -->
+<section class="max-w-screen-2xl mx-auto mt-16 px-6">
+  <div class="grid md:grid-cols-2 gap-12 items-start">
+
+    <!-- Bên trái: Thông tin -->
+    <div>
+      <h2 class="text-4xl font-bold mb-6 text-gray-900 leading-tight">
+        Cùng <span class="text-[#FF5532]">Luxora</span> tạo nên không gian ánh sáng của bạn
+      </h2>
+
+      <p class="text-gray-600 mb-10 leading-relaxed">
+        Dù bạn đang tìm đèn decor hoàn hảo cho ngôi nhà, hay muốn hợp tác cùng Luxora — chúng tôi
+        luôn trân trọng mọi phản hồi từ bạn.
+        <br><br>
+        Hãy gửi tin nhắn, email hoặc ghé thăm showroom để trải nghiệm không gian ánh sáng cao cấp.
+      </p>
+
+      <div class="grid sm:grid-cols-2 gap-8">
+        <!-- Email -->
+        <div class="bg-[#FFF7F6] rounded-2xl p-6 hover:bg-[#FFEDEB] transition-all duration-300 hover:shadow-md">
+          <div class="flex items-center gap-3 mb-3"> <span
+              class="material-symbols-outlined text-[#FF5532] text-4xl">forward_to_inbox</span>
+            <h2 class="text-xl font-semibold text-gray-900">Nhắn tin cho chúng tôi</h2>
+          </div>
+          <p class="text-gray-600 mb-1">Đội ngũ hỗ trợ luôn sẵn sàng giúp đỡ bạn</p> <a href="mailto:support@luxora.vn"
+            class="font-semibold text-[#FF5532] hover:underline">support@luxora.vn</a>
+        </div>
+        <!-- Phone -->
+        <div class="bg-[#FFF7F6] rounded-2xl p-6 hover:bg-[#FFEDEB] transition-all duration-300 hover:shadow-md">
+          <div class="flex items-center gap-3 mb-3"> <span
+              class="material-symbols-outlined text-[#FF5532] text-4xl">phone_in_talk</span>
+            <h2 class="text-xl font-semibold text-gray-900">Gọi cho chúng tôi</h2>
+          </div>
+          <p class="text-gray-600 mb-1">Tổng đài miễn phí</p>
+          <p class="text-gray-900 font-semibold">+84 123 456 789</p>
+        </div>
+        <!-- Office -->
+        <div class="bg-[#FFF7F6] rounded-2xl p-6 hover:bg-[#FFEDEB] transition-all duration-300 hover:shadow-md">
+          <div class="flex items-center gap-3 mb-3"> <span
+              class="material-symbols-outlined text-[#FF5532] text-4xl">home_work</span>
+            <h2 class="text-xl font-semibold text-gray-900">Đến văn phòng</h2>
+          </div>
+          <p class="text-gray-600 mb-1">Rất hân hạnh được đón tiếp bạn tại</p>
+          <p class="text-gray-900 font-semibold"> 123 Nguyễn Trãi, Thanh Xuân, Hà Nội </p>
+        </div>
+        <!-- Working Hours -->
+        <div class="bg-[#FFF7F6] rounded-2xl p-6 hover:bg-[#FFEDEB] transition-all duration-300 hover:shadow-md">
+          <div class="flex items-center gap-3 mb-3"> <span
+              class="material-symbols-outlined text-[#FF5532] text-4xl">today</span>
+            <h2 class="text-xl font-semibold text-gray-900">Giờ làm việc</h2>
+          </div>
+          <p class="text-gray-600">Thứ Hai – Thứ Sáu: 9h00 – 17h00</p>
+          <p class="text-gray-600">Thứ Bảy: 9h00 – 12h00</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bên phải: Form liên hệ -->
+    <form id="contact-form"
+      hx-post="{% url 'contact_submit' %}" hx-swap="none"
+      hx-on="contactSuccess: document.getElementById('contact-form').reset()"
+      class="bg-[#FAFAFA] rounded-2xl p-8 space-y-6 flex flex-col h-full">
+      {% csrf_token %}
+      <!-- Tên -->
+      <div>
+        <label class="block text-gray-800 font-medium mb-1" for="name">Họ và tên*</label>
+        <input id="name" type="text" name="name" required class="w-full rounded-xl border border-gray-300 p-3 text-gray-900 bg-white placeholder-gray-400 focus:ring-2 focus:ring-[#FF5532]/60 
+        focus:border-[#FF5532] outline-none transition duration-300 shadow-sm hover:shadow-md"
+          placeholder="Nhập tên của bạn" />
+      </div>
+      <!-- Email -->
+      <div>
+        <label class="block text-gray-800 font-medium mb-1" for="email">Email*</label>
+        <input id="email" type="email" name="email" required class="w-full rounded-xl border border-gray-300 p-3 text-gray-900 bg-white placeholder-gray-400 focus:ring-2 focus:ring-[#FF5532]/60 
+        focus:border-[#FF5532] outline-none transition duration-300 shadow-sm hover:shadow-md"
+          placeholder="example@gmail.com" />
+      </div>
+      <div class="flex-grow flex flex-col">
+        <label class="block text-gray-800 font-medium mb-1" for="message">Tin nhắn của bạn*</label>
+        <textarea id="message" name="message" rows="5" required class="flex-grow rounded-xl border border-gray-300 p-3 text-gray-900 bg-white resize-none placeholder-gray-400 focus:ring-2 focus:ring-[#FF5532]/60 
+          focus:border-[#FF5532] outline-none transition duration-300 shadow-sm hover:shadow-md"
+          placeholder="Nhập nội dung tin nhắn của bạn..."></textarea>
+      </div>
+      <button type="submit" class="w-full bg-[#FF5532] hover:bg-[#e24c2c] text-white font-semibold py-3 px-6 rounded-full shadow-lg transition-all duration-300 transform hover:-translate-y-1">
+        Gửi tin nhắn
+      </button>
+    </form>
+  </div>
+</section>
+{% endblock %}

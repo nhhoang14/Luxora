@@ -10,7 +10,8 @@ urlpatterns = [
 
     # Trang chủ & các trang chung
     path('', core_views.home_view, name='home'),
-    path('contact/', core_views.contact_view, name='contact'),
+    path("contact/", core_views.contact_view, name="contact"),
+    path("contact/submit/", core_views.contact_submit, name="contact_submit"),
 
     # Quick View
     path('quick-view/<int:pk>/', core_views.quick_view, name='quick_view'),
