@@ -5,29 +5,28 @@ from products.models import Product
 
 # Giỏ hàng
 class Cart(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
+    def total_price(self):
+        return sum(item.subtotal() for item in self.items.all())
+
     def __str__(self):
-        return f"Cart {self.id} - {self.user.username}"
+        return f"Cart #{self.id} - {self.user or 'Guest'}"
 
 
 # Sản phẩm trong giỏ hàng
 class CartItem(models.Model):
     cart = models.ForeignKey(Cart, on_delete=models.CASCADE, related_name='items')
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    color = models.ForeignKey('products.Color', on_delete=models.CASCADE, null=True, blank=True)
     quantity = models.PositiveIntegerField(default=1)
 
+    def subtotal(self):
+        return self.product.price * self.quantity
+
     def __str__(self):
+        if self.color:
+            return f"{self.product.name} ({self.color.name}) x {self.quantity}"
         return f"{self.product.name} x {self.quantity}"
-
-
-# Sản phẩm đã xem
-class ViewedProduct(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    product = models.ForeignKey(Product, on_delete=models.CASCADE)
-    viewed_at = models.DateTimeField(auto_now_add=True)
-
-    def __str__(self):
-        return f"{self.user.username} viewed {self.product.name}"
 

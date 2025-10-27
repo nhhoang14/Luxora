@@ -1,28 +1,28 @@
-<header class="bg-[#FAFAFA] shadow w-full fixed top-0 left-0 z-50 h-20">
+<header class="bg-white shadow w-full fixed top-0 left-0 z-50 h-20">
   <div class="container mx-auto flex items-center justify-between h-20 relative">
 
     <!-- Left menu -->
     <nav class="hidden md:flex space-x-2 h-full items-center relative">
       <!-- Products Mega Menu -->
-      <div class="group relative">
+      <div class="group/dropdown relative dropdown-group">
         <!-- Nút Products -->
         <a href="/products/" class="font-medium relative rounded-full px-5 py-2 group/btn overflow-hidden block">
           <span class="block text-black transition-opacity duration-200 group-hover/btn:opacity-0">
-            Products
+            Sản phẩm
           </span>
           <span class="absolute inset-0 flex items-center justify-center
                         bg-black text-white rounded-full
                         translate-y-full group-hover/btn:translate-y-0
                         transition-transform duration-300">
-            Products
+            Sản phẩm
           </span>
         </a>
 
         <!-- Dropdown full width -->
-        <div class="fixed left-0 top-20 w-full bg-[#FAFAFA] shadow-lg rounded-b-2xl opacity-0 invisible group-hover:opacity-100 group-hover:visible
-          -translate-y-3 group-hover:translate-y-0 transition-all duration-300 z-40 py-4">
+        <div class="fixed left-0 top-20 w-full bg-white shadow-lg rounded-b-2xl opacity-0 invisible group-hover/dropdown:opacity-100 group-hover/dropdown:visible
+          -translate-y-3 group-hover/dropdown:translate-y-0 transition-all duration-300 z-40 py-4">
 
-          <div class="container mx-auto pb-4 grid grid-cols-5 gap-10 min-h-[560px] items-stretch">
+          <div class="container mx-auto pb-4 grid grid-cols-5 gap-10 min-h-[500px] items-stretch">
 
             <!-- Cột 1: Danh mục -->
             <div class="flex flex-col col-span-1">
@@ -55,9 +55,16 @@
             <div class="col-span-3">
               <div class="w-full flex items-baseline justify-between mb-6">
                 <h4 class="text-gray-700 text-sm uppercase">Phổ biến nhất</h4>
-                <a id="category-link" href="#" class="text-lg text-black font-semibold inline-flex items-center">
-                  <span>All <span id="category-name"></span>
-                    <span class="material-symbols-outlined align-middle text-sm">arrow_forward</span>
+                <a id="category-link" href="#" class="text-gray-600 font-bold flex items-center gap-2 group/link">
+                  <span class="relative group-hover/link:text-gray-800 transition duration-300">
+                    Xem tất cả
+                    <span
+                      class="absolute bottom-0 left-0 w-0 h-[1px] bg-gray-800 group-hover/link:w-full transition-all duration-300"></span>
+                  </span>
+                  <span
+                    class="material-symbols-outlined !font-extrabold group-hover/link:text-white p-2 bg-gray-200 rounded-full group-hover/link:bg-gray-800 transition duration-300"
+                    style="font-size: 0.5rem;">
+                    arrow_forward_ios
                   </span>
                 </a>
               </div>
@@ -68,7 +75,6 @@
 
             <!-- Cột 3: Special -->
             <div class="col-span-1 flex flex-col items-start justify-between">
-              
             </div>
 
           </div>
@@ -78,13 +84,13 @@
       <!-- Collab -->
       <a href="/contact/" class="font-medium relative rounded-full px-5 py-2 group overflow-hidden">
         <span class="block text-black transition-opacity duration-200 group-hover:opacity-0">
-          #Collab
+          Liên hệ
         </span>
         <span class="absolute inset-0 flex items-center justify-center
                      bg-black text-white rounded-full
                      translate-y-full group-hover:translate-y-0
                      transition-transform duration-300">
-          #Collab
+          Liên hệ
         </span>
       </a>
     </nav>
@@ -115,17 +121,18 @@
 
       <!-- Cart -->
       <label for="cart-drawer" class="btn btn-xl btn-ghost btn-circle">
-        <span class="material-symbols-outlined">shopping_cart</span>
+        <span class="material-symbols-outlined">
+          local_mall
+        </span>
       </label>
     </div>
   </div>
-  
+
   <script>
     document.addEventListener('DOMContentLoaded', () => {
-      const group = document.querySelector('.group.relative');
+      const group = document.querySelector('.dropdown-group');
       const buttons = Array.from(document.querySelectorAll('.category-btn'));
       const list = document.getElementById('category-products-list');
-      const categoryName = document.getElementById('category-name');
       const categoryLink = document.getElementById('category-link');
 
       function clearActive() {
@@ -135,31 +142,28 @@
         });
       }
 
-      // cập nhật UI khi nhấn nút (HTMX sẽ load nội dung)
+      // Khi click vào category
       buttons.forEach(btn => {
-        btn.addEventListener('click', (e) => {
+        btn.addEventListener('click', () => {
           clearActive();
           btn.classList.add('font-semibold', 'text-black');
           btn.classList.remove('text-gray-500');
-          categoryName.textContent = btn.textContent.trim();
           categoryLink.href = `/products/category/${btn.dataset.slug}/`;
         });
       });
 
-      // Mặc định: chọn mục đầu khi tải trang
-      if (buttons.length > 0) {
-        buttons[0].click();
-      }
-
-      // Khi mở dropdown (hover/pointerenter) chọn lại mục đầu nếu chưa có
+      // Chỉ load khi hover vào menu, không tự động khi tải trang
       if (group) {
         group.addEventListener('pointerenter', () => {
-          if (!categoryName.textContent && buttons.length > 0) buttons[0].click();
+          // Khi hover vào: luôn click vào nút danh mục đầu tiên
+          if (buttons.length > 0) {
+            buttons[0].click();
+          }
         });
-        // Khi rời (đóng dropdown) reset nội dung
+
         group.addEventListener('pointerleave', () => {
+          // Khi rời dropdown: reset lại giao diện
           list.innerHTML = '<p class="text-gray-400">Đang tải sản phẩm...</p>';
-          categoryName.textContent = '';
           categoryLink.href = '#';
           clearActive();
         });

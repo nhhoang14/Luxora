@@ -12,7 +12,7 @@
     {% tailwind_css %}
 </head>
 
-<body class="bg-gray-50 text-black" style="font-family: 'Plus Jakarta Sans', sans-serif;">
+<body class="bg-white text-black" style="font-family: 'Plus Jakarta Sans', sans-serif;">
 
     <!-- Drawer wrapper -->
     <div class="drawer drawer-end z-50 min-h-screen">
@@ -21,13 +21,13 @@
         <input id="cart-drawer" type="checkbox" class="drawer-toggle" />
 
         <!-- Page content -->
-        <div class="drawer-content flex flex-col">
+        <div class="drawer-content flex flex-col min-h-screen">
 
             <!-- Navbar -->
             {% include "partials/navbar.html" %}
 
             <!-- Main content -->
-            <main class="w-full py-20 flex-1">
+            <main class="w-full pt-20 flex-1">
                 {% block content %}{% endblock %}
             </main>
 

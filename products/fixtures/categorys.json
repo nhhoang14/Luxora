@@ -34,14 +34,5 @@
       "slug": "den-tuong",
       "order": 2
     }
-  },
-  {
-    "model": "products.category",
-    "pk": 6,
-    "fields": {
-      "name": "Đèn LED",
-      "slug": "den-led",
-      "order": 3
-    }
   }
 ]
