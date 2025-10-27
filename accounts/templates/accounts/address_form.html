@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block title %}{{ 'Sửa' if addr else 'Thêm' }} địa chỉ{% endblock %}
+{% block content %}
+<h2>{{ 'Sửa' if addr else 'Thêm' }} địa chỉ</h2>
+<form class="form" method="post">
+  <label>Người nhận <input name="recipient_name" required value="{{ addr.recipient_name if addr else '' }}"></label>
+  <label>Điện thoại <input name="phone" value="{{ addr.phone if addr else '' }}"></label>
+  <label>Địa chỉ dòng 1 <input name="line1" required value="{{ addr.line1 if addr else '' }}"></label>
+  <label>Địa chỉ dòng 2 <input name="line2" value="{{ addr.line2 if addr else '' }}"></label>
+  <label>Thành phố <input name="city" required value="{{ addr.city if addr else '' }}"></label>
+  <label>Tỉnh/TP <input name="state" value="{{ addr.state if addr else '' }}"></label>
+  <label>Mã bưu chính <input name="postal_code" value="{{ addr.postal_code if addr else '' }}"></label>
+  <label>Quốc gia <input name="country" required value="{{ addr.country if addr else 'Vietnam' }}"></label>
+  <label><input type="checkbox" name="is_default" {% if addr and addr.is_default %}checked{% endif %}> Đặt làm mặc định</label>
+  <button class="btn" type="submit">{{ 'Cập nhật' if addr else 'Thêm mới' }}</button>
+  <a class="btn outline" href="{{ url_for('addresses_list') }}">Huỷ</a>
+</form>
+{% endblock %}

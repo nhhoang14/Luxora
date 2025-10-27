@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% block title %}Chi tiết đơn hàng{% endblock %}
+{% block content %}
+<h2>Đơn {{ od.order_number }}</h2>
+<ul class="list">
+  <li><strong>Trạng thái:</strong> {{ od.status }}</li>
+  <li><strong>Tổng:</strong> {{ '%.2f'|format(od.total) }} đ</li>
+  <li><strong>Ngày tạo:</strong> {{ od.created_at.strftime('%Y-%m-%d %H:%M') }}</li>
+</ul>
+<p><a class="btn" href="{{ url_for('orders_list') }}">← Quay lại</a></p>
+{% endblock %}
