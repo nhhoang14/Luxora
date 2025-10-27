@@ -40,15 +40,15 @@
       </button>
 
       <div x-show="open" x-transition class="mt-3 space-y-2 pl-2">
-        <!-- Giữ màu khi nhấn “Tất cả” -->
+        <!-- Giữ màu khi nhấn “Tất cả sản phẩm” -->
         <a href="{% url 'products:list' %}{% if selected_color_id %}?color={{ selected_color_id }}{% endif %}"
-           class="block px-2 py-1 rounded-md text-[15px] {% if not selected_category %}bg-black text-white{% else %}hover:bg-gray-100{% endif %}">
-          Tất cả
+           class="block px-2 py-1 rounded-md text-[15px] {% if not selected_category %}bg-black text-white{% else %}hover:bg-gray-100{% endif %} cursor-pointer">
+          Tất cả sản phẩm
         </a>
 
         {% for c in categories %}
           <a href="{% url 'products:category_products' c.slug %}{% if selected_color_id %}?color={{ selected_color_id }}{% endif %}"
-             class="block px-2 py-1 rounded-md text-[15px] {% if selected_category and selected_category.id == c.id %}bg-black text-white{% else %}hover:bg-gray-100{% endif %}">
+             class="block px-2 py-1 rounded-md text-[15px] {% if selected_category and selected_category.id == c.id %}bg-black text-white{% else %}hover:bg-gray-100{% endif %} cursor-pointer">
             {{ c.name }}
           </a>
         {% endfor %}
@@ -69,9 +69,9 @@
       </button>
 
       <div x-show="open" x-transition class="mt-3 grid grid-cols-5 gap-2 pl-2">
-        <!-- Giữ loại khi chọn “Tất cả màu” -->
-        <a href="{% if selected_category %}?category={{ selected_category.slug }}{% endif %}"
-           class="flex items-center justify-center w-6 h-6 rounded-full border {% if not selected_color_id %}ring-2 ring-black{% endif %}"
+        <!-- ✅ Giữ loại khi chọn “Tất cả màu” -->
+        <a href="{% if selected_category %}{% url 'products:category_products' selected_category.slug %}{% else %}{% url 'products:list' %}{% endif %}"
+           class="flex items-center justify-center w-6 h-6 rounded-full border {% if not selected_color_id %}ring-2 ring-black{% endif %} cursor-pointer"
            title="Tất cả"></a>
 
         {% for color in colors %}
