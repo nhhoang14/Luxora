@@ -3,14 +3,6 @@ from django.conf import settings
 from django.db import models
 from django.utils.text import slugify
 
-# Màu sắc sản phẩm
-class Color(models.Model):
-    name = models.CharField(max_length=50, unique=True)
-    hex_code = models.CharField(max_length=7, help_text="Ví dụ: #FF0000 cho màu đỏ")
-
-    def __str__(self):
-        return f"{self.name} ({self.hex_code})"
-    
 # Danh mục sản phẩm
 class Category(models.Model):
     name = models.CharField(max_length=100, unique=True)
@@ -45,7 +37,6 @@ class Product(models.Model):
     slug = models.SlugField(unique=True, blank=True)
     description = models.TextField(blank=True)
     price = models.DecimalField(max_digits=12, decimal_places=0)
-    colors = models.ManyToManyField('Color', related_name='products', blank=True)
     stock = models.PositiveIntegerField(default=0)
     image = models.ImageField(upload_to='products/', blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)

@@ -10,10 +10,8 @@ urlpatterns = [
 
     # Trang chủ & các trang chung
     path('', core_views.home_view, name='home'),
-    path('contact/', core_views.contact_view, name='contact'),
-
-    # Quick View
-    path('quick-view/<int:pk>/', core_views.quick_view, name='quick_view'),
+    path("contact/", core_views.contact_view, name="contact"),
+    path("contact/submit/", core_views.contact_submit, name="contact_submit"),
 
     # Navbar
     path('nav/category/<slug:slug>/', core_views.nav_category_products, name='nav_category_products'),

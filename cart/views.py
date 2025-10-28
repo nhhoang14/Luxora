@@ -20,30 +20,38 @@ def cart_tab(request):
 
 
 # ➕ Thêm sản phẩm vào giỏ
+# ➕ Thêm sản phẩm vào giỏ
 def cart_add(request):
     if request.method != "POST":
         return HttpResponse(status=405)
 
+    # 🔹 Lấy thông tin sản phẩm
     product_id = request.POST.get("product")
-    color = request.POST.get("color") or None
-    try:
-        color_id = int(color) if color not in (None, '', 'None') else None
-    except (ValueError, TypeError):
-        color_id = None
 
-    qty = int(request.POST.get("qty", 1))
+    # 🔹 Lấy số lượng (mặc định = 1)
+    try:
+        qty = int(request.POST.get("qty", 1))
+    except (ValueError, TypeError):
+        qty = 1
+
+    # 🔹 Lấy sản phẩm và giỏ hàng
     product = get_object_or_404(Product, pk=product_id)
     cart_obj = get_cart(request, create_if_missing=True)
 
-    item, created = CartItem.objects.get_or_create(cart=cart_obj, product=product, color_id=color_id)
+    # 🔹 Tạo hoặc cập nhật sản phẩm trong giỏ
+    item, created = CartItem.objects.get_or_create(cart=cart_obj, product=product)
     if not created:
         item.quantity += qty
+    else:
+        item.quantity = qty
     item.save()
 
-    if request.headers.get('HX-Request'):  
+    # ✅ Trả về giao diện
+    if request.headers.get("HX-Request"):
         return render(request, "cart/partials/cart_tab.html", {"cart": cart_obj})
-    
+
     return render(request, "cart/cart.html", {"cart": cart_obj})
+
 
 # ❌ Xóa sản phẩm
 def cart_remove(request):

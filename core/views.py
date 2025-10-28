@@ -1,5 +1,7 @@
+from django.http import HttpResponse
 from django.shortcuts import render, get_object_or_404
 from products.models import Category, Product
+from .models import ContactMessage
 
 def home_view(request):
     categories = Category.objects.all().order_by('order')  # nếu có field order
@@ -12,9 +14,18 @@ def home_view(request):
 def contact_view(request):
     return render(request, 'contact.html')
 
-def quick_view(request, pk):
-    product = get_object_or_404(Product, pk=pk)
-    return render(request, 'partials/quickview_modal.html', {'product': product})
+def contact_submit(request):
+    if request.method == "POST":
+        name = request.POST.get("name")
+        email = request.POST.get("email")
+        message = request.POST.get("message")
+        # lưu vào DB
+        ContactMessage.objects.create(name=name, email=email, message=message)
+        # trả empty response và bắn sự kiện để client reset form (hx-on trên form)
+        res = HttpResponse('', status=204)
+        res['HX-Trigger'] = 'contactSuccess'
+        return res
+    return HttpResponse("<p class='text-red-600 font-medium'>Vui lòng gửi lại!</p>")
 
 def nav_category_products(request, slug):
     category = get_object_or_404(Category.objects.prefetch_related('products'), slug=slug)

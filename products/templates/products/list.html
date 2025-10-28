@@ -1,12 +1,57 @@
 {% extends 'base.html' %}
+{% load static %}
 
 {% block content %}
-<section class="max-w-7xl mx-auto px-4 py-10">
-  <h1 class="text-2xl font-bold mb-6">Tất cả sản phẩm</h1>
-  <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
-    {% for product in products %}
-      {% include 'products/partials/product_card.html' with product=product list_page=True %}
-    {% endfor %}
+<!-- banner section -->
+<section class="flex flex-col items-center justify-center w-full h-64 md:h-80 lg:h-96 bg-cover bg-center text-white mb-4"
+  style="background-image: url({% static 'core/images/banner.png' %});">
+  <h1 class="text-4xl font-bold drop-shadow-lg">Khám phá sản phẩm của chúng tôi</h1>
+</section>
+
+<section class="max-w-screen-2xl mx-auto px-4 py-8">
+  <!-- Layout: Bộ lọc + Danh sách sản phẩm -->
+  <div class="flex gap-8">
+
+    <!-- Bộ lọc (Sidebar trái) -->
+    <aside class="flex-[1] bg-transparent h-fit">
+      <h2 class="text-lg font-semibold mb-4 border-b pb-2">Bộ lọc sản phẩm</h2>
+
+      <!-- Category filter -->
+      <div class="mb-6">
+        <h3 class="text-sm font-medium text-gray-700 mb-2">Danh mục</h3>
+        <ul class="space-y-2">
+          <li>
+            <a href="{% url 'products:list' %}"
+               hx-get="{% url 'products:list' %}"
+               hx-target="#product-list"
+               hx-swap="innerHTML"
+               class="block text-gray-600 hover:text-black transition">
+              Tất cả sản phẩm
+            </a>
+          </li>
+          {% for category in categories %}
+          <li>
+            <a href="{% url 'products:category' category.slug %}"
+               hx-get="{% url 'products:category' category.slug %}"
+               hx-target="#product-list"
+               hx-swap="innerHTML"
+               class="block text-gray-600 hover:text-black transition">
+              {{ category.name }}
+            </a>
+          </li>
+          {% empty %}
+          <li class="text-gray-400 text-sm">Chưa có danh mục</li>
+          {% endfor %}
+        </ul>
+      </div>
+    </aside>
+
+    <!-- Danh sách sản phẩm -->
+    <div class="flex-[3]">
+      <div id="product-list">
+        {% include 'products/partials/product_grid.html' with products=products %}
+      </div>
+    </div>
   </div>
 </section>
 {% endblock %}
