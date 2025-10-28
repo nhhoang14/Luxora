@@ -27,10 +27,6 @@ def contact_submit(request):
         return res
     return HttpResponse("<p class='text-red-600 font-medium'>Vui lòng gửi lại!</p>")
 
-def quick_view(request, pk):
-    product = get_object_or_404(Product, pk=pk)
-    return render(request, 'partials/quickview_modal.html', {'product': product})
-
 def nav_category_products(request, slug):
     category = get_object_or_404(Category.objects.prefetch_related('products'), slug=slug)
     products = category.products.all()[:3]

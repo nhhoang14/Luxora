@@ -1,15 +1,127 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<section class="max-w-5xl mx-auto px-4 py-10">
-  <div class="grid md:grid-cols-2 gap-8">
-    <img src="{{ product.image.url }}" alt="{{ product.name }}" class="w-full rounded-xl object-cover">
-    <div>
-      <h1 class="text-2xl font-bold mb-2">{{ product.name }}</h1>
-      <p class="text-gray-600 mb-4">{{ product.price|floatformat:0 }}₫</p>
-      <p>{{ product.description }}</p>
-      <button class="mt-4 bg-black text-white px-4 py-2 rounded hover:bg-gray-800">Thêm vào giỏ</button>
+{% load vn_currency %}
+<section class="max-w-screen-2xl mx-auto px-4 py-8 mt-4 grid grid-cols-1 md:grid-cols-2 gap-8">
+  <!-- Ảnh sản phẩm -->
+  <div class="w-full aspect-square flex items-center justify-center bg-gray-100 overflow-hidden rounded-2xl">
+    {% if product.image %}
+    <img src="{{ product.image.url }}" alt="{{ product.name }}"
+      class="w-full h-full object-cover object-center block" />
+    {% else %}
+    <span class="text-gray-400">Không có ảnh</span>
+    {% endif %}
+  </div>
+
+  <!-- Thông tin sản phẩm -->
+  <div class="flex flex-col text-gray-800 px-8 pt-12">
+
+    <h2 class="text-5xl font-bold mb-4">{{ product.name }}</h2>
+
+    <!-- Giá -->
+    <div class="flex items-baseline gap-3 mb-4">
+      <p class="text-2xl text-[#FF5532]">{{ product.price|vnd }} VND</p>
+      {% if product.old_price %}
+      <p class="text-gray-400 line-through">{{ product.old_price|vnd }} VND</p>
+      {% endif %}
+    </div>
+
+    <!-- Tình trạng -->
+    <div class="flex items-center gap-2 mb-8">
+      {% if product.stock > 0 %}
+      <div
+        class="inline-flex items-center gap-2 bg-green-100 text-green-700 px-5 py-3 rounded-full text-sm font-semibold">
+        <span class="relative flex items-center justify-center w-4 h-4">
+          <span class="absolute w-4 h-4 rounded-full border-1 border-green-400"></span>
+          <span class="w-3 h-3 bg-green-500 rounded-full"></span>
+        </span>
+        In stock, ready to ship
+      </div>
+      {% else %}
+      <div class="inline-flex items-center gap-2 bg-red-100 text-red-600 px-5 py-3 rounded-full text-sm font-semibold">
+        <span class="relative flex items-center justify-center w-4 h-4">
+          <span class="absolute w-4 h-4 rounded-full border-1 border-red-400"></span>
+          <span class="w-3 h-3 bg-red-500 rounded-full"></span>
+        </span>
+        Out of stock
+      </div>
+      {% endif %}
+    </div>
+
+    <!-- Mô tả -->
+    <div class="mb-8">
+      <p class="text-gray-600 leading-relaxed">{{ product.description }}</p>
+    </div>
+
+    <form hx-post="{% url 'cart:add' %}" hx-target="#tab-content" hx-swap="innerHTML" class="flex flex-col gap-4">
+      {% csrf_token %}
+      <input type="hidden" name="product" value="{{ product.pk }}">
+
+      <div class="flex items-center gap-3">
+        <!-- Bộ chọn số lượng (đảm bảo input name="qty") -->
+        <div class="flex h-full items-center justify-between border-2 border-gray-300 rounded-full px-6 flex-[1]">
+          <button type="button" onclick="changeQty(this, -1)">
+            <span class="material-symbols-outlined !text-sm leading-none cursor-pointer">arrow_back_ios_new</span>
+          </button>
+
+          <input id="qty-input" name="qty" type="number" min="1" value="1"
+            class="w-10 text-center outline-none border-none bg-transparent text-base font-medium" />
+
+          <button type="button" onclick="changeQty(this, 1)">
+            <span class="material-symbols-outlined !text-sm leading-none cursor-pointer">arrow_forward_ios</span>
+          </button>
+        </div>
+
+        <!-- Nút thêm vào giỏ (dùng qty từ input) -->
+        <button type="submit"
+          class="flex-1 bg-black text-white hover:opacity-80 active:opacity-100 transition py-4 rounded-full border-2 border-black font-semibold flex-[3]">
+          Thêm vào giỏ hàng
+        </button>
+      </div>
+    </form>
+
+    <!-- Sản phẩm liên quan -->
+    <div class="mt-8">
+      <div class="flex items-center justify-between mb-3 gap-4">
+        <h3 class="flex-1 text-lg font-semibold border-b border-gray-200 pb-2">Sản phẩm liên quan</h3>
+        <div class="flex gap-2">
+          <button
+            class="w-8 h-8 border rounded-full flex items-center justify-center hover:bg-black hover:text-white transition">
+            <span class="material-symbols-outlined !text-sm leading-none">arrow_back_ios_new</span>
+          </button>
+          <button
+            class="w-8 h-8 border rounded-full flex items-center justify-center hover:bg-black hover:text-white transition">
+            <span class="material-symbols-outlined !text-sm leading-none">arrow_forward_ios</span>
+          </button>
+        </div>
+      </div>
+
+      <div class="flex items-center gap-4">
+        <div class="w-20 h-20 bg-gray-100 rounded-lg flex items-center justify-center overflow-hidden">
+          <img src="{{ related_product.image.url }}" alt="{{ related_product.name }}"
+            class="object-cover w-full h-full">
+        </div>
+        <div class="flex-1">
+          <p class="font-medium">{{ related_product.name }}</p>
+          <p class="text-[#FF5532] font-semibold text-sm">
+            From {{ related_product.price|vnd }} VND
+            <span class="text-gray-400 line-through ml-1">{{ related_product.old_price|vnd }}
+              VND</span>
+          </p>
+        </div>
+        <button class="border border-black rounded-full px-4 py-1 hover:bg-black hover:text-white transition">
+          + View
+        </button>
+      </div>
     </div>
   </div>
 </section>
+<script>
+  // Thay đổi số lượng
+  function changeQty(btn, delta) {
+    const input = btn.closest('div').querySelector('input[type=number]');
+    const current = parseInt(input.value) || 1;
+    input.value = Math.max(1, current + delta);
+  }
+</script>
 {% endblock %}

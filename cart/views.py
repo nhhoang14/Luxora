@@ -21,6 +21,8 @@ def cart_add(request):
         item, created = CartItem.objects.get_or_create(cart=cart, product=product)
         if not created:
             item.quantity += qty
+        else:
+            item.quantity = qty
         item.save()
 
         return render(request, "cart/partials/cart_tab.html", {"cart": cart})

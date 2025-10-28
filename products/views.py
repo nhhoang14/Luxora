@@ -1,11 +1,24 @@
 from django.shortcuts import render, get_object_or_404
 from .models import Product, Category
 
-def product_list(request):
-    products = Product.objects.all()
+def product_list(request, slug=None):
     categories = Category.objects.all()
+    if slug:
+        category = get_object_or_404(Category, slug=slug)
+        products = category.products.all()
+        title = category.name
+    else:
+        products = Product.objects.all()
+        title = 'All Products'
+
+    # HTMX: chỉ trả partial grid
+    if request.headers.get('HX-Request') or request.META.get('HTTP_HX_REQUEST'):
+        return render(request, 'products/partials/product_grid.html', {
+            'products': products,
+        })
+
     return render(request, 'products/list.html', {
-        'title': 'All Products',
+        'title': title,
         'categories': categories,
         'products': products,
     })
@@ -21,17 +34,6 @@ def product_detail(request, slug):
             'image': str(product.image),
             'price': float(product.price)
         })
-        viewed_products = viewed_products[:10]
-        request.session['viewed_products'] = viewed_products
+        request.session['viewed_products'] = viewed_products[:10]
 
     return render(request, 'products/detail.html', {'product': product})
-
-def category_products(request, slug):
-    category = get_object_or_404(Category, slug=slug)
-    products = category.products.all()
-    categories = Category.objects.all()
-    return render(request, 'products/list.html', {
-        'title': category.name,
-        'categories': categories,
-        'products': products
-    })
