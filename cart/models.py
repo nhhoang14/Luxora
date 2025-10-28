@@ -19,14 +19,11 @@ class Cart(models.Model):
 class CartItem(models.Model):
     cart = models.ForeignKey(Cart, on_delete=models.CASCADE, related_name='items')
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
-    color = models.ForeignKey('products.Color', on_delete=models.CASCADE, null=True, blank=True)
     quantity = models.PositiveIntegerField(default=1)
 
     def subtotal(self):
         return self.product.price * self.quantity
 
     def __str__(self):
-        if self.color:
-            return f"{self.product.name} ({self.color.name}) x {self.quantity}"
         return f"{self.product.name} x {self.quantity}"
 

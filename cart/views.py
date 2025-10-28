@@ -13,19 +13,12 @@ def cart_tab(request):
 def cart_add(request):
     if request.method == "POST":
         product_id = request.POST.get("product")
-        color = request.POST.get("color") or None
-        try:
-            color_id = int(color) if color not in (None, '', 'None') else None
-        except (ValueError, TypeError):
-            color_id = None
-
         qty = int(request.POST.get("qty", 1))
         product = get_object_or_404(Product, pk=product_id)
 
         cart = get_cart(request, create_if_missing=True)
 
-        # use color_id (None or integer)
-        item, created = CartItem.objects.get_or_create(cart=cart, product=product, color_id=color_id)
+        item, created = CartItem.objects.get_or_create(cart=cart, product=product)
         if not created:
             item.quantity += qty
         item.save()
