@@ -120,7 +120,7 @@ def cart_update(request):
         else:
             product = get_object_or_404(Product, pk=product_id)
             CartItem.objects.create(cart=cart_obj, product=product, quantity=qty)
-    return render(request, "cart/partials/cart_tab.html", {"cart": cart})
+    return render(request, "cart/partials/cart.html", {"cart": cart})
 
 def cart_tab_update(request):
     if request.method != 'POST':
