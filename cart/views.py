@@ -92,7 +92,7 @@ def cart_tab_remove(request):
 
 # 🔁 Cập nhật số lượng
 def cart_update(request):
-    if request.method != 'POST':
+    if request.method != "POST":
         return HttpResponse(status=405)
 
     product_id = request.POST.get("product")
@@ -113,14 +113,18 @@ def cart_update(request):
     if qty <= 0:
         if item:
             item.delete()
+            return HttpResponse("")  # xóa item → trả về rỗng cho HTMX
     else:
         if item:
             item.quantity = qty
             item.save()
         else:
             product = get_object_or_404(Product, pk=product_id)
-            CartItem.objects.create(cart=cart_obj, product=product, quantity=qty)
-    return render(request, "cart/partials/cart.html", {"cart": cart})
+            item = CartItem.objects.create(cart=cart_obj, product=product, quantity=qty)
+
+    return render(request, "cart/cart.html", {"cart": cart_obj})
+
+
 
 def cart_tab_update(request):
     if request.method != 'POST':
