@@ -1,27 +1,22 @@
-{% extends "base.html" %}
-{% block title %}Địa chỉ{% endblock %}
+{% extends "accounts/base.html" %}
 {% block content %}
 <h2>Địa chỉ giao hàng</h2>
-<p><a class="btn" href="{{ url_for('address_new') }}">+ Thêm địa chỉ</a></p>
-<table class="table">
-  <thead><tr><th>Người nhận</th><th>Địa chỉ</th><th>Điện thoại</th><th>Mặc định</th><th></th></tr></thead>
-  <tbody>
-  {% for a in addresses %}
-    <tr>
-      <td>{{ a.recipient_name }}</td>
-      <td>{{ a.line1 }}{% if a.line2 %}, {{ a.line2 }}{% endif %}, {{ a.city }}{% if a.state %}, {{ a.state }}{% endif %}, {{ a.country }} {% if a.postal_code %}{{ a.postal_code }}{% endif %}</td>
-      <td>{{ a.phone or "-" }}</td>
-      <td>{% if a.is_default %}✔{% else %}—{% endif %}</td>
-      <td class="actions">
-        <a href="{{ url_for('address_edit', addr_id=a.id) }}">Sửa</a>
-        <form method="post" action="{{ url_for('address_delete', addr_id=a.id) }}" style="display:inline" onsubmit="return confirm('Xoá địa chỉ này?')">
-          <button class="btn link" type="submit">Xoá</button>
-        </form>
-      </td>
-    </tr>
-  {% else %}
-    <tr><td colspan="5">Chưa có địa chỉ</td></tr>
-  {% endfor %}
-  </tbody>
+<p><a href="{% url 'address_new' %}">+ Thêm địa chỉ</a></p>
+<table border="1" cellpadding="6">
+<tr><th>Người nhận</th><th>Điện thoại</th><th>Địa chỉ</th><th>Mặc định</th><th></th></tr>
+{% for a in addresses %}
+<tr>
+  <td>{{ a.recipient_name }}</td>
+  <td>{{ a.phone }}</td>
+  <td>{{ a.line1 }} {{ a.line2 }} - {{ a.city }} {{ a.state }} - {{ a.country }}</td>
+  <td>{% if a.is_default %}✔{% endif %}</td>
+  <td>
+    <a href="{% url 'address_edit' a.id %}">Sửa</a> |
+    <a href="{% url 'address_delete' a.id %}" onclick="return confirm('Xoá địa chỉ này?')">Xoá</a>
+  </td>
+</tr>
+{% empty %}
+<tr><td colspan="5">Chưa có địa chỉ nào</td></tr>
+{% endfor %}
 </table>
 {% endblock %}

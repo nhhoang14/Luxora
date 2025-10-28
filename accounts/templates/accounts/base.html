@@ -1,44 +1,12 @@
-<!doctype html>
-<html lang="vi">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>{% block title %}Accounts Demo{% endblock %}</title>
-  <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
-</head>
+<!doctype html><html lang="vi"><head><meta charset="utf-8"><title>Luxora</title></head>
 <body>
-<header class="site-header">
-  <div class="container nav">
-    <a class="brand" href="{{ url_for('index') }}">Accounts Demo</a>
-    <nav>
-      {% if current_user.is_authenticated %}
-        <a href="{{ url_for('dashboard') }}">Tài khoản</a>
-        <a href="{{ url_for('addresses_list') }}">Địa chỉ</a>
-        <a href="{{ url_for('orders_list') }}">Đơn hàng</a>
-        <a href="{{ url_for('logout') }}">Đăng xuất</a>
-      {% else %}
-        <a href="{{ url_for('login') }}">Đăng nhập</a>
-        <a class="btn" href="{{ url_for('register') }}">Đăng ký</a>
-      {% endif %}
-    </nav>
-  </div>
-</header>
-
-<main class="container">
-  {% with messages = get_flashed_messages(with_categories=True) %}
-    {% if messages %}
-      <ul class="flash">
-        {% for cat,msg in messages %}
-          <li class="flash-{{cat}}">{{ msg|safe }}</li>
-        {% endfor %}
-      </ul>
-    {% endif %}
-  {% endwith %}
-  {% block content %}{% endblock %}
-</main>
-
-<footer class="site-footer">
-  <div class="container"><small>© 2025</small></div>
-</footer>
-</body>
-</html>
+<nav>
+  <a href="/">Home</a> |
+  <a href="/addresses/">Địa chỉ</a> |
+  <a href="/orders/">Đơn hàng</a> |
+  <a href="/password/change/">Đổi mật khẩu</a> |
+  <a href="/logout/">Đăng xuất</a>
+</nav><hr>
+{% if messages %}<ul>{% for m in messages %}<li>{{ m }}</li>{% endfor %}</ul>{% endif %}
+{% block content %}{% endblock %}
+</body></html>

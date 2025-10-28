@@ -1,22 +1,16 @@
-{% extends "base.html" %}
-{% block title %}Đơn hàng{% endblock %}
+{% extends "accounts/base.html" %}
 {% block content %}
 <h2>Đơn hàng của tôi</h2>
-<table class="table">
-  <thead><tr><th>Mã đơn</th><th>Trạng thái</th><th>Tổng</th><th>Ngày tạo</th><th></th></tr></thead>
-  <tbody>
-  {% for o in orders %}
-    <tr>
-      <td>{{ o.order_number }}</td>
-      <td>{{ o.status }}</td>
-      <td>{{ '%.2f'|format(o.total) }} đ</td>
-      <td>{{ o.created_at.strftime('%Y-%m-%d %H:%M') }}</td>
-      <td><a href="{{ url_for('order_detail', order_id=o.id) }}">Chi tiết</a></td>
-    </tr>
-  {% else %}
-    <tr><td colspan="5">Chưa có đơn hàng</td></tr>
-  {% endfor %}
-  </tbody>
+<table border="1" cellpadding="6">
+<tr><th>Mã</th><th>Ngày</th><th>Tổng</th></tr>
+{% for o in orders %}
+<tr>
+  <td>#{{ o.id }}</td>
+  <td>{{ o.created_at }}</td>
+  <td>{{ o.total }}</td>
+</tr>
+{% empty %}
+<tr><td colspan="3">Chưa có đơn hàng</td></tr>
+{% endfor %}
 </table>
-<p><em>Tip:</em> Vào <code>/seed-orders</code> để tạo nhanh 3 đơn mẫu.</p>
 {% endblock %}
