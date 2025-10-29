@@ -13,7 +13,7 @@
         </a>
 
         <!-- Nút Thêm vào giỏ hàng (gửi tới endpoint update, action add để +1) -->
-        <form hx-post="{% url 'cart:update' %}" hx-target="#tab-content" hx-swap="innerHTML"
+        <form hx-post="{% url 'cart:modify' %}" hx-target="#cart-tab" hx-swap="innerHTML"
             class="absolute bottom-4 right-4 z-10" onclick="event.stopPropagation();">
             {% csrf_token %}
             <input type="hidden" name="product" value="{{ product.pk }}">

@@ -1,14 +1,53 @@
 {% load vn_currency %}
 
-{% if cart and cart.items.exists %}
-<div id="cart-list" class="space-y-4">
-  {% for item in cart.items.all %}
-    {% include 'cart/partials/cart_item.html' with item=item %}
-  {% endfor %}
-</div>
-{% else %}
-<div id="cart-list" class="flex flex-col items-center justify-center bg-white border border-gray-200 rounded-2xl shadow-sm py-16 px-6 text-center w-full">
-  <p class="text-gray-700 text-xl font-medium mb-6">Giỏ hàng đang trống! Hãy lấp đầy giỏ hàng</p>
-  <a href="{% url 'products:list' %}" class="bg-black hover:opacity-80 text-white text-base px-8 py-4 duration-300 rounded-full">Tiếp tục mua sắm</a>
-</div>
-{% endif %}
+<div id="cart-page" hx-swap-oob="true" class="flex gap-8">
+    <div class="flex-[3] bg-transparent p-8 border border-gray-300 rounded-xl h-full flex flex-col">
+      {% if cart and cart.items.exists %}
+      <div class="hidden md:flex items-center w-full text-gray-900 font-medium mb-4 border-b border-gray-300 pb-4">
+        <div class="flex-[3]" style="padding-right: 112px;">Sản phẩm</div>
+        <div class="flex-1 flex justify-center">Số lượng</div>
+        <div class="flex-1 flex" style="justify-content: right;">Tổng cộng</div>
+      </div>
+
+      <div class="space-y-4" id="cart-items" >
+        {% for item in cart.items.all %}
+        {% include 'cart/partials/cart_item.html' with item=item %}
+        {% endfor %}
+      </div>
+      {% else %}
+      <div class="flex flex-col items-center justify-center bg-transparent py-16 px-6 text-center w-full">
+        <p class="text-gray-700 text-xl font-medium mb-6">Giỏ hàng đang trống! Hãy lấp đầy giỏ hàng</p>
+        <a href="{% url 'products:list' %}"
+          class="bg-black hover:opacity-80 text-white text-base px-8 py-4 duration-300 rounded-full">Tiếp tục mua
+          sắm</a>
+      </div>
+      {% endif %}
+    </div>
+    
+    <aside class="flex-1 bg-white p-6 border border-gray-200 rounded-xl h-fit">
+      {% if cart and cart.items.exists %}
+      <h3 class="text-xl font-semibold mb-4 text-gray-900">Tóm tắt đơn hàng</h3>
+
+      <div class="flex justify-between text-lg font-medium mb-3">
+        <span>Tạm tính</span>
+        <span class="tabular-nums">{{ cart.total_price|vnd }} VND</span>
+      </div>
+
+      <p class="text-sm text-gray-500 mb-4">Đã bao gồm thuế. Phí vận chuyển sẽ được tính khi thanh toán.</p>
+
+      <textarea placeholder="Ghi chú đơn hàng"
+        class="w-full border rounded-lg p-3 mb-4 text-sm bg-transparent focus:ring-2 focus:ring-blue-500"></textarea>
+
+      <div class="flex justify-between items-center text-lg font-semibold border-t pt-4 mb-6" id="cart-total" >
+        <span>Tổng cộng</span>
+        <span class="pr-4 tabular-nums">{{ cart.total_price|vnd }} VND</span>
+      </div>
+
+      <a href="{% url 'cart:checkout' %}"
+        class="w-full block text-center bg-black text-white py-3 rounded-full font-semibold hover:opacity-80 transition">Thanh
+        toán</a>
+      {% else %}
+      <p class="text-sm text-gray-500">Không có sản phẩm trong giỏ.</p>
+      {% endif %}
+    </aside>
+  </div>

@@ -5,29 +5,52 @@
 {% block title %}Thanh toán - Luxora{% endblock %}
 
 {% block content %}
-  <div class="max-w-7xl mx-auto mt-10 grid grid-cols-1 lg:grid-cols-1 gap-8">
+<div class="max-w-screen-2xl mx-auto p-8 bg-white">
 
-    <!-- Cột trống bên trái -->
-    <div class="lg:col-span-1"></div>
+  <!-- ===== HEADER ===== -->
+  <div class="text-center mb-8">
+    <h1 class="text-3xl font-bold text-gray-900 tracking-tight">Thanh toán đơn hàng</h1>
+    <p class="text-gray-500 mt-1 text-sm">
+      Hoàn tất đơn hàng của bạn tại <span class="font-semibold text-[#FF5532]">Luxora</span>
+    </p>
+  </div>
 
-    <!-- 🧾 Cột giữa: Quy trình thanh toán -->
-    <div class="lg:col-span-1 border border-gray-200 rounded-2xl shadow-sm p-8">
+  <!-- ===== LAYOUT 2 CỘT ===== -->
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
 
-      <!-- ===== HEADER ===== -->
-      <div class="text-center mb-8">
-        <h1 class="text-3xl font-bold text-gray-900 tracking-tight">Thanh toán đơn hàng</h1>
-        <p class="text-gray-500 mt-1 text-sm">Hoàn tất đơn hàng của bạn tại <span class="font-semibold text-[#FF5532]">Luxora</span></p>
-      </div>
+    <!-- ===== CỘT TRÁI: FORM GIAO HÀNG ===== -->
+    <div class="bg-gray-50 border border-gray-300 rounded-2xl p-8">
+      <h2 class="text-lg font-semibold text-gray-900 mb-4">Thông tin giao hàng</h2>
+      <form id="checkout-form" class="space-y-5">
+        {% csrf_token %}
+        <div>
+          <label class="block mb-1 text-sm font-medium text-gray-700">Họ tên</label>
+          <input type="text" name="fullname"
+            class="w-full border border-gray-300 p-3 rounded-lg focus:ring-2 focus:ring-[#FF5532] focus:outline-none">
+        </div>
 
-      <!-- ===== BƯỚC 1 ===== -->
-      <div id="step-1">
-        <h2 class="text-xl font-semibold text-gray-900 mb-5">🧾 Bước 1: Xác nhận đơn hàng</h2>
+        <div>
+          <label class="block mb-1 text-sm font-medium text-gray-700">Số điện thoại</label>
+          <input type="text" name="phone"
+            class="w-full border border-gray-300 p-3 rounded-lg focus:ring-2 focus:ring-[#FF5532] focus:outline-none">
+        </div>
 
-        <ul class="divide-y divide-gray-100 mb-6">
+        <div>
+          <label class="block mb-1 text-sm font-medium text-gray-700">Địa chỉ</label>
+          <input type="text" name="address"
+            class="w-full border border-gray-300 p-3 rounded-lg focus:ring-2 focus:ring-[#FF5532] focus:outline-none">
+        </div>
+      </form>
+    </div>
+
+    <!-- ===== CỘT PHẢI: TÓM TẮT ĐƠN HÀNG ===== -->
+    <div class="bg-gray-50 border border-gray-300 rounded-2xl p-8">
+      <h2 class="text-lg font-semibold text-gray-900">Tóm tắt đơn hàng</h2>
+      <ul class="divide-y divide-gray-200 mb-2">
         {% for item in cart.items.all %}
-        <li class="py-3 text-gray-700 text-sm">
-          <div class="flex justify-between">  
-            <span class="truncate text-base font-semibold">{{ item.product.name }} × {{ item.quantity }}</span>
+        <li class="py-3 text-gray-700 text-xs">
+          <div class="flex justify-between text-sm">
+            <span class="truncate font-semibold">{{ item.product.name }} × {{ item.quantity }}</span>
             <span class="font-semibold">{{ item.subtotal|vnd }} VND</span>
           </div>
           <div class="text-gray-500 text-xs mt-1">
@@ -37,168 +60,52 @@
         {% endfor %}
       </ul>
 
-        <div class="flex justify-between text-lg font-semibold mb-6">
-          <span></span>
-          <span></span>
-          <span></span>
-          <span></span>
-          <span></span>
-          <span>Tổng cộng:</span>
-          <span class="text-[#FF5532]">{{ cart.total_price|vnd }} VND</span>
-        </div>
-
-          <div class="flex justify-between mt-6">
-            <button type="button" id="back-to-cart"
-                    class="bg-gray-200 text-gray-800 px-6 py-2 rounded-full hover:bg-gray-300 transition">
-              Quay lại
-            </button>
-            <button id="next-to-step-2"
-              class="bg-[#FF5532] text-white px-6 py-2 rounded-full font-semibold hover:opacity-90 transition">
-              Nhập thông tin giao hàng
-            </button>
-          </div>
-      </div>  
-
-      <!-- ===== BƯỚC 2 ===== -->
-      <div id="step-2" class="hidden">
-        <h2 class="text-xl font-semibold text-gray-900 mb-5">📦 Bước 2: Thông tin giao hàng</h2>
-
-        <form id="shipping-form" class="space-y-5">
-          {% csrf_token %}
-          <div>
-            <label class="block mb-1 text-sm font-medium text-gray-700">Họ tên</label>
-            <input type="text" name="fullname"
-                   class="w-full border border-gray-300 p-3 rounded-lg focus:ring-2 focus:ring-[#FF5532] focus:outline-none">
-          </div>
-
-          <div>
-            <label class="block mb-1 text-sm font-medium text-gray-700">Địa chỉ</label>
-            <input type="text" name="address"
-                   class="w-full border border-gray-300 p-3 rounded-lg focus:ring-2 focus:ring-[#FF5532] focus:outline-none">
-          </div>
-
-          <div>
-            <label class="block mb-1 text-sm font-medium text-gray-700">Số điện thoại</label>
-            <input type="text" name="phone"
-                   class="w-full border border-gray-300 p-3 rounded-lg focus:ring-2 focus:ring-[#FF5532] focus:outline-none">
-          </div>
-
-          <div class="flex justify-between mt-6">
-            <button type="button" id="back-to-step-1"
-                    class="bg-gray-200 text-gray-800 px-6 py-2 rounded-full hover:bg-gray-300 transition">
-              Quay lại
-            </button>
-            <button type="button" id="next-to-step-3"
-                    class="bg-[#FF5532] text-white px-6 py-2 rounded-full font-semibold hover:opacity-90 transition">
-              Thanh toán
-            </button>
-          </div>
-        </form>
+      <div class="flex justify-between text-lg font-semibold mb-4">
+        <span>Tổng cộng:</span>
+        <span class="text-[#FF5532]">{{ cart.total_price|vnd }} VND</span>
       </div>
 
-      <!-- ===== BƯỚC 3 ===== -->
-      <div id="step-3" class="hidden">
-        <h2 class="text-xl font-semibold text-gray-900 mb-5">💳 Bước 3: Phương thức thanh toán</h2>
-
-        <!-- ✅ KHÔNG để action để tránh load lại trang -->
-        <form id="payment-form" class="space-y-6">
-
-          {% csrf_token %}
-          <div class="space-y-4">
-            <label class="flex items-center gap-3 cursor-pointer">
-              <input type="radio" name="payment_method" value="cash" class="w-5 h-5 text-[#FF5532]">
-              <span class="text-gray-800 text-base">Thanh toán khi nhận hàng (COD)</span>
-            </label>
-            <label class="flex items-center gap-3 cursor-pointer">
-              <input type="radio" name="payment_method" value="qr" class="w-5 h-5 text-[#FF5532]">
-              <span class="text-gray-800 text-base">Thanh toán qua mã QR</span>
-            </label>
-          </div>
-
-          <!-- QR hiển thị khi chọn thanh toán QR -->
-          <div id="qr-section" class="hidden text-center mt-4">
-            <p class="text-gray-600 mb-3 text-sm">Quét mã QR để thanh toán:</p>
-            <img src="{% static 'core/images/qr-example.png' %}" alt="QR Payment"
-                class="w-52 mx-auto rounded-xl border border-gray-300 shadow-sm">
-          </div>
-
-          <div class="flex justify-between mt-6">
-            <button type="button" id="back-to-step-2"
-                    class="bg-gray-200 text-gray-800 px-6 py-2 rounded-full hover:bg-gray-300 transition">
-              Quay lại
-            </button>
-            <button type="button" id="confirm-payment"
-                    class="bg-[#FF5532] text-white px-6 py-2 rounded-full font-semibold hover:opacity-90 transition">
-              Xác nhận thanh toán
-            </button>
-          </div>
-        </form>
-
-        <!-- Thông báo kết quả -->
-        <div id="checkout-message" class="hidden mt-6 mb-4 px-4 py-3 rounded-lg text-sm font-medium"></div>
+      <!-- Nút hành động -->
+      <div class="flex justify-between gap-4">
+        <button type="button" id="back-to-cart"
+          class="bg-gray-200 text-gray-800 px-6 py-2 rounded-full hover:bg-gray-300 transition">
+          Quay lại giỏ hàng
+        </button>
+        <button type="button" id="confirm-payment"
+          class="bg-[#FF5532] text-white px-6 py-2 rounded-full font-semibold hover:opacity-90 transition">
+          Xác nhận đặt hàng
+        </button>
       </div>
-
-    <!-- Cột trống bên phải -->
-    <div class="lg:col-span-1"></div>
+    </div>
   </div>
+
+  <!-- Thông báo -->
+  <div id="checkout-message" class="hidden mt-6 mb-4 px-4 py-3 rounded-lg text-sm font-medium"></div>
+
 </div>
 
-<!-- ===== FOOTER SPACING (đồng bộ Luxora) ===== -->
+<!-- FOOTER SPACING -->
 <div class="h-16"></div>
 
-<!-- ===== JS điều hướng các bước ===== -->
+<!-- ===== JS ===== -->
 <script>
-  const step1 = document.getElementById('step-1');
-  const step2 = document.getElementById('step-2');
-  const step3 = document.getElementById('step-3');
-  const qrSection = document.getElementById('qr-section');
-
-  // ---- Điều hướng giữa các bước ----
   document.getElementById('back-to-cart').onclick = () => {
     window.location.href = "{% url 'cart:cart' %}";
   };
 
-  document.getElementById('next-to-step-2').onclick = () => {
-    step1.classList.add('hidden');
-    step2.classList.remove('hidden');
-  };
-
-  document.getElementById('back-to-step-1').onclick = () => {
-    step2.classList.add('hidden');
-    step1.classList.remove('hidden');
-  };
-
-  document.getElementById('next-to-step-3').onclick = () => {
-    const form = document.getElementById('shipping-form');
-    const fullname = form.querySelector('[name="fullname"]').value.trim();
-    const address = form.querySelector('[name="address"]').value.trim();
-    const phone = form.querySelector('[name="phone"]').value.trim();
+  document.getElementById('confirm-payment').addEventListener('click', async () => {
+    const form = document.getElementById('checkout-form');
+    const fullname = form.fullname.value.trim();
+    const address = form.address.value.trim();
+    const phone = form.phone.value.trim();
 
     if (!fullname || !address || !phone) {
       alert("⚠️ Vui lòng nhập đầy đủ thông tin giao hàng!");
       return;
     }
 
-    step2.classList.add('hidden');
-    step3.classList.remove('hidden');
-  };
-
-  document.getElementById('back-to-step-2').onclick = () => {
-    step3.classList.add('hidden');
-    step2.classList.remove('hidden');
-  };
-
-  // ---- Gửi yêu cầu thanh toán ----
-  document.getElementById("confirm-payment").addEventListener("click", async () => {
-    const paymentMethod = document.querySelector('input[name="payment_method"]:checked');
-    if (!paymentMethod) {
-      alert("⚠️ Vui lòng chọn phương thức thanh toán!");
-      return;
-    }
-
-    const formData = new FormData();
-    formData.append("payment_method", paymentMethod.value);
-    formData.append("csrfmiddlewaretoken", "{{ csrf_token }}");
+    const formData = new FormData(form);
+    formData.append("payment_method", "cash"); // luôn là thanh toán khi nhận hàng
 
     try {
       const response = await fetch("{% url 'cart:checkout_confirm' %}", {
@@ -207,10 +114,8 @@
       });
       const data = await response.json();
 
-      // Hiển thị thông báo đơn giản
       alert(data.message);
 
-      // Nếu thành công -> quay về trang chủ
       if (data.success) {
         window.location.href = "{% url 'home' %}";
       }
@@ -219,5 +124,4 @@
     }
   });
 </script>
-
 {% endblock %}
