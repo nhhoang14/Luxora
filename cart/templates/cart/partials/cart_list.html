@@ -1,0 +1,14 @@
+{% load vn_currency %}
+
+{% if cart and cart.items.exists %}
+<div id="cart-list" class="space-y-4">
+  {% for item in cart.items.all %}
+    {% include 'cart/partials/cart_item.html' with item=item %}
+  {% endfor %}
+</div>
+{% else %}
+<div id="cart-list" class="flex flex-col items-center justify-center bg-white border border-gray-200 rounded-2xl shadow-sm py-16 px-6 text-center w-full">
+  <p class="text-gray-700 text-xl font-medium mb-6">Giỏ hàng đang trống! Hãy lấp đầy giỏ hàng</p>
+  <a href="{% url 'products:list' %}" class="bg-black hover:opacity-80 text-white text-base px-8 py-4 duration-300 rounded-full">Tiếp tục mua sắm</a>
+</div>
+{% endif %}
