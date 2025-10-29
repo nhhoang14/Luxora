@@ -12,13 +12,13 @@
             {% endif %}
         </a>
 
-        <!-- Nút Thêm vào giỏ hàng -->
-        <form hx-post="{% url 'cart:add' %}" hx-target="#tab-content" hx-swap="innerHTML"
+        <!-- Nút Thêm vào giỏ hàng (gửi tới endpoint update, action add để +1) -->
+        <form hx-post="{% url 'cart:modify' %}" hx-target="#cart-tab" hx-swap="innerHTML"
             class="absolute bottom-4 right-4 z-10" onclick="event.stopPropagation();">
             {% csrf_token %}
             <input type="hidden" name="product" value="{{ product.pk }}">
             <input type="hidden" name="qty" value="1">
-
+            <input type="hidden" name="action" value="add">
             <button type="submit"
                 class="bg-black hover:opacity-80 text-white rounded-full btn btn-lg
                    flex items-center justify-center gap-2 opacity-0 group-hover:opacity-100 cursor-pointer duration-300">
