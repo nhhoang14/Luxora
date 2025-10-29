@@ -20,11 +20,6 @@
     <p class="text-gray-800 font-medium">
       {% if item.product %}{{ item.product.price|vnd }}{% else %}{{ item.price|vnd }}{% endif %} VND
     </p>
-    {% if item.color %}
-    <span class="w-5 h-5 rounded-full border border-gray-300 shadow-sm"
-      style="background-color: {{ item.color.hex_code }};">
-    </span>
-    {% endif %}
   </div>
 
   <!-- Số lượng & Xóa -->

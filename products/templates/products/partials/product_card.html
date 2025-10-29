@@ -17,14 +17,6 @@
             class="absolute bottom-4 right-4 z-10" onclick="event.stopPropagation();">
             {% csrf_token %}
             <input type="hidden" name="product" value="{{ product.pk }}">
-            {% with only_color=product.colors.all|first %}
-                {% if product.colors.count == 1 %}
-                    <input type="hidden" id="selected-color-input-{{ product.pk }}" name="color" value="{{ only_color.id }}">
-                {% else %}
-                    <input type="hidden" id="selected-color-input-{{ product.pk }}" name="color" value="">
-                {% endif %}
-            {% endwith %}
-
             <input type="hidden" name="qty" value="1">
 
             <button type="submit"
@@ -43,18 +35,5 @@
             <a href="{% url 'products:detail' product.slug %}" class="cursor-pointer">{{ product.name }}</a>
         </h3>
         <p class="text-gray-600 font-medium">{{ product.price|vnd }} VND</p>
-        {% if product.colors.all %}
-            <div class="flex flex-wrap gap-2 mt-3" data-product="{{ product.pk }}">
-                {% with only_color=product.colors.all|first %}
-                    {% for color in product.colors.all %}
-                        <button type="button"
-                            class="color-btn w-5 h-5 rounded-full border border-gray-300 shadow-sm {% if product.colors.count == 1 %}ring-2 ring-black{% endif %}"
-                            style="background-color: {{ color.hex_code }};" data-color-id="{{ color.id }}"
-                            aria-label="{{ color.name }}">
-                        </button>
-                    {% endfor %}
-                {% endwith %}
-            </div>
-        {% endif %}
     </div>
 </div>
