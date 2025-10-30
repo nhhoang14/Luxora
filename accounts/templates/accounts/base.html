@@ -1,0 +1,12 @@
+<!doctype html><html lang="vi"><head><meta charset="utf-8"><title>Luxora</title></head>
+<body>
+<nav>
+  <a href="/">Home</a> |
+  <a href="/addresses/">Địa chỉ</a> |
+  <a href="/orders/">Đơn hàng</a> |
+  <a href="/password/change/">Đổi mật khẩu</a> |
+  <a href="/logout/">Đăng xuất</a>
+</nav><hr>
+{% if messages %}<ul>{% for m in messages %}<li>{{ m }}</li>{% endfor %}</ul>{% endif %}
+{% block content %}{% endblock %}
+</body></html>

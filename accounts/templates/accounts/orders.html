@@ -1,0 +1,16 @@
+{% extends "accounts/base.html" %}
+{% block content %}
+<h2>Đơn hàng của tôi</h2>
+<table border="1" cellpadding="6">
+<tr><th>Mã</th><th>Ngày</th><th>Tổng</th></tr>
+{% for o in orders %}
+<tr>
+  <td>#{{ o.id }}</td>
+  <td>{{ o.created_at }}</td>
+  <td>{{ o.total }}</td>
+</tr>
+{% empty %}
+<tr><td colspan="3">Chưa có đơn hàng</td></tr>
+{% endfor %}
+</table>
+{% endblock %}
