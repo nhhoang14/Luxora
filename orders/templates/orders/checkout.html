@@ -100,7 +100,7 @@
     const phone = form.phone.value.trim();
 
     if (!fullname || !address || !phone) {
-      alert("⚠️ Vui lòng nhập đầy đủ thông tin giao hàng!");
+      alert("Vui lòng nhập đầy đủ thông tin giao hàng!");
       return;
     }
 
@@ -108,7 +108,7 @@
     formData.append("payment_method", "cash"); // luôn là thanh toán khi nhận hàng
 
     try {
-      const response = await fetch("{% url 'cart:checkout_confirm' %}", {
+      const response = await fetch("{% url 'orders:checkout_confirm' %}", {
         method: "POST",
         body: formData
       });
@@ -120,7 +120,7 @@
         window.location.href = "{% url 'home' %}";
       }
     } catch (error) {
-      alert("❌ Đã có lỗi xảy ra, vui lòng thử lại sau!");
+      alert("Đã có lỗi xảy ra, vui lòng thử lại sau!");
     }
   });
 </script>

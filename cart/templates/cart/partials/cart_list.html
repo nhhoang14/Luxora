@@ -43,7 +43,7 @@
         <span class="pr-4 tabular-nums">{{ cart.total_price|vnd }} VND</span>
       </div>
 
-      <a href="{% url 'cart:checkout' %}"
+      <a href="{% url 'orders:checkout' %}"
         class="w-full block text-center bg-black text-white py-3 rounded-full font-semibold hover:opacity-80 transition">Thanh
         toán</a>
       {% else %}

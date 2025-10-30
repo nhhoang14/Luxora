@@ -102,21 +102,21 @@
 
     <!-- Right icons -->
     <div class="flex items-center space-x-4 h-full">
-      <!-- Search -->
-      <a href="/search/" class="btn btn-xl btn-ghost btn-circle">
-        <span class="material-symbols-outlined">search</span>
-      </a>
-
-      <!-- User dropdown -->
-      <div class="dropdown dropdown-end">
-        <label tabindex="0" class="btn btn-xl btn-ghost btn-circle">
-          <span class="material-symbols-outlined">person</span>
-        </label>
-        <ul tabindex="0" class="dropdown-content menu p-2 shadow bg-white rounded-box w-52 mt-2">
-          <li><a href="/profile/">Profile</a></li>
-          <li><a href="/settings/">Settings</a></li>
-          <li><a href="/logout/">Logout</a></li>
-        </ul>
+      <!-- User -->
+      <div class="btn btn-xl btn-ghost btn-circle p-0">
+        {% if request.user.is_authenticated %}
+          <a href="{% url 'accounts:profile' %}" class="w-10 h-10 flex items-center justify-center overflow-hidden" tabindex="0">
+            {% if user_avatar_url %}
+              <img src="{{ user_avatar_url }}" alt="{{ request.user.get_full_name|default:request.user.username }}" class="w-10 h-10 rounded-full object-cover block">
+            {% else %}
+              <span class="material-symbols-outlined text-xl align-middle leading-none">person</span>
+            {% endif %}
+          </a>
+        {% else %}
+          <a href="{% url 'accounts:login' %}" class="w-10 h-10 flex items-center justify-center" tabindex="0">
+            <span class="material-symbols-outlined text-xl align-middle leading-none">person</span>
+          </a>
+        {% endif %}
       </div>
 
       <!-- Cart -->

@@ -6,6 +6,7 @@
     <title>{% block title %}Luxora{% endblock %}</title>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="{{ csrf_token }}">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;700&display=swap"
         rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
@@ -25,15 +26,19 @@
         <div class="drawer-content flex flex-col min-h-screen">
 
             <!-- Navbar -->
+            {% block navbar %}
             {% include "partials/navbar.html" %}
+            {% endblock %}
 
             <!-- Main content -->
-            <main class="w-full pt-20 flex-1">
+            <main class="w-full {% if not content_block %}pt-20{% endif %} flex-1">
                 {% block content %}{% endblock %}
             </main>
 
             <!-- Footer -->
+            {% block footer %}
             {% include 'partials/footer.html' %}
+            {% endblock %}
         </div>
 
         <!-- Quick View Modal -->
@@ -53,6 +58,24 @@
                 if (modal) modal.classList.add("flex");
             }
         });
+    </script>
+    <!-- HTMX CSRF helper -->
+    <script>
+        (function () {
+            function getCookie(name) {
+                const match = document.cookie.match('(^|;)\\s*' + name + '\\s*=\\s*([^;]+)');
+                return match ? match.pop() : null;
+            }
+            function getCSRF() {
+                const meta = document.querySelector('meta[name="csrf-token"]');
+                if (meta && meta.content) return meta.content;
+                return getCookie('csrftoken');
+            }
+            document.body.addEventListener('htmx:configRequest', function (event) {
+                const token = getCSRF();
+                if (token) event.detail.headers['X-CSRFToken'] = token;
+            });
+        })();
     </script>
 </body>
 

@@ -1,10 +1,8 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.http import HttpResponse
-from django.contrib import messages
 from products.models import Product
 from .models import CartItem
 from .utils import get_cart
-from django.http import JsonResponse
 from django.template.loader import render_to_string
 
 
@@ -73,39 +71,3 @@ def cart_modify(request):
 
     # fallback: full page render
     return render(request, "cart/cart.html", {"cart": cart})
-
-# Trang thanh toán (checkout)
-def cart_checkout(request):
-    cart_obj = get_cart(request, create_if_missing=True)
-
-    if not cart_obj.items.exists():
-        messages.error(request, "Giỏ hàng của bạn đang trống.")
-        return redirect("cart:cart")
-
-    return render(request, "cart/cart_checkout.html", {"cart": cart_obj})
-
-def cart_checkout_confirm(request):
-    if request.method != "POST":
-        return JsonResponse({"success": False, "message": "Phương thức không hợp lệ."}, status=405)
-
-    cart = get_cart(request, create_if_missing=True)
-    payment = request.POST.get("payment_method")
-
-    # Kiểm tra giỏ hàng
-    if not cart.items.exists():
-        return JsonResponse({"success": False, "message": "Giỏ hàng của bạn đang trống."})
-
-    # Kiểm tra phương thức thanh toán
-    if payment not in ["cash", "qr"]:
-        return JsonResponse({"success": False, "message": "Vui lòng chọn phương thức thanh toán hợp lệ."})
-
-    # Xử lý thanh toán
-    messages = {
-        "cash": "Đơn hàng đã được xác nhận! Thanh toán khi nhận hàng.",
-        "qr": "Thanh toán qua mã QR thành công! Cảm ơn bạn đã mua hàng."
-    }
-
-    # Xóa giỏ hàng sau khi thanh toán
-    cart.items.all().delete()
-
-    return JsonResponse({"success": True, "message": messages[payment]})

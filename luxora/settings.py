@@ -44,10 +44,7 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = 'luxora.urls'
-
-from pathlib import Path
-
-BASE_DIR = Path(__file__).resolve().parent.parent
+AUTH_USER_MODEL = 'accounts.User'
 
 TEMPLATES = [
     {
@@ -61,6 +58,7 @@ TEMPLATES = [
                 'django.contrib.messages.context_processors.messages',
                 'cart.context_processors.cart_context',
                 "core.context_processors.site_categories",
+                "core.context_processors.user_avatar",
             ],
         },
     },
@@ -135,3 +133,8 @@ NPM_BIN_PATH = npm_path
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
+
+AUTH_USER_MODEL = 'accounts.User'
+LOGIN_URL = '/accounts/login/'
+LOGIN_REDIRECT_URL = '/'
+LOGOUT_REDIRECT_URL = '/'
