@@ -1,0 +1,127 @@
+{% extends "base.html" %}
+{% load vn_currency %}
+{% load static %}
+
+{% block title %}Thanh toán - Luxora{% endblock %}
+
+{% block content %}
+<div class="max-w-screen-2xl mx-auto p-8 bg-white">
+
+  <!-- ===== HEADER ===== -->
+  <div class="text-center mb-8">
+    <h1 class="text-3xl font-bold text-gray-900 tracking-tight">Thanh toán đơn hàng</h1>
+    <p class="text-gray-500 mt-1 text-sm">
+      Hoàn tất đơn hàng của bạn tại <span class="font-semibold text-[#FF5532]">Luxora</span>
+    </p>
+  </div>
+
+  <!-- ===== LAYOUT 2 CỘT ===== -->
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+
+    <!-- ===== CỘT TRÁI: FORM GIAO HÀNG ===== -->
+    <div class="bg-gray-50 border border-gray-300 rounded-2xl p-8">
+      <h2 class="text-lg font-semibold text-gray-900 mb-4">Thông tin giao hàng</h2>
+      <form id="checkout-form" class="space-y-5">
+        {% csrf_token %}
+        <div>
+          <label class="block mb-1 text-sm font-medium text-gray-700">Họ tên</label>
+          <input type="text" name="fullname"
+            class="w-full border border-gray-300 p-3 rounded-lg focus:ring-2 focus:ring-[#FF5532] focus:outline-none">
+        </div>
+
+        <div>
+          <label class="block mb-1 text-sm font-medium text-gray-700">Số điện thoại</label>
+          <input type="text" name="phone"
+            class="w-full border border-gray-300 p-3 rounded-lg focus:ring-2 focus:ring-[#FF5532] focus:outline-none">
+        </div>
+
+        <div>
+          <label class="block mb-1 text-sm font-medium text-gray-700">Địa chỉ</label>
+          <input type="text" name="address"
+            class="w-full border border-gray-300 p-3 rounded-lg focus:ring-2 focus:ring-[#FF5532] focus:outline-none">
+        </div>
+      </form>
+    </div>
+
+    <!-- ===== CỘT PHẢI: TÓM TẮT ĐƠN HÀNG ===== -->
+    <div class="bg-gray-50 border border-gray-300 rounded-2xl p-8">
+      <h2 class="text-lg font-semibold text-gray-900">Tóm tắt đơn hàng</h2>
+      <ul class="divide-y divide-gray-200 mb-2">
+        {% for item in cart.items.all %}
+        <li class="py-3 text-gray-700 text-xs">
+          <div class="flex justify-between text-sm">
+            <span class="truncate font-semibold">{{ item.product.name }} × {{ item.quantity }}</span>
+            <span class="font-semibold">{{ item.subtotal|vnd }} VND</span>
+          </div>
+          <div class="text-gray-500 text-xs mt-1">
+            {{ item.product.price|vnd }} VND / sản phẩm
+          </div>
+        </li>
+        {% endfor %}
+      </ul>
+
+      <div class="flex justify-between text-lg font-semibold mb-4">
+        <span>Tổng cộng:</span>
+        <span class="text-[#FF5532]">{{ cart.total_price|vnd }} VND</span>
+      </div>
+
+      <!-- Nút hành động -->
+      <div class="flex justify-between gap-4">
+        <button type="button" id="back-to-cart"
+          class="bg-gray-200 text-gray-800 px-6 py-2 rounded-full hover:bg-gray-300 transition">
+          Quay lại giỏ hàng
+        </button>
+        <button type="button" id="confirm-payment"
+          class="bg-[#FF5532] text-white px-6 py-2 rounded-full font-semibold hover:opacity-90 transition">
+          Xác nhận đặt hàng
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Thông báo -->
+  <div id="checkout-message" class="hidden mt-6 mb-4 px-4 py-3 rounded-lg text-sm font-medium"></div>
+
+</div>
+
+<!-- FOOTER SPACING -->
+<div class="h-16"></div>
+
+<!-- ===== JS ===== -->
+<script>
+  document.getElementById('back-to-cart').onclick = () => {
+    window.location.href = "{% url 'cart:cart' %}";
+  };
+
+  document.getElementById('confirm-payment').addEventListener('click', async () => {
+    const form = document.getElementById('checkout-form');
+    const fullname = form.fullname.value.trim();
+    const address = form.address.value.trim();
+    const phone = form.phone.value.trim();
+
+    if (!fullname || !address || !phone) {
+      alert("⚠️ Vui lòng nhập đầy đủ thông tin giao hàng!");
+      return;
+    }
+
+    const formData = new FormData(form);
+    formData.append("payment_method", "cash"); // luôn là thanh toán khi nhận hàng
+
+    try {
+      const response = await fetch("{% url 'cart:checkout_confirm' %}", {
+        method: "POST",
+        body: formData
+      });
+      const data = await response.json();
+
+      alert(data.message);
+
+      if (data.success) {
+        window.location.href = "{% url 'home' %}";
+      }
+    } catch (error) {
+      alert("❌ Đã có lỗi xảy ra, vui lòng thử lại sau!");
+    }
+  });
+</script>
+{% endblock %}

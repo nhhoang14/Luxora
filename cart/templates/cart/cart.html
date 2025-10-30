@@ -1,32 +1,12 @@
-{% extends "base.html" %}
+{% extends 'base.html' %}
+{% load vn_currency %}
 
-{% block title %}Cart - Luxora{% endblock %}
+{% block title %}Giỏ hàng - Luxora{% endblock %}
 
 {% block content %}
-<h1 class="text-3xl font-bold mb-4">Your Shopping Cart</h1>
-<table class="table w-full border">
-    <thead>
-        <tr>
-            <th>Product</th>
-            <th>Price</th>
-            <th>Quantity</th>
-            <th>Total</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for item in cart %}
-        <tr>
-            <td>{{ item.name }}</td>
-            <td>${{ item.price }}</td>
-            <td>{{ item.quantity }}</td>
-            <td>${{ item.total }}</td>
-        </tr>
-        {% empty %}
-        <tr>
-            <td colspan="4" class="text-center">Your cart is empty.</td>
-        </tr>
-        {% endfor %}
-    </tbody>
-</table>
-<button class="btn btn-primary mt-4">Checkout</button>
+
+<div class="max-w-screen-2xl mx-auto mt-10 grid grid-cols-1 gap-8">
+  <h2 class="text-4xl font-bold text-gray-900 text-center">Giỏ hàng</h2>
+  {% include 'cart/partials/cart_list.html' %}
+</div>
 {% endblock %}

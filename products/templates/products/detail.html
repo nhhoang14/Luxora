@@ -50,11 +50,10 @@
       <p class="text-gray-600 leading-relaxed">{{ product.description }}</p>
     </div>
 
-    <!-- Form thêm vào giỏ -->
-    <form hx-post="{% url 'cart:add' %}" hx-target="#tab-content" hx-swap="innerHTML" class="flex flex-col gap-4">
+    <form hx-post="{% url 'cart:modify' %}" hx-target="#cart-tab" hx-swap="onnerHTML" class="flex flex-col gap-4">
       {% csrf_token %}
       <input type="hidden" name="product" value="{{ product.pk }}">
-
+      <input type="hidden" name="action" value="add">
       <div class="flex items-center gap-3">
         <!-- Bộ chọn số lượng -->
         <div class="flex h-full items-center justify-between border-2 border-gray-300 rounded-full px-6 flex-[1]">

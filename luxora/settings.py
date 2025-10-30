@@ -45,10 +45,14 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = 'luxora.urls'
 
+from pathlib import Path
+
+BASE_DIR = Path(__file__).resolve().parent.parent
+
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [BASE_DIR / 'templates'],  # Thêm thư mục templates chính của dự án
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -56,10 +60,12 @@ TEMPLATES = [
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
                 'cart.context_processors.cart_context',
+                "core.context_processors.site_categories",
             ],
         },
     },
 ]
+
 
 WSGI_APPLICATION = 'luxora.wsgi.application'
 
