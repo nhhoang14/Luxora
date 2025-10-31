@@ -30,7 +30,7 @@ cd ../../
 ### 5️⃣ Database setup
 ```bash
 python manage.py migrate
-python manage.py loaddata users.json categorys.json colors.json products.json
+python manage.py loaddata users.json category.json product.json
 ```
 ### 6️⃣ Build TailwindCSS
 ```bash
