@@ -1,4 +1,4 @@
-<div class="p-6 bg-white border rounded-lg mt-4">
+<div class="p-6 bg-gray-50 border rounded-lg mt-4">
     <form
         hx-post="{% if address and address.id %}{% url 'accounts:edit_address' address.id %}{% else %}{% url 'accounts:add_address' %}{% endif %}"
         hx-target="#shipping-form" hx-swap="innerHTML" class="space-y-3">

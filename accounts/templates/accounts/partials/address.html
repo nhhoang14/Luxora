@@ -23,8 +23,9 @@
                 <button hx-get="{% url 'accounts:edit_address' address.id %}" hx-target="#shipping-form"
                     hx-swap="innerHTML" class="text-xs px-2 py-1 border rounded-md">Sửa</button>
 
-                <button hx-delete="{% url 'accounts:delete_address' address.id %}"
-                    hx-confirm="Bạn có chắc muốn xóa địa chỉ này?" hx-target="#shipping-list"
+                <!-- chuyển từ hx-delete sang hx-post để tránh vấn đề method/CSRF -->
+                <button hx-post="{% url 'accounts:delete_address' address.id %}"
+                    hx-confirm="Bạn có chắc muốn xóa địa chỉ này?" hx-target="#shipping-list" hx-swap="innerHTML"
                     class="text-xs px-2 py-1 border rounded-md text-red-600">
                     Xóa
                 </button>
@@ -36,13 +37,14 @@
     <p class="text-gray-400 text-sm">Chưa có địa chỉ nào.</p>
     {% endif %}
 
-    {% if addresses|length < 3 %} <div class="mt-3" id="shipping-add-btn">
+    {% if addresses|length < 3 %}
+    <div class="mt-3" id="shipping-add-btn">
         <button hx-get="{% url 'accounts:add_address' %}" hx-target="#shipping-form" hx-swap="innerHTML"
             class="w-full mt-2 px-3 py-2 rounded-lg border border-gray-200 text-sm hover:bg-gray-50 text-center">
             + Thêm địa chỉ
         </button>
-</div>
-{% endif %}
+    </div>
+    {% endif %}
 
 <div id="shipping-form"></div>
 </div>

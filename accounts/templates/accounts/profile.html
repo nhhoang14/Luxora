@@ -4,33 +4,33 @@
 {% block title %}Tài khoản của tôi — Luxora{% endblock %}
 
 {% block content %}
-<div class="max-w-6xl mx-auto p-6">
+<div class="max-w-screen-2xl mx-auto p-6">
   <h1 class="text-2xl font-semibold mb-6 text-center py-4">Tài khoản của tôi</h1>
 
   <div class="bg-transparent p-6 flex gap-8">
     <!-- CỘT TRÁI: Thông tin + địa chỉ -->
-    <aside class="flex-[1] flex flex-col items-center rounded-2xl shadow border border-gray-200 p-8">
+    <aside class="flex-[1] flex flex-col items-center rounded-2xl shadow border border-gray-300 p-8">
       <!-- Avatar -->
-      <div class="w-28 h-28 rounded-full overflow-hidden border shadow-sm">
-        <img src="" alt="Avatar" class="w-full h-full object-cover">
+      <div class="w-28 h-28 rounded-full overflow-hidden border shadow-sm flex items-center justify-center bg-gray-100">
+        <img src="{% static 'accounts/images/avatar-default.svg' %}" alt="Avatar" class="w-[80%] h-[80%] object-cover block">
       </div>
 
       <!-- Tên + email -->
-      <div class="mt-4 text-center md:text-left">
+      <div class="mt-4 text-center ">
         <h2 class="text-lg font-semibold">{{ user.get_full_name|default:user.username }}</h2>
         <p class="text-sm text-gray-500">{{ user.email }}</p>
       </div>
 
       <!-- Action buttons: Logout / Change password -->
-      <div class="mt-4 w-full flex flex-row gap-3 items-center justify-between">
+      <div class="mt-4 w-full flex flex-row gap-2 items-center justify-between">
         <a href="{% url 'accounts:change_password' %}"
-          class="w-full sm:w-auto text-center px-4 py-2 bg-white border border-gray-200 rounded-lg text-sm hover:bg-gray-50">
+          class="flex-1 text-center px-4 py-2 bg-white border border-gray-300 rounded-lg text-sm hover:bg-gray-50">
           Đổi mật khẩu
         </a>
-        <form method="post" action="{% url 'accounts:logout' %}" class="w-full sm:w-auto">
+        <form method="post" action="{% url 'accounts:logout' %}" class="flex-1 flex">
           {% csrf_token %}
           <button type="submit"
-            class="cursor-pointer w-full sm:w-auto px-4 py-2 bg-white border border-gray-200 rounded-lg text-sm hover:bg-gray-50">
+            class="cursor-pointer flex-1 px-4 py-2 bg-white border border-gray-300 rounded-lg text-sm hover:bg-gray-50">
             Đăng xuất
           </button>
         </form>
@@ -46,58 +46,24 @@
     </aside>
 
     <!-- CỘT PHẢI: Đơn hàng -->
-    <main class="flex-[3] rounded-2xl shadow border border-gray-200 p-8">
+    <main class="flex-[3] rounded-2xl shadow border border-gray-300 p-8">
       <div class="flex items-center justify-between mb-4">
         <h2 class="text-lg font-semibold">Đơn hàng của tôi</h2>
         <div class="text-sm text-gray-500">Tổng {{ orders|length }} đơn</div>
       </div>
 
       <div class="space-y-4">
-        {% for order in orders %}
-        <div class="bg-white border rounded-lg p-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-          <div>
-            <div class="text-sm text-gray-500">Mã đơn:</div>
-            <div class="font-mono font-semibold text-indigo-600">{{ order.code }}</div>
-          </div>
-          <div>
-            <div class="text-sm text-gray-500">Tổng giá:</div>
-            <div class="font-semibold">{{ order.total|floatformat:0 }} ₫</div>
-          </div>
-          <div>
-            <div class="text-sm text-gray-500">Trạng thái:</div>
-            {% if order.status == 'delivering' %}
-            <span
-              class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-yellow-100 text-yellow-800">
-              Đang giao
-            </span>
-            {% elif order.status == 'success' %}
-            <span
-              class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-800">
-              Thành công
-            </span>
-            {% elif order.status == 'cancelled' %}
-            <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-red-100 text-red-800">
-              Đã hủy
-            </span>
-            {% endif %}
-          </div>
-          <div>
-            {% if order.status == 'delivering' %}
-            <button hx-post="{% url 'cancel_order' order.id %}"
-              hx-confirm="Bạn có chắc muốn hủy đơn {{ order.code }} không?"
-              class="px-3 py-2 rounded-lg border text-sm hover:bg-gray-50">
-              Hủy đơn
-            </button>
-            {% else %}
-            <button disabled class="px-3 py-2 rounded-lg border text-sm opacity-50 cursor-not-allowed">
-              {{ order.get_status_display }}
-            </button>
-            {% endif %}
-          </div>
-        </div>
-        {% empty %}
-        <p class="text-gray-400 text-sm">Bạn chưa có đơn hàng nào.</p>
+        {% if orders %}
+        <div id="orders-list" class="space-y-3">
+          {% for order in orders %}
+          {% include "orders/partials/order_card.html" with order=order %}
         {% endfor %}
+        </div>
+        {% else %}
+        <p class="text-gray-400 text-sm">Bạn chưa có đơn hàng nào.</p>
+        {% endif %}
+        <!-- container where order_detail partial will be injected -->
+        <div id="order-detail" class="mt-4"></div>
       </div>
     </main>
   </div>
