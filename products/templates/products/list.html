@@ -25,6 +25,7 @@
                hx-get="{% url 'products:list' %}"
                hx-target="#product-list"
                hx-swap="innerHTML"
+               hx-push-url="true"
                class="block text-gray-600 hover:text-black transition">
               Tất cả sản phẩm
             </a>
@@ -34,7 +35,8 @@
             <a href="{% url 'products:category' category.slug %}"
                hx-get="{% url 'products:category' category.slug %}"
                hx-target="#product-list"
-               hx-swap="innerHTML"
+               hx-swap="innerHTML"  
+               hx-push-url="true"
                class="block text-gray-600 hover:text-black transition">
               {{ category.name }}
             </a>
@@ -52,16 +54,19 @@
       <div class="flex justify-end items-center mb-4">
         <label for="sort" class="text-sm text-gray-700 mr-2">Sắp xếp theo:</label>
         <select id="sort"
-                name="sort"
-                hx-get="{% if slug %}{% url 'products:category' slug %}{% else %}{% url 'products:list' %}{% endif %}"
-                hx-target="#product-list"
-                hx-swap="innerHTML"
-                class="border border-gray-300 rounded-md px-2 py-1 text-sm"
-                onchange="this.setAttribute('hx-vals', JSON.stringify({sort: this.value}))">
-          <option value="">Mặc định</option>
-          <option value="price_asc" {% if sort == 'price_asc' %}selected{% endif %}>Giá: Thấp đến cao</option>
-          <option value="price_desc" {% if sort == 'price_desc' %}selected{% endif %}>Giá: Cao đến thấp</option>
-        </select>
+          name="sort"
+          hx-get="{% if slug %}{% url 'products:category' slug %}{% endif %}"
+          hx-target="#product-list"
+          hx-swap="innerHTML"
+          hx-push-url="true"
+          onchange="this.setAttribute('hx-vals', JSON.stringify({sort: this.value}))"
+          class="border border-gray-300 rounded-md px-2 py-1 text-sm">
+
+    <option value="">Mặc định</option>
+    <option value="price_asc" {% if sort == 'price_asc' %}selected{% endif %}>Giá: Thấp → Cao</option>
+    <option value="price_desc" {% if sort == 'price_desc' %}selected{% endif %}>Giá: Cao → Thấp</option>
+</select>
+
       </div>
 
       <div id="product-list">
