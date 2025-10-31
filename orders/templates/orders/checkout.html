@@ -1,0 +1,181 @@
+{% extends "base.html" %}
+{% load vn_currency %}
+{% load static %}
+
+{% block title %}Thanh toán - Luxora{% endblock %}
+
+{% block content %}
+<div class="max-w-screen-2xl mx-auto p-8 bg-white">
+
+  <!-- ===== HEADER ===== -->
+  <div class="text-center mb-8">
+    <h1 class="text-3xl font-bold text-gray-900 tracking-tight">Thanh toán đơn hàng</h1>
+    <p class="text-gray-500 mt-1 text-sm">
+      Hoàn tất đơn hàng của bạn tại <span class="font-semibold text-[#FF5532]">Luxora</span>
+    </p>
+  </div>
+
+  <!-- ===== LAYOUT 2 CỘT ===== -->
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+
+    <!-- ===== CỘT TRÁI: FORM GIAO HÀNG ===== -->
+    <div class="bg-gray-50 border border-gray-300 rounded-2xl p-8">
+      <h2 class="text-lg font-semibold text-gray-900 mb-4">Thông tin giao hàng</h2>
+
+      <form id="checkout-form" class="space-y-5">
+        {% csrf_token %}
+        {# Nếu user đã đăng nhập: cho chọn địa chỉ có sẵn hoặc thêm mới #}
+        {% if request.user.is_authenticated %}
+          {# include chung partial để HTMX có thể cập nhật ngay trên trang checkout #}
+          <div class="space-y-3">
+            {% include "accounts/partials/address.html" with addresses=request.user.addresses.all %}
+          </div>
+          <div id="new-address-form" class="mt-3"></div>
+         {# Nếu chưa đăng nhập: hiển thị full inputs để khách điền #}
+         {% else %}
+        <div>
+          <label class="block mb-1 text-sm font-medium text-gray-700">Họ tên</label>
+          <input type="text" name="fullname" id="guest-fullname"
+            class="w-full border border-gray-300 p-3 rounded-lg focus:ring-2 focus:ring-[#FF5532] focus:outline-none">
+        </div>
+        <div>
+          <label class="block mb-1 text-sm font-medium text-gray-700">Số điện thoại</label>
+          <input type="text" name="phone" id="guest-phone"
+            class="w-full border border-gray-300 p-3 rounded-lg focus:ring-2 focus:ring-[#FF5532] focus:outline-none">
+        </div>
+        <div>
+          <label class="block mb-1 text-sm font-medium text-gray-700">Địa chỉ</label>
+          <input type="text" name="address" id="guest-address"
+            class="w-full border border-gray-300 p-3 rounded-lg focus:ring-2 focus:ring-[#FF5532] focus:outline-none">
+        </div>
+        {% endif %}
+       </form>
+     </div>
+
+    <!-- ===== CỘT PHẢI: TÓM TẮT ĐƠN HÀNG ===== -->
+    <div class="bg-gray-50 border border-gray-300 rounded-2xl p-8">
+      <h2 class="text-lg font-semibold text-gray-900">Tóm tắt đơn hàng</h2>
+      <ul class="divide-y divide-gray-200 mb-2">
+        {% for item in cart.items.all %}
+        <li class="py-3 text-gray-700 text-xs">
+          <div class="flex justify-between text-sm">
+            <span class="truncate font-semibold">{{ item.product.name }} × {{ item.quantity }}</span>
+            <span class="font-semibold">{{ item.subtotal|vnd }} VND</span>
+          </div>
+          <div class="text-gray-500 text-xs mt-1">
+            {{ item.product.price|vnd }} VND / sản phẩm
+          </div>
+        </li>
+        {% endfor %}
+      </ul>
+
+      <div class="flex justify-between text-lg font-semibold mb-4">
+        <span>Tổng cộng:</span>
+        <span class="text-[#FF5532]">{{ cart.total_price|vnd }} VND</span>
+      </div>
+
+      <!-- Nút hành động -->
+      <div class="flex justify-between gap-4">
+        <button type="button" id="back-to-cart"
+          class="bg-gray-200 text-gray-800 px-6 py-2 rounded-full hover:bg-gray-300 transition">
+          Quay lại giỏ hàng
+        </button>
+        <button type="button" id="confirm-payment"
+          class="bg-[#FF5532] text-white px-6 py-2 rounded-full font-semibold hover:opacity-90 transition">
+          Xác nhận đặt hàng
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Thông báo -->
+  <div id="checkout-message" class="hidden mt-6 mb-4 px-4 py-3 rounded-lg text-sm font-medium"></div>
+
+</div>
+
+<!-- FOOTER SPACING -->
+<div class="h-16"></div>
+
+<!-- ===== JS ===== -->
+<script>
+  document.getElementById('back-to-cart').onclick = () => {
+    window.location.href = "{% url 'cart:cart' %}";
+  };
+
+  async function gatherAddressData() {
+    const form = document.getElementById('checkout-form');
+    const data = new FormData();
+
+    // 1) radio được chọn (nếu có)
+    const radio = form.querySelector('input[name="address_id"]:checked');
+    if (radio) {
+      data.append('address_id', radio.value);
+      return data;
+    }
+
+    // 2) chưa có radio: cố tìm badge "Mặc định" trong danh sách địa chỉ và lấy id từ container address-<id>
+    const shippingList = document.getElementById('shipping-list');
+    if (shippingList) {
+      const spans = shippingList.querySelectorAll('span');
+      for (const s of spans) {
+        if (s.textContent && s.textContent.trim().includes('Mặc định')) {
+          const card = s.closest('[id]');
+          if (card && card.id && card.id.startsWith('address-')) {
+            const m = card.id.match(/address-(\d+)/);
+            if (m) {
+              data.append('address_id', m[1]);
+              return data;
+            }
+          }
+        }
+      }
+    }
+
+    // 3) nếu có form thêm địa chỉ (HTMX injected), thu its inputs
+    const newForm = document.querySelector('#new-address-form form') || document.querySelector('#shipping-form form');
+    if (newForm) {
+      newForm.querySelectorAll('input,textarea').forEach(i => {
+        if (i.name) data.append(i.name, i.value);
+      });
+      return data;
+    }
+
+    // 4) guest inputs
+    const fullname = document.getElementById('guest-fullname');
+    const phone = document.getElementById('guest-phone');
+    const address = document.getElementById('guest-address');
+    if (fullname && phone && address) {
+      data.append('fullname', fullname.value.trim());
+      data.append('phone', phone.value.trim());
+      data.append('address', address.value.trim());
+      return data;
+    }
+
+    return data;
+  }
+
+  document.getElementById('confirm-payment').addEventListener('click', async () => {
+    const addrData = await gatherAddressData();
+    if (!addrData.has('address_id') && (!addrData.get('fullname') || !addrData.get('phone') || !addrData.get('address'))) {
+      alert("Vui lòng chọn hoặc nhập địa chỉ giao hàng!");
+      return;
+    }
+
+    const csrf = document.querySelector('input[name=\"csrfmiddlewaretoken\"]');
+    if (csrf) addrData.append('csrfmiddlewaretoken', csrf.value);
+
+    try {
+      const response = await fetch("{% url 'orders:checkout_confirm' %}", {
+        method: "POST",
+        body: addrData,
+        credentials: 'same-origin'
+      });
+      const data = await response.json();
+      alert(data.message);
+      if (data.success) window.location.href = "{% url 'accounts:profile' %}";
+    } catch (err) {
+      alert("Đã có lỗi, thử lại sau.");
+    }
+  });
+</script>
+{% endblock %}

@@ -1,0 +1,31 @@
+{% extends "accounts/acc_layout.html" %}
+{% block title %}Đăng nhập - Luxora{% endblock %}
+{% block acc_content %}
+<h2 class="text-2xl font-semibold text-center mb-6">Đăng nhập</h2>
+
+<form method="post" class="space-y-4">
+  {% csrf_token %}
+  
+  <div>
+    <label for="username" class="block text-sm font-medium text-gray-700">Tên đăng nhập</label>
+    <input type="text" name="username" id="username" required
+      class="mt-1 block w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+  </div>
+
+  <div>
+    <label for="password" class="block text-sm font-medium text-gray-700">Mật khẩu</label>
+    <input type="password" name="password" id="password" required
+      class="mt-1 block w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+  </div>
+
+  <button type="submit" 
+    class="w-full bg-black text-white py-2 rounded-lg hover:opacity-80 active:opacity-100 transition mt-4">
+    Đăng nhập
+  </button>
+
+  <div class="text-center text-sm text-gray-500 mt-4">
+    <a href="{% url 'accounts:register' %}" class="text-indigo-600 hover:underline">Đăng ký</a> ·
+    <a href="{% url 'accounts:password_reset' %}" class="text-indigo-600 hover:underline">Quên mật khẩu?</a>
+  </div>
+</form>
+{% endblock %}

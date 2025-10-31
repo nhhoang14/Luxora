@@ -1,0 +1,33 @@
+<div class="p-6 bg-gray-50 border rounded-lg mt-4">
+    <form
+        hx-post="{% if address and address.id %}{% url 'accounts:edit_address' address.id %}{% else %}{% url 'accounts:add_address' %}{% endif %}"
+        hx-target="#shipping-form" hx-swap="innerHTML" class="space-y-3">
+        {% csrf_token %}
+        {% if errors %}
+        <div class="text-sm text-red-600 bg-red-50 border border-red-100 p-3 rounded">
+            {{ errors.0 }}
+        </div>
+        {% endif %}
+        <div>
+            <label class="text-sm text-gray-700">Người nhận</label>
+            <input name="recipient_name" value="{{ address.recipient_name|default_if_none:'' }}"
+                class="w-full border rounded px-3 py-2 text-sm">
+        </div>
+        <div>
+            <label class="text-sm text-gray-700">Địa chỉ</label>
+            <input name="address" value="{{ address.address|default_if_none:'' }}"
+                class="w-full border rounded px-3 py-2 text-sm">
+        </div>
+        <div>
+            <label class="text-sm text-gray-700">Số điện thoại</label>
+            <input name="phone" value="{{ address.phone|default_if_none:'' }}"
+                class="w-full border rounded px-3 py-2 text-sm">
+        </div>
+
+        <div class="flex w-full gap-2 justify-end mt-4">
+            <button type="submit" class="px-4 py-2 bg-black text-white rounded">Lưu</button>
+            <button type="button" class="px-4 py-2 border rounded"
+                onclick="document.getElementById('shipping-form').innerHTML=''">Hủy</button>
+        </div>
+    </form>
+</div>

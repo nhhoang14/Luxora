@@ -1,0 +1,32 @@
+{% load vn_currency %}
+
+<div class="bg-white border rounded-lg p-4 space-y-3">
+  <div class="flex justify-between items-start">
+    <div>
+      <div class="text-sm text-gray-500">Mã đơn</div>
+      <div class="font-mono font-semibold text-black">#{{ order.id }}</div>
+    </div>
+    <div class="text-sm text-gray-500">Trạng thái: <span class="font-medium">{{ order.get_status_display }}</span></div>
+  </div>
+
+  <div>
+    <div class="text-sm text-gray-500">Sản phẩm</div>
+    <ul class="mt-2 space-y-2">
+      {% for item in order.items.all %}
+      <li class="flex justify-between text-sm">
+        <span>{{ item.product.name }} × {{ item.quantity }}</span>
+        <span class="font-medium">{{ item.subtotal|vnd }} VND</span>
+      </li>
+      {% empty %}
+      <li class="text-sm text-gray-400">Không có sản phẩm</li>
+      {% endfor %}
+    </ul>
+  </div>
+
+  <div class="flex justify-end gap-2">
+    <button type="button" class="px-3 py-2 border rounded text-sm"
+            onclick="document.getElementById('order-{{ order.id }}-detail').innerHTML=''">
+      Đóng
+    </button>
+  </div>
+</div>
