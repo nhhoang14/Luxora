@@ -147,12 +147,15 @@ def order_list(request):
 def cancel_order(request, order_id):
     if request.method != "POST":
         return JsonResponse({"success": False, "message": "Invalid method"}, status=405)
+
     order = get_object_or_404(Order, id=order_id, user=request.user)
-    if getattr(order, "status", None) in ("pending", "shipping", "processing"):
+
+    if getattr(order, "status", None) in ("pending", "shipping"):
         order.status = "cancelled"
         order.save()
-        # after cancel, return updated orders list fragment so client can replace it
-        orders = get_user_orders_ordered(request.user)
-        html = render(request, 'orders/partials/orders_list.html', {'orders': orders}).content
+
+        # chỉ render lại card của đơn này
+        html = render(request, 'orders/partials/card_order.html', {'order': order}).content.decode('utf-8')
         return HttpResponse(html)
+
     return JsonResponse({"success": False, "message": "Không thể hủy đơn hàng ở trạng thái này."}, status=400)
