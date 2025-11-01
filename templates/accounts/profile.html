@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+{% block title %}Your Profile{% endblock %}
+{% block content %}
+<h1 class="text-xl font-semibold mb-6">Your Profile</h1>
+
+<div id="avatar-wrap" class="flex items-center space-x-6">
+  {% include 'accounts/_avatar_partial.html' %}
+  <form 
+    id="avatar-form" 
+    hx-post="{% url 'update_avatar' %}" 
+    hx-target="#avatar-wrap" 
+    hx-swap="outerHTML" 
+    method="post" enctype="multipart/form-data"
+    class="space-y-2"
+  >
+    {% csrf_token %}
+    {{ avatar_form.as_p }}
+    <button class="px-4 py-2 border rounded">Upload new avatar</button>
+  </form>
+</div>
+{% endblock %}

@@ -1,18 +1,22 @@
 from django.urls import path
+from django.contrib.auth import views as auth_views
 from . import views
 
-app_name = 'accounts'
-
 urlpatterns = [
-    path('', views.login_view, name='index'),
-    path('login/', views.login_view, name='login'),
-    path('register/', views.register_view, name='register'),
-    path('logout/', views.logout_view, name='logout'),
+    path('', views.home, name='home'),
+    path('register/', views.register, name='register'),
+    path('login/', auth_views.LoginView.as_view(template_name='accounts/login.html'), name='login'),
+    path('logout/', auth_views.LogoutView.as_view(), name='logout'),
     path('profile/', views.profile, name='profile'),
-    path('password-reset/', views.password_reset_view, name='password_reset'),
-    path('password-change/', views.change_password_view, name='change_password'),
-    path('address/add/', views.add_address, name='add_address'),
-    path('address/<int:address_id>/edit/', views.edit_address, name='edit_address'),
-    path('address/<int:address_id>/delete/', views.delete_address, name='delete_address'),
-    path('address/<int:address_id>/set-default/', views.set_default_address, name='set_default_address'),
+    path('profile/avatar/', views.update_avatar, name='update_avatar'),
+
+    # Addresses
+    path('addresses/', views.address_list, name='address_list'),
+    path('addresses/create/', views.address_create, name='address_create'),
+    path('addresses/<int:pk>/edit/', views.address_edit, name='address_edit'),
+    path('addresses/<int:pk>/delete/', views.address_delete, name='address_delete'),
+    path('addresses/<int:pk>/set-default/', views.address_set_default, name='address_set_default'),
+
+    # Orders
+    path('orders/', views.order_list, name='order_list'),
 ]

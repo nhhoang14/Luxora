@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>{% block title %}Django + HTMX + Tailwind{% endblock %}</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/htmx.org@2.0.2"></script>
+  {% block head %}{% endblock %}
+</head>
+<body class="min-h-screen bg-gray-50 text-gray-900">
+  <nav class="bg-white border-b">
+    <div class="mx-auto max-w-5xl px-4 py-3 flex items-center justify-between">
+      <a href="{% url 'home' %}" class="font-semibold">djhx_project</a>
+      <div class="space-x-4">
+        {% if request.user.is_authenticated %}
+          <a class="text-sm" href="{% url 'profile' %}">Profile</a>
+          <a class="text-sm" href="{% url 'address_list' %}">Addresses</a>
+          <a class="text-sm" href="{% url 'order_list' %}">Orders</a>
+          <a class="text-sm" href="{% url 'logout' %}">Logout</a>
+        {% else %}
+          <a class="text-sm" href="{% url 'login' %}">Login</a>
+          <a class="text-sm" href="{% url 'register' %}">Register</a>
+        {% endif %}
+      </div>
+    </div>
+  </nav>
+  <main class="mx-auto max-w-5xl px-4 py-8">
+    {% block content %}{% endblock %}
+  </main>
+</body>
+</html>
