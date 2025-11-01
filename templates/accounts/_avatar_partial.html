@@ -1,0 +1,8 @@
+{% load static %}
+{% if request.user.profile.avatar %}
+  <img src="{{ request.user.profile.avatar.url }}" alt="avatar" class="h-24 w-24 rounded-full object-cover border">
+{% else %}
+  <div class="h-24 w-24 rounded-full border flex items-center justify-center bg-white">
+    <span class="text-sm text-gray-500">No Avatar</span>
+  </div>
+{% endif %}

@@ -1,0 +1,35 @@
+{% for a in addresses %}
+  <div class="bg-white border rounded p-4 mb-3">
+    <div class="flex items-start justify-between">
+      <div>
+        <div class="font-medium">{{ a.full_name }}{% if a.is_default %} <span class="ml-2 text-xs px-2 py-1 border rounded">Default</span>{% endif %}</div>
+        <div class="text-sm text-gray-600">{{ a.phone }}</div>
+        <div class="text-sm">{{ a.line1 }}{% if a.line2 %}, {{ a.line2 }}{% endif %}, {{ a.city }}, {{ a.state }} {{ a.postal_code }}, {{ a.country }}</div>
+      </div>
+      <div class="space-x-2">
+        <button 
+          class="px-3 py-1 border rounded text-sm"
+          hx-get="{% url 'address_edit' a.pk %}"
+          hx-target="#addresses"
+          hx-swap="innerHTML"
+        >Edit</button>
+        <button 
+          class="px-3 py-1 border rounded text-sm"
+          hx-post="{% url 'address_delete' a.pk %}"
+          hx-target="#addresses"
+          hx-swap="innerHTML"
+        >Delete</button>
+        {% if not a.is_default %}
+        <button 
+          class="px-3 py-1 border rounded text-sm"
+          hx-post="{% url 'address_set_default' a.pk %}"
+          hx-target="#addresses"
+          hx-swap="innerHTML"
+        >Set default</button>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+{% empty %}
+  <div class="text-sm text-gray-600">No addresses yet.</div>
+{% endfor %}

@@ -1,48 +1,30 @@
 from django import forms
-from django.contrib.auth.forms import UserCreationForm, AuthenticationForm, PasswordChangeForm
-from django.contrib.auth import get_user_model
+from django.contrib.auth.models import User
+from .models import Profile, Address
 
-User = get_user_model()
-
-
-class RegisterForm(UserCreationForm):
-    email = forms.EmailField(required=True, label="Email")
+class RegisterForm(forms.ModelForm):
+    password = forms.CharField(widget=forms.PasswordInput)
+    password2 = forms.CharField(label='Confirm password', widget=forms.PasswordInput)
 
     class Meta:
         model = User
-        fields = ['username', 'email', 'password1', 'password2']
+        fields = ('username', 'email')
 
-    def clean_email(self):
-        email = self.cleaned_data.get('email')
-        if User.objects.filter(email=email).exists():
-            raise forms.ValidationError("Email này đã được sử dụng.")
-        return email
+    def clean(self):
+        cleaned = super().clean()
+        if cleaned.get('password') != cleaned.get('password2'):
+            raise forms.ValidationError('Passwords do not match')
+        return cleaned
 
+class AvatarForm(forms.ModelForm):
+    class Meta:
+        model = Profile
+        fields = ('avatar',)
 
-class LoginForm(AuthenticationForm):
-    username = forms.CharField(label="Tên đăng nhập", max_length=100)
-    password = forms.CharField(label="Mật khẩu", widget=forms.PasswordInput)
-
-class CustomPasswordChangeForm(PasswordChangeForm):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-
-        field_attrs = {
-            'class': 'mt-1 block w-full border border-gray-300 rounded-lg px-3 py-2 pr-12 focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm',
+class AddressForm(forms.ModelForm):
+    class Meta:
+        model = Address
+        fields = ("full_name","phone","line1","line2","city","state","postal_code","country","is_default")
+        widgets = {
+            "is_default": forms.CheckboxInput(attrs={"class": "ml-2"}),
         }
-
-        self.fields['old_password'].widget.attrs.update({
-            **field_attrs,
-            'id': 'id_old_password',
-            'placeholder': 'Mật khẩu hiện tại',
-        })
-        self.fields['new_password1'].widget.attrs.update({
-            **field_attrs,
-            'id': 'id_new_password1',
-            'placeholder': 'Mật khẩu mới',
-        })
-        self.fields['new_password2'].widget.attrs.update({
-            **field_attrs,
-            'id': 'id_new_password2',
-            'placeholder': 'Nhập lại mật khẩu mới',
-        })

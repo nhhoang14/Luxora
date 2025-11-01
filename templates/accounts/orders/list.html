@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+{% block title %}Your Orders{% endblock %}
+{% block content %}
+<h1 class="text-xl font-semibold mb-4">Orders</h1>
+
+<div class="bg-white border rounded divide-y">
+  {% for o in orders %}
+  <div class="p-4 flex items-center justify-between">
+    <div>
+      <div class="font-medium">#{{ o.number }}</div>
+      <div class="text-sm text-gray-600">{{ o.created_at }}</div>
+    </div>
+    <div class="text-right">
+      <div class="text-sm">{{ o.get_status_display }}</div>
+      <div class="font-semibold">${{ o.total }}</div>
+    </div>
+  </div>
+  {% empty %}
+  <div class="p-4 text-sm text-gray-600">You have no orders yet.</div>
+  {% endfor %}
+</div>
+{% endblock %}
