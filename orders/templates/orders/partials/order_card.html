@@ -24,7 +24,7 @@
         Tổng: <span class="font-semibold">{{ order.total_amount|vnd }} VND</span>
       </div>
 
-      <!-- 🟢 Thêm trạng thái hiển thị -->
+      <!-- Thêm trạng thái hiển thị -->
       <div class="mt-1 text-sm">
         <span class="
           {% if order.status == 'pending' %} text-yellow-600
@@ -49,8 +49,8 @@
       {% if order.status == 'pending' or order.status == 'shipping' or order.status == 'processing' %}
         <button hx-post="{% url 'orders:cancel_order' order.id %}"
                 hx-confirm="Bạn có chắc muốn hủy đơn {{ order.id }} không?"
-                hx-target="#order-card-{{ order.id }}"  <!-- 🟢 chỉ cập nhật card này -->
-                hx-swap="outerHTML"                    <!-- 🟢 thay toàn bộ card -->
+                hx-target="#order-card-{{ order.id }}" 
+                hx-swap="outerHTML"                    
                 class="px-3 py-2 rounded-lg border text-sm text-red-600 hover:bg-gray-50">
           Hủy
         </button>
