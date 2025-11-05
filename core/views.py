@@ -5,7 +5,7 @@ from .models import ContactMessage
 
 def home_view(request):
     categories = Category.objects.all().order_by('order')  # nếu có field order
-    new_products = Product.objects.order_by('-created_at')[:8]  # 8 sản phẩm mới nhất
+    new_products = Product.objects.order_by('-created_at')[:10]  # 8 sản phẩm mới nhất
     return render(request, 'home.html', {
         'categories': categories,
         'new_products': new_products,
