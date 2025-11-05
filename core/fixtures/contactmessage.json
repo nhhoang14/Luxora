@@ -1,0 +1,12 @@
+[
+  {
+    "model": "core.contactmessage",
+    "pk": 1,
+    "fields": {
+      "name": "hoang",
+      "email": "hg1@gmail.com",
+      "message": "hghdhgsd",
+      "created_at": "2025-11-05T14:20:44.571048+00:00"
+    }
+  }
+]

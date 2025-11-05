@@ -4,7 +4,7 @@
     "pk": 1,
     "fields": {
       "password": "pbkdf2_sha256$1000000$TmWn13nT015tE3UHSnY6gm$CgBJ6y4Wjl1eZDG1iJm8075KZuu0Pe4C5Kb/qpIxpT8=",
-      "last_login": "2025-10-31T01:44:44.531636+00:00",
+      "last_login": "2025-11-05T13:48:16.181988+00:00",
       "is_superuser": true,
       "username": "admin",
       "first_name": "",
@@ -23,7 +23,7 @@
     "pk": 3,
     "fields": {
       "password": "pbkdf2_sha256$1000000$IdRDnsUhoXFe0V5t6TiteF$jnd16YSLYbIqHRB0k1K5GlKh1n3tmOCHoWdA2X1JJXE=",
-      "last_login": "2025-10-31T01:45:26.250201+00:00",
+      "last_login": "2025-11-05T13:48:01.449884+00:00",
       "is_superuser": false,
       "username": "hg",
       "first_name": "",
@@ -31,7 +31,7 @@
       "email": "hg@gmail.com",
       "is_staff": false,
       "is_active": true,
-      "date_joined": "2025-10-30T16:37:23.377866+00:00",
+      "date_joined": "2025-10-30T16:37:23+00:00",
       "avatar": "",
       "groups": [],
       "user_permissions": []
