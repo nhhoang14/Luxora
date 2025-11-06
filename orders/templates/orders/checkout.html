@@ -7,7 +7,7 @@
 {% block content %}
 <div class="max-w-screen-2xl mx-auto p-8 bg-white">
 
-  <!-- ===== HEADER ===== -->
+  <!-- HEADER -->
   <div class="text-center mb-8">
     <h1 class="text-3xl font-bold text-gray-900 tracking-tight">Thanh toán đơn hàng</h1>
     <p class="text-gray-500 mt-1 text-sm">
@@ -15,22 +15,20 @@
     </p>
   </div>
 
-  <!-- ===== LAYOUT 2 CỘT ===== -->
   <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
 
-    <!-- ===== CỘT TRÁI: FORM GIAO HÀNG ===== -->
+    <!-- FORM -->
     <div class="bg-gray-50 border border-gray-300 rounded-2xl p-8">
       <h2 class="text-lg font-semibold text-gray-900 mb-4">Thông tin giao hàng</h2>
 
       <form id="checkout-form" class="space-y-5">
         {% csrf_token %}
-        <div class="space-y-3">
-          {% include "accounts/partials/address.html" with addresses=addresses %}
-        </div>
+        {% include "accounts/partials/address.html" with addresses=addresses %}
       </form>
+
     </div>
 
-    <!-- ===== CỘT PHẢI: TÓM TẮT ĐƠN HÀNG ===== -->
+    <!-- SUMMARY -->
     <div class="bg-gray-50 border border-gray-300 rounded-2xl p-8">
       <h2 class="text-lg font-semibold text-gray-900">Tóm tắt đơn hàng</h2>
       <ul class="divide-y divide-gray-200 mb-2">
@@ -52,82 +50,20 @@
         <span class="text-[#FF5532]">{{ cart.total_price|vnd }} VND</span>
       </div>
 
-      <!-- Nút hành động -->
       <div class="flex justify-between gap-4">
-        <a href="{% url 'cart:cart' %}"
-          class="bg-gray-200 text-gray-800 px-6 py-2 rounded-full hover:bg-gray-300 transition">
+        <a href="{% url 'cart:cart' %}" class="bg-gray-200 text-gray-800 px-6 py-2 rounded-full hover:bg-gray-300 transition">
           Quay lại giỏ hàng
         </a>
-        <button id="confirm-payment" type="button"
+
+        <button 
+          hx-post="{% url 'orders:checkout_confirm' %}"
+          hx-swap="innerHTML"
+          hx-include="#checkout-form"
           class="bg-[#FF5532] text-white px-6 py-2 rounded-full font-semibold hover:opacity-90 transition">
           Xác nhận đặt hàng
         </button>
       </div>
-      <div id="checkout-message" class="hidden" role="status"></div>
     </div>
   </div>
 </div>
-
-<script>
-  (function () {
-    function getCookie(name) { const m = document.cookie.match('(^|;)\\s*' + name + '\\s*=\\s*([^;]+)'); return m ? m.pop() : ''; }
-    async function gatherAddressData() {
-      const data = new FormData();
-      // radio selected on addresses partial (if radios exist)
-      const radio = document.querySelector('input[name="address_id"]:checked');
-      if (radio) { data.append('address_id', radio.value); return data; }
-      // try to pick default address card (badge "Mặc định")
-      const shippingList = document.getElementById('shipping-list');
-      if (shippingList) {
-        const def = shippingList.querySelector('.default-badge') || Array.from(shippingList.querySelectorAll('*')).find(n => n.textContent && n.textContent.includes('Mặc định'));
-        if (def) {
-          const card = def.closest('[id^="address-"]');
-          if (card) { const m = card.id.match(/address-(\d+)/); if (m) { data.append('address_id', m[1]); return data; } }
-        }
-      }
-      // if HTMX injected new address form exists, include its fields
-      const newForm = document.querySelector('#shipping-form form') || document.querySelector('#new-address-form form');
-      if (newForm) { new FormData(newForm).forEach((v, k) => data.append(k, v)); return data; }
-      return data;
-    }
-
-    document.getElementById('confirm-payment').addEventListener('click', async function () {
-      const btn = this; btn.disabled = true;
-      const data = await gatherAddressData();
-      if (!data.has('address_id')) {
-        const msgEl = document.getElementById('checkout-message');
-        msgEl.className = 'mt-6 mb-4 px-4 py-3 rounded-lg text-sm font-medium text-yellow-800 bg-yellow-100';
-        msgEl.textContent = 'Vui lòng chọn hoặc thêm địa chỉ giao hàng.';
-        msgEl.classList.remove('hidden'); msgEl.scrollIntoView({ behavior: 'smooth' }); btn.disabled = false; return;
-      }
-      const csrf = document.querySelector('input[name="csrfmiddlewaretoken"]');
-      if (csrf) data.append('csrfmiddlewaretoken', csrf.value); else data.append('csrfmiddlewaretoken', getCookie('csrftoken'));
-      try {
-        const resp = await fetch("{% url 'orders:checkout_confirm' %}", {
-          method: 'POST',
-          body: data,
-          credentials: 'same-origin'
-        });
-        const json = await resp.json();
-        const msgEl = document.getElementById('checkout-message');
-        if (json.success) {
-          msgEl.className = 'mt-6 mb-4 px-4 py-3 rounded-lg text-sm font-medium text-white bg-green-600';
-          msgEl.textContent = json.message || 'Đặt hàng thành công';
-          msgEl.classList.remove('hidden');
-          setTimeout(() => { window.location.href = json.redirect || "{% url 'accounts:profile' %}"; }, 800);
-        } else {
-          msgEl.className = 'mt-6 mb-4 px-4 py-3 rounded-lg text-sm font-medium text-white bg-red-600';
-          msgEl.textContent = json.message || 'Có lỗi xảy ra';
-          msgEl.classList.remove('hidden');
-          // redirect if backend asks to
-          if (json.redirect) setTimeout(() => window.location.href = json.redirect, 1200);
-        }
-      } catch (e) {
-        const msgEl = document.getElementById('checkout-message');
-        msgEl.className = 'mt-6 mb-4 px-4 py-3 rounded-lg text-sm font-medium text-white bg-red-600';
-        msgEl.textContent = 'Lỗi mạng, thử lại sau.'; msgEl.classList.remove('hidden');
-      } finally { btn.disabled = false; }
-    });
-  })();
-</script>
 {% endblock %}

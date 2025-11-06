@@ -5,7 +5,7 @@ from .models import Order, OrderItem
 from products.models import Product
 from cart.utils import get_cart 
 from django.db import transaction
-from django.http import JsonResponse, HttpResponse
+from django.http import HttpResponseBadRequest, JsonResponse, HttpResponse
 from accounts.models import Address
 from django.db.models import Case, When, Value, IntegerField
 from django.urls import reverse
@@ -30,97 +30,64 @@ def order_checkout(request):
 @login_required
 def order_checkout_confirm(request):
     if request.method != 'POST':
-        return JsonResponse({"success": False, "message": "Invalid method"}, status=405)
+        return HttpResponse('<p class="text-sm font-medium text-red-600">Invalid method</p>', status=405)
 
     cart = get_cart(request, create_if_missing=False)
     if not cart or not cart.items.exists():
-        return JsonResponse({
-            "success": False,
-            "message": "Giỏ hàng trống!",
-            "redirect": reverse('cart:cart')
-        }, status=400)
+        resp = HttpResponse('<p class="text-sm font-medium text-red-600">Giỏ hàng trống!</p>')
+        resp['HX-Redirect'] = reverse('cart:cart')
+        return resp
 
     user = request.user
 
-    # Prefer default address
+    # lấy address (cứ giữ logic cũ y chang, chỉ đổi return)
     default_addr = Address.objects.filter(user=user, is_default=True).first()
-    if default_addr:
-        final_fullname = default_addr.recipient_name
-        final_phone = default_addr.phone
-        final_address = default_addr.address
-    else:
-        # fallback: address_id from form (if user explicitly selected/created)
-        address_id = request.POST.get('address_id')
-        if address_id:
-            try:
-                addr_obj = Address.objects.get(id=int(address_id), user=user)
-                final_fullname = addr_obj.recipient_name
-                final_phone = addr_obj.phone
-                final_address = addr_obj.address
-            except Address.DoesNotExist:
-                return JsonResponse({
-                    "success": False,
-                    "message": "Địa chỉ không hợp lệ. Vui lòng thêm địa chỉ giao hàng.",
-                    "redirect": reverse('accounts:profile')
-                }, status=400)
-        else:
-            return JsonResponse({
-                "success": False,
-                "message": "Bạn chưa có địa chỉ giao hàng. Vui lòng thêm địa chỉ.",
-                "redirect": reverse('accounts:profile')
-            }, status=400)
+    if not default_addr:
+        address_id = request.POST.get("address_id")
+        if not address_id:
+            resp = HttpResponse('<p class="text-sm font-medium text-red-600">Bạn chưa có địa chỉ giao hàng.</p>')
+            resp['HX-Redirect'] = reverse('accounts:profile')
+            return resp
+        try:
+            default_addr = Address.objects.get(id=address_id, user=user)
+        except:
+            resp = HttpResponse('<p class="text-sm font-medium text-red-600">Địa chỉ không hợp lệ.</p>')
+            resp['HX-Redirect'] = reverse('accounts:profile')
+            return resp
 
-    # check stock for all items
+    # check stock
     insufficient = []
-    items = cart.items.select_related('product').all()
-    for item in items:
-        product = item.product
-        qty = item.quantity or 1
-        stock = getattr(product, 'stock', None)
-        if stock is not None and qty > stock:
-            insufficient.append({
-                "name": product.name,
-                "available": stock,
-                "requested": qty
-            })
+    for item in cart.items.select_related('product').all():
+        if item.product.stock is not None and item.quantity > item.product.stock:
+            insufficient.append(f"{item.product.name} chỉ còn {item.product.stock}")
 
     if insufficient:
-        # build readable message
-        parts = [f"{i['name']} chỉ còn {i['available']} (yêu cầu {i['requested']})" for i in insufficient]
-        return JsonResponse({
-            "success": False,
-            "message": "Không thể đặt hàng: " + "; ".join(parts),
-            "redirect": reverse('cart:cart')
-        }, status=400)
+        resp = HttpResponse(f'<p class="text-sm font-medium text-red-600">{"; ".join(insufficient)}</p>')
+        resp['HX-Redirect'] = reverse('cart:cart')
+        return resp
 
-    # all ok -> create order, create items, decrement stock, clear cart
+    # create order
     with transaction.atomic():
         order = Order.objects.create(
             user=user,
-            full_name=final_fullname,
-            phone=final_phone,
-            address=final_address,
+            full_name=default_addr.recipient_name,
+            phone=default_addr.phone,
+            address=default_addr.address
         )
-        for item in items:
-            product = item.product
-            quantity = item.quantity or 1
-            price = getattr(product, 'price', 0)
-            OrderItem.objects.create(order=order, product=product, quantity=quantity, price=price)
-            if getattr(product, 'stock', None) is not None:
-                product.stock = max(0, product.stock - quantity)
-                product.save(update_fields=['stock'])
 
-        # clear cart
+        for item in cart.items.all():
+            OrderItem.objects.create(order=order, product=item.product,
+                                     quantity=item.quantity, price=item.product.price)
+            if item.product.stock is not None:
+                item.product.stock -= item.quantity
+                item.product.save(update_fields=['stock'])
+
         cart.items.all().delete()
         request.session.pop('cart_id', None)
-        request.session.modified = True
 
-    return JsonResponse({
-        "success": True,
-        "message": "Thanh toán thành công! Đơn đã được lưu.",
-        "order_id": order.id,
-        "redirect": reverse('accounts:profile')
-    })
+    resp = HttpResponse('<p class="text-sm font-medium text-green-600">Thanh toán thành công!</p>')
+    resp['HX-Redirect'] = reverse('accounts:profile')
+    return resp
 
 
 @login_required
