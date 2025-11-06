@@ -33,6 +33,7 @@
 
                 <input type="number" name="qty" min="0" value="{{ item.quantity }}" data-initial="{{ item.quantity }}"
                     class="w-12 h-10 border border-gray-300 rounded-lg text-center text-xs focus:outline-none focus:ring focus:ring-gray-200"
+                    max="{{ item.product.stock }}"
                     hx-on="blur: if (this.value != this.getAttribute('data-initial')) { 
                     this.setAttribute('data-initial', this.value); 
                     htmx.trigger(this.form, 'submit'); 
