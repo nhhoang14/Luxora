@@ -3,24 +3,62 @@
 <div id="order-card-{{ order.id }}" class="bg-white border rounded-lg p-4 flex flex-col gap-3">
   <div class="flex justify-between items-start">
     <div>
-      <div class="text-sm text-gray-500">Mã đơn</div>
-      <div class="font-mono font-semibold text-indigo-600">#{{ order.id }}</div>
+      <div>
+        <span class="text-sm font-semibold text-black">Mã đơn:</span>
+        <span class="font-mono font-semibold text-indigo-600">#{{ order.id }}</span>
+      </div>
 
       {% with first_item=order.items.all|first %}
         {% if first_item %}
-        <div class="text-sm text-gray-500 mt-1">Sản phẩm chính</div>
-        <div class="text-sm text-gray-700">
-          {{ first_item.product.name }}
-          {% if order.items.count > 1 %}
-            và {{ order.items.count|add:"-1" }} sản phẩm khác
-          {% endif %}
+        <div class="mt-2 flex items-start gap-4">
+          <!-- ảnh sản phẩm đầu tiên -->
+          <div class="w-20 h-20 rounded-md overflow-hidden bg-gray-50 flex-shrink-0">
+            {% if first_item.product and first_item.product.image %}
+              <img src="{{ first_item.product.image.url }}" alt="{{ first_item.product.name }}" class="w-full h-full object-cover">
+            {% endif %}
+          </div>
+
+          <!-- tên, giá, qty -->
+          <div class="min-w-0 items-start">
+            <div class="text-sm text-gray-500">Sản phẩm chính</div>
+            <div class="font-semibold text-gray-900 truncate">{{ first_item.product.name }}</div>
+            <div class="text-sm text-gray-600 mt-1">
+              <span class="font-medium tabular-nums">{{ first_item.price|vnd }} VND</span>
+              &nbsp;•&nbsp;
+              Số lượng: <span class="font-medium">{{ first_item.quantity }}</span>
+            </div>
+
+            <!-- nếu có nhiều hơn 1 sản phẩm: nút mở thêm -->
+            {% if order.items.count > 1 %}
+              <button type="button" onclick="document.getElementById('order-{{ order.id }}-more').classList.toggle('hidden')"
+                      class="mt-3 text-sm text-indigo-600 hover:underline">
+                Xem thêm {{ order.items.count|add:'-1' }} sản phẩm khác
+              </button>
+
+              <div id="order-{{ order.id }}-more" class="hidden mt-3 space-y-2">
+                {% for extra in order.items.all|slice:"1:" %}
+                  <div class="flex items-center gap-3">
+                    <div class="w-12 h-12 rounded-md overflow-hidden bg-gray-50 flex-shrink-0">
+                      {% if extra.product and extra.product.image %}
+                        <img src="{{ extra.product.image.url }}" alt="{{ extra.product.name }}" class="w-full h-full object-cover">
+                      {% endif %}
+                    </div>
+                    <div class="min-w-0">
+                      <div class="text-sm font-medium truncate">{{ extra.product.name }}</div>
+                      <div class="text-xs text-gray-500">{{ extra.price|vnd}} VND x {{ extra.quantity }}</div>
+                    </div>
+                  </div>
+                {% endfor %}
+              </div>
+            {% endif %}
+          </div>
         </div>
         {% else %}
         <div class="text-sm text-gray-400 mt-1">Không có sản phẩm</div>
         {% endif %}
       {% endwith %}
 
-      <div class="text-sm text-gray-500 mt-1">
+      <div class="text-sm text-gray-500 mt-3">
         Tổng: <span class="font-semibold">{{ order.total_amount|vnd }} VND</span>
       </div>
 
@@ -40,24 +78,22 @@
 
     <div class="flex items-center gap-2">
       <button hx-get="{% url 'orders:order_detail' order.id %}"
-              hx-target="#order-{{ order.id }}-detail"
+              hx-target="#global-order-detail"
               hx-swap="innerHTML"
-              class="px-3 py-2 rounded-lg border text-sm hover:bg-gray-50">
+              class="cursor-pointer px-3 py-2 rounded-lg border text-sm hover:bg-gray-50">
         Xem
       </button>
 
       {% if order.status == 'pending' or order.status == 'shipping' or order.status == 'processing' %}
         <button hx-post="{% url 'orders:cancel_order' order.id %}"
                 hx-confirm="Bạn có chắc muốn hủy đơn {{ order.id }} không?"
-                hx-target="#order-card-{{ order.id }}" 
-                hx-swap="outerHTML"                    
-                class="px-3 py-2 rounded-lg border text-sm text-red-600 hover:bg-gray-50">
+                hx-target="#order-card-{{ order.id }}"
+                hx-swap="outerHTML"
+                class="cursor-pointer px-3 py-2 rounded-lg border text-sm text-red-600 hover:bg-gray-50">
           Hủy
         </button>
       {% endif %}
     </div>
   </div>
 
-  <!-- inline detail container -->
-  <div id="order-{{ order.id }}-detail" class="mt-3"></div>
 </div>

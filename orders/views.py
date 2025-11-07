@@ -9,6 +9,7 @@ from django.http import HttpResponseBadRequest, JsonResponse, HttpResponse
 from accounts.models import Address
 from django.db.models import Case, When, Value, IntegerField
 from django.urls import reverse
+from django.template.loader import render_to_string
 
 # helper: ordered queryset where cancelled orders are placed last
 def get_user_orders_ordered(user):
@@ -133,10 +134,12 @@ def cancel_order(request, order_id):
         order.status = "cancelled"
         order.save(update_fields=["status"])
 
-    # Nếu request từ HTMX, trả partial cập nhật danh sách đơn
+    # Nếu request từ HTMX: trả về updated order-card (oob) và clear detail (oob) để update UI ngay
     if request.headers.get("HX-Request"):
-        orders = get_user_orders_ordered(request.user)
-        html = render(request, 'orders/partials/orders_list.html', {'orders': orders}).content.decode('utf-8')
-        return HttpResponse(html)
+        # main swap: updated card HTML
+        card_html = render_to_string('orders/partials/order_card.html', {'order': order}, request=request)
+        # out-of-band clear: clear global detail container so modal/inline closes
+        clear_detail = '<div id="global-order-detail" hx-swap-oob="true"></div>'
+        return HttpResponse(card_html + clear_detail, content_type='text/html')
 
     return JsonResponse({"success": True, "message": "Đã hủy đơn hàng và trả lại tồn kho."})

@@ -54,6 +54,7 @@
 
       <div class="space-y-4">
         {% if orders %}
+        <div id="global-order-detail"> </div>
         <div id="orders-list" class="space-y-3">
           {% for order in orders %}
           {% include "orders/partials/order_card.html" with order=order %}
