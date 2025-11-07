@@ -120,7 +120,7 @@
       </div>
 
       <!-- Cart -->
-      <label for="cart-drawer" class="btn btn-xl btn-ghost btn-circle">
+      <label id="cart-drawer-toggle" for="cart-drawer" class="btn btn-xl btn-ghost btn-circle">
         <span class="material-symbols-outlined">
           local_mall
         </span>
@@ -168,6 +168,28 @@
           clearActive();
         });
       }
+
+      // Nếu đang ở trang cart hoặc checkout: click icon sẽ chuyển trang cart (không mở drawer)
+      (function disableDrawerOnCartPages(){
+        const cartToggleLabel = document.getElementById('cart-drawer-toggle');
+        if(!cartToggleLabel) return;
+        const cartUrl = "{% url 'cart:cart' %}";
+        const checkoutUrl = "{% url 'orders:checkout' %}";
+        const path = window.location.pathname.replace(/\/+$/, ''); // remove trailing slash
+
+        // normalize urls without trailing slash for comparison
+        const normalizedCartUrl = cartUrl.replace(/\/+$/, '');
+        const normalizedCheckoutUrl = checkoutUrl.replace(/\/+$/, '');
+
+        if (path === normalizedCartUrl || path === normalizedCheckoutUrl) {
+          // replace label (which toggles drawer) by an anchor to cart page
+          const a = document.createElement('a');
+          a.href = cartUrl;
+          a.className = cartToggleLabel.className;
+          a.innerHTML = cartToggleLabel.innerHTML;
+          cartToggleLabel.replaceWith(a);
+        }
+      })();
     });
   </script>
 </header>

@@ -9,7 +9,7 @@
 
   <div class="bg-transparent p-6 flex gap-8">
     <!-- CỘT TRÁI: Thông tin + địa chỉ -->
-    <aside class="flex-[1] flex flex-col items-center rounded-2xl shadow border border-gray-300 p-8">
+    <aside class="flex-[1] h-fit self-start flex flex-col items-center rounded-2xl shadow border border-gray-300 p-8 sticky top-25 self-start">
       <!-- Avatar -->
       <div class="w-28 h-28 rounded-full overflow-hidden border shadow-sm flex items-center justify-center bg-gray-100">
         <img src="{% static 'accounts/images/avatar-default.svg' %}" alt="Avatar" class="w-[80%] h-[80%] object-cover block">
@@ -54,6 +54,7 @@
 
       <div class="space-y-4">
         {% if orders %}
+        <div id="global-order-detail"> </div>
         <div id="orders-list" class="space-y-3">
           {% for order in orders %}
           {% include "orders/partials/order_card.html" with order=order %}

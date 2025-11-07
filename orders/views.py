@@ -1,13 +1,15 @@
-from pyexpat.errors import messages
+from django.contrib import messages
 from django.shortcuts import redirect, render, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from .models import Order, OrderItem
 from products.models import Product
-from cart.utils import get_cart  # dùng hàm get_cart của app cart
+from cart.utils import get_cart 
 from django.db import transaction
-from django.http import JsonResponse, HttpResponse
+from django.http import HttpResponseBadRequest, JsonResponse, HttpResponse
 from accounts.models import Address
 from django.db.models import Case, When, Value, IntegerField
+from django.urls import reverse
+from django.template.loader import render_to_string
 
 # helper: ordered queryset where cancelled orders are placed last
 def get_user_orders_ordered(user):
@@ -22,113 +24,71 @@ def get_user_orders_ordered(user):
 
 @login_required
 def order_checkout(request):
-    """
-    GET: hiển thị form checkout (lấy cart từ get_cart)
-    """
     cart = get_cart(request, create_if_missing=False)
-
-    # nếu không có cart hoặc rỗng -> quay về trang giỏ hàng
-    if not cart or not getattr(cart, "items", None) or not cart.items.exists():
-        messages.warning(request, "Giỏ hàng của bạn đang trống!")
-        return redirect('cart:cart')
-
-    # Only GET here; POST handled by order_checkout_confirm
-    return render(request, 'orders/checkout.html', {'cart': cart})
-
+    addresses = Address.objects.filter(user=request.user).order_by('-is_default', '-id')
+    return render(request, 'orders/checkout.html', {'cart': cart, 'addresses': addresses})
 
 @login_required
 def order_checkout_confirm(request):
-    """
-    Xử lý POST xác nhận thanh toán (AJAX). Trả JSON.
-    Hỗ trợ:
-     - Nếu user đăng nhập và có địa chỉ mặc định -> luôn dùng địa chỉ mặc định
-     - Nếu user đăng nhập và không có mặc định -> fallback sang address_id / new address / default logic cũ
-     - Nếu user không đăng nhập -> fullname/phone/address bắt buộc
-    """
     if request.method != 'POST':
-        return JsonResponse({"success": False, "message": "Invalid method"}, status=405)
+        return HttpResponse('<p class="text-sm font-medium text-red-600">Invalid method</p>', status=405)
 
     cart = get_cart(request, create_if_missing=False)
-    if not cart or not getattr(cart, "items", None) or not cart.items.exists():
-        return JsonResponse({"success": False, "message": "Giỏ hàng trống"}, status=400)
+    if not cart or not cart.items.exists():
+        resp = HttpResponse('<p class="text-sm font-medium text-red-600">Giỏ hàng trống!</p>')
+        resp['HX-Redirect'] = reverse('cart:cart')
+        return resp
 
-    user = request.user if request.user.is_authenticated else None
+    user = request.user
 
-    # priority: address_id radio / provided fields (kept for fallback if no default)
-    address_id = request.POST.get('address_id')
-    full_name = request.POST.get('fullname') or request.POST.get('full_name')
-    phone = request.POST.get('phone')
-    address_text = request.POST.get('address')
-    save_address = request.POST.get('save_address') in ('1', 'on', 'true')
-    make_default = request.POST.get('is_default') in ('1', 'on', 'true')
+    # lấy address (cứ giữ logic cũ y chang, chỉ đổi return)
+    default_addr = Address.objects.filter(user=user, is_default=True).first()
+    if not default_addr:
+        address_id = request.POST.get("address_id")
+        if not address_id:
+            resp = HttpResponse('<p class="text-sm font-medium text-red-600">Bạn chưa có địa chỉ giao hàng.</p>')
+            resp['HX-Redirect'] = reverse('accounts:profile')
+            return resp
+        try:
+            default_addr = Address.objects.get(id=address_id, user=user)
+        except:
+            resp = HttpResponse('<p class="text-sm font-medium text-red-600">Địa chỉ không hợp lệ.</p>')
+            resp['HX-Redirect'] = reverse('accounts:profile')
+            return resp
 
-    # determine final full_name/phone/address
-    if user:
-        # ALWAYS prefer default address if available
-        default_addr = Address.objects.filter(user=user, is_default=True).first()
-        if default_addr:
-            final_fullname = default_addr.recipient_name
-            final_phone = default_addr.phone
-            final_address = default_addr.address
-        else:
-            # fallback to previous behaviour
-            if address_id:
-                try:
-                    addr_obj = Address.objects.get(id=int(address_id), user=user)
-                    final_fullname = addr_obj.recipient_name
-                    final_phone = addr_obj.phone
-                    final_address = addr_obj.address
-                except Address.DoesNotExist:
-                    return JsonResponse({"success": False, "message": "Địa chỉ không hợp lệ"}, status=400)
-            elif full_name and phone and address_text:
-                final_fullname = full_name.strip()
-                final_phone = phone.strip()
-                final_address = address_text.strip()
+    # check stock
+    insufficient = []
+    for item in cart.items.select_related('product').all():
+        if item.product.stock is not None and item.quantity > item.product.stock:
+            insufficient.append(f"{item.product.name} chỉ còn {item.product.stock}")
 
-                if save_address:
-                    # only save when user has less than 3 addresses
-                    if user.addresses.count() < 3:
-                        addr = Address(user=user, recipient_name=final_fullname, phone=final_phone, address=final_address, is_default=make_default)
-                        try:
-                            addr.full_clean()
-                            addr.save()
-                        except Exception:
-                            pass
-            else:
-                # no address provided and no default -> error
-                return JsonResponse({"success": False, "message": "Vui lòng chọn hoặc thêm địa chỉ giao hàng."}, status=400)
-    else:
-        # guest checkout: require fullname/phone/address_text
-        if not (full_name and phone and address_text):
-            return JsonResponse({"success": False, "message": "Vui lòng nhập đầy đủ thông tin giao hàng"}, status=400)
-        final_fullname = full_name.strip()
-        final_phone = phone.strip()
-        final_address = address_text.strip()
+    if insufficient:
+        resp = HttpResponse(f'<p class="text-sm font-medium text-red-600">{"; ".join(insufficient)}</p>')
+        resp['HX-Redirect'] = reverse('cart:cart')
+        return resp
 
-    # create order and items
+    # create order
     with transaction.atomic():
         order = Order.objects.create(
             user=user,
-            full_name=final_fullname,
-            phone=final_phone,
-            address=final_address,
+            full_name=default_addr.recipient_name,
+            phone=default_addr.phone,
+            address=default_addr.address
         )
-        for item in cart.items.all():
-            product = item.product
-            quantity = item.quantity or 1
-            price = getattr(product, 'price', 0)
-            OrderItem.objects.create(order=order, product=product, quantity=quantity, price=price)
 
-        # clear cart
+        for item in cart.items.all():
+            OrderItem.objects.create(order=order, product=item.product,
+                                     quantity=item.quantity, price=item.product.price)
+            if item.product.stock is not None:
+                item.product.stock -= item.quantity
+                item.product.save(update_fields=['stock'])
+
         cart.items.all().delete()
         request.session.pop('cart_id', None)
-        request.session.modified = True
 
-    return JsonResponse({
-        "success": True,
-        "message": "Thanh toán thành công! Đơn đã được lưu.",
-        "order_id": order.id
-    })
+    resp = HttpResponse('<p class="text-sm font-medium text-green-600">Thanh toán thành công!</p>')
+    resp['HX-Redirect'] = reverse('accounts:profile')
+    return resp
 
 
 @login_required
@@ -150,12 +110,36 @@ def cancel_order(request, order_id):
 
     order = get_object_or_404(Order, id=order_id, user=request.user)
 
-    if getattr(order, "status", None) in ("pending", "shipping"):
+    # chỉ cho hủy khi ở trạng thái cho phép
+    if getattr(order, "status", None) not in ("pending", "shipping"):
+        return JsonResponse({"success": False, "message": "Không thể hủy đơn hàng ở trạng thái này."}, status=400)
+
+    # atomic + select_for_update để tránh race khi cập nhật stock
+    with transaction.atomic():
+        order = Order.objects.select_for_update().get(pk=order.pk)
+
+        # nếu đã hủy trước đó thì không làm gì
+        if order.status == "cancelled":
+            return JsonResponse({"success": False, "message": "Đơn hàng đã bị hủy trước đó."}, status=400)
+
+        # Trả lại số lượng cho từng sản phẩm (nếu model Product có trường `stock`)
+        for item in order.items.select_related("product").all():
+            product = item.product
+            if product is None:
+                continue
+            if getattr(product, "stock", None) is not None:
+                product.stock = (product.stock or 0) + (item.quantity or 0)
+                product.save(update_fields=["stock"])
+
         order.status = "cancelled"
-        order.save()
+        order.save(update_fields=["status"])
 
-        # chỉ render lại card của đơn này
-        html = render(request, 'orders/partials/card_order.html', {'order': order}).content.decode('utf-8')
-        return HttpResponse(html)
+    # Nếu request từ HTMX: trả về updated order-card (oob) và clear detail (oob) để update UI ngay
+    if request.headers.get("HX-Request"):
+        # main swap: updated card HTML
+        card_html = render_to_string('orders/partials/order_card.html', {'order': order}, request=request)
+        # out-of-band clear: clear global detail container so modal/inline closes
+        clear_detail = '<div id="global-order-detail" hx-swap-oob="true"></div>'
+        return HttpResponse(card_html + clear_detail, content_type='text/html')
 
-    return JsonResponse({"success": False, "message": "Không thể hủy đơn hàng ở trạng thái này."}, status=400)
+    return JsonResponse({"success": True, "message": "Đã hủy đơn hàng và trả lại tồn kho."})

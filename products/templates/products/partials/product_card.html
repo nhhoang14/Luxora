@@ -6,13 +6,30 @@
     <div class="relative w-full aspect-square rounded-2xl overflow-hidden group">
         <a href="{% url 'products:detail' product.slug %}">
             {% if product.image %}
-                <img src="{{ product.image.url }}" alt="{{ product.name }}" class="w-full h-full object-cover" />
+                <img src="{{ product.image.url }}" alt="{{ product.name }}" class="w-full h-full object-cover {% if product.stock == 0 %}brightness-75{% endif %}" />
             {% else %}
-                <img src="{% static 'core/images/default-category.jpg' %}" alt="{{ product.name }}" class="w-full h-full object-cover" />
+                <img src="{% static 'core/images/default-category.jpg' %}" alt="{{ product.name }}" class="w-full h-full object-cover {% if product.stock == 0 %}brightness-75{% endif %}" />
             {% endif %}
         </a>
 
+        {% if not product.stock or product.stock == 0 %}
+            <div class="absolute top-3 left-3 z-20">
+                <span class="inline-flex items-center justify-center px-3 py-1 text-xs font-semibold bg-red-600 text-white rounded-full">
+                    Hết hàng
+                </span>
+            </div>
+        {% else %}
+            {% if product.stock <= 5 %}
+                <div class="absolute top-3 left-3 z-20">
+                    <span class="inline-flex items-center justify-center px-2 py-1 text-xs font-medium bg-yellow-100 text-yellow-800 rounded-full">
+                        Chỉ còn {{ product.stock }}
+                    </span>
+                </div>
+            {% endif %}
+        {% endif %}
+
         <!-- Nút Thêm vào giỏ hàng (gửi tới endpoint update, action add để +1) -->
+        {% if product.stock and product.stock > 0 %}
         <form hx-post="{% url 'cart:modify' %}" hx-target="#cart-tab" hx-swap="innerHTML"
             class="absolute bottom-4 right-4 z-10" onclick="event.stopPropagation();">
             {% csrf_token %}
@@ -26,6 +43,16 @@
                 <span class="text-sm font-medium">Thêm nhanh</span>
             </button>
         </form>
+        {% else %}
+        <div class="absolute bottom-4 right-4 z-10" onclick="event.stopPropagation();">
+            <button type="button" aria-disabled="true"
+                class="bg-gray-300 text-white rounded-full btn btn-lg flex items-center justify-center gap-2 opacity-0 group-hover:opacity-100 cursor-not-allowed duration-300"
+                disabled>
+                <span class="material-symbols-outlined" style="font-size: 1rem;">remove_shopping_cart</span>
+                <span class="text-sm font-medium">Hết hàng</span>
+            </button>
+        </div>
+        {% endif %}
     </div>
 
     <!-- Thông tin sản phẩm -->
