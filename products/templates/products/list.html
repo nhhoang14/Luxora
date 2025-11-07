@@ -3,8 +3,9 @@
 
 {% block content %}
 <!-- banner section -->
-<section class="flex flex-col items-center justify-center w-full h-64 md:h-80 lg:h-96 bg-cover bg-center text-white mb-4"
-  style="background-image: url({% static 'core/images/banner.png' %});">
+<section
+  class="flex flex-col items-center justify-center w-full h-64 md:h-80 lg:h-96 bg-cover bg-center text-white mb-4"
+  style="background-image: url({% static 'products/images/product_banner.webp' %});">
   <h1 class="text-4xl font-bold drop-shadow-lg">Khám phá sản phẩm của chúng tôi</h1>
 </section>
 
@@ -12,31 +13,55 @@
   <!-- Layout: Bộ lọc + Danh sách sản phẩm -->
   <div class="flex gap-8">
 
-    <!-- Bộ lọc (Sidebar trái) -->
-    <aside class="flex-[1] bg-transparent h-fit">
-      <h2 class="text-lg font-semibold mb-4 border-b pb-2">Bộ lọc sản phẩm</h2>
+    <!-- Bộ lọc (Sidebar trái) - sticky trên md+ -->
+    <aside class="flex-[1] bg-transparent h-fit sticky top-25 self-start">
+      <div class="mb-6 flex items-center gap-2 border-b pb-2 mb-4">
+        <span class="material-symbols-outlined">
+          page_info
+        </span>
+        <h2 class="text-lg font-semibold">Bộ lọc</h2>
+      </div>
 
       <!-- Category filter -->
       <div class="mb-6">
-        <h3 class="text-sm font-medium text-gray-700 mb-2">Danh mục</h3>
-        <ul class="space-y-2">
+        <button type="button"
+          class="js-toggle-category inline-flex items-center text-gray-700 hover:text-black gap-2 flex items-center justify-between mb-4 w-full"
+          data-target="category-list" aria-expanded="true" aria-controls="category-list">
+          <span class="text-lg font-medium">Loại sản phẩm</span>
+          <span class="material-symbols-outlined icon transition-transform text-sm">expand_more</span>
+        </button>
+
+        <ul id="category-list" class="grid grid-cols-2 lg:grid-cols-3 gap-3">
           <li>
-            <a href="{% url 'products:list' %}"
-               hx-get="{% url 'products:list' %}"
-               hx-target="#product-list"
-               hx-swap="innerHTML"
-               class="block text-gray-600 hover:text-black transition">
-              Tất cả sản phẩm
+            <a href="{% url 'products:list' %}" hx-get="{% url 'products:list' %}" hx-target="#product-list"
+              hx-swap="innerHTML" hx-push-url="true"
+              class="text-gray-600 hover:text-black transition flex flex-col items-center">
+              <div class=" relative overflow-visible">
+                <span class="material-symbols-outlined border-gray-300 border p-5 lg:p-8 rounded-md">
+                  light_group
+                </span>
+                <span class="absolute -top-2 -right-2 w-6 h-6 flex items-center justify-center text-xs bg-white text-black rounded-full border border-gray-300">
+                  {{ total_products_count }}
+                </span>
+              </span>
+              </div>
+              <span class="mt-2">Tất cả</span>
             </a>
           </li>
-          {% for category in categories %}
+          {% for category, icon in categories_with_icons %}
           <li>
-            <a href="{% url 'products:category' category.slug %}"
-               hx-get="{% url 'products:category' category.slug %}"
-               hx-target="#product-list"
-               hx-swap="innerHTML"
-               class="block text-gray-600 hover:text-black transition">
-              {{ category.name }}
+            <a href="{% url 'products:category' category.slug %}" hx-get="{% url 'products:category' category.slug %}"
+              hx-target="#product-list" hx-swap="innerHTML" hx-push-url="true"
+              class="text-gray-600 hover:text-black transition flex flex-col items-center">
+              <div class=" relative overflow-visible">
+                <span class="material-symbols-outlined border-gray-300 border p-5 lg:p-8 rounded-md">
+                  {{ icon }}
+                </span>
+                <span class="absolute -top-2 -right-2 w-6 h-6 flex items-center justify-center text-xs bg-white text-black rounded-full border border-gray-300">
+                  {{ category.product_count }}
+                </span>
+              </div>
+              <span class="mt-2">{{ category.name }}</span>
             </a>
           </li>
           {% empty %}
@@ -44,24 +69,41 @@
           {% endfor %}
         </ul>
       </div>
+      <script>
+        (function () {
+          document.addEventListener('click', function (e) {
+            const btn = e.target.closest('.js-toggle-category');
+            if (!btn) return;
+            const targetId = btn.dataset.target;
+            const list = document.getElementById(targetId);
+            if (!list) return;
+            const expanded = btn.getAttribute('aria-expanded') === 'true';
+            btn.setAttribute('aria-expanded', String(!expanded));
+            // toggle visibility
+            list.classList.toggle('hidden');
+            // rotate icon
+            const icon = btn.querySelector('.icon');
+            if (icon) icon.classList.toggle('rotate-180');
+          });
+        })();
+      </script>
     </aside>
 
     <!-- Danh sách sản phẩm -->
-    <div class="flex-[3]">
+    <div class="flex-[4]">
       <!-- Thanh sắp xếp -->
       <div class="flex justify-end items-center mb-4">
         <label for="sort" class="text-sm text-gray-700 mr-2">Sắp xếp theo:</label>
-        <select id="sort"
-                name="sort"
-                hx-get="{% if slug %}{% url 'products:category' slug %}{% else %}{% url 'products:list' %}{% endif %}"
-                hx-target="#product-list"
-                hx-swap="innerHTML"
-                class="border border-gray-300 rounded-md px-2 py-1 text-sm"
-                onchange="this.setAttribute('hx-vals', JSON.stringify({sort: this.value}))">
+        <select id="sort" name="sort" hx-get="{% if slug %}{% url 'products:category' slug %}{% endif %}"
+          hx-target="#product-list" hx-swap="innerHTML" hx-push-url="true"
+          onchange="this.setAttribute('hx-vals', JSON.stringify({sort: this.value}))"
+          class="border border-gray-300 rounded-md px-2 py-1 text-sm">
+
           <option value="">Mặc định</option>
-          <option value="price_asc" {% if sort == 'price_asc' %}selected{% endif %}>Giá: Thấp đến cao</option>
-          <option value="price_desc" {% if sort == 'price_desc' %}selected{% endif %}>Giá: Cao đến thấp</option>
+          <option value="price_asc" {% if sort == 'price_asc' %}selected{% endif %}>Giá: Thấp → Cao</option>
+          <option value="price_desc" {% if sort == 'price_desc' %}selected{% endif %}>Giá: Cao → Thấp</option>
         </select>
+
       </div>
 
       <div id="product-list">

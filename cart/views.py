@@ -35,7 +35,6 @@ def cart_modify(request):
         request.session["cart_id"] = cart.id
         request.session.modified = True
 
-    # find item
     item = None
     if item_id and str(item_id).isdigit():
         item = CartItem.objects.filter(cart=cart, id=item_id).first()
@@ -50,12 +49,25 @@ def cart_modify(request):
         # update / create
         if qty is None:
             qty = 1
+
+        # lấy product object
         if item:
-            item.quantity = qty if action != "add" else item.quantity + qty
-            item.save()
+            product = item.product
         else:
             product = get_object_or_404(Product, pk=product_id)
-            CartItem.objects.create(cart=cart, product=product, quantity=qty)
+
+        # limit số lượng theo stock
+        if qty > product.stock:
+            qty = product.stock
+
+        if item:
+            item.quantity = qty if action != "add" else min(item.quantity + qty, product.stock)
+            item.save()
+        else:
+            if qty > 0:
+                CartItem.objects.create(cart=cart, product=product, quantity=qty)
+            else:
+                pass
     cart.refresh_from_db()
 
     # Nếu là HTMX request: trả OOB fragments để cập nhật cả drawer và trang cart

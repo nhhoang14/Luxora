@@ -1,17 +1,127 @@
 [
   {
     "model": "products.product",
-    "pk": 7,
+    "pk": 15,
     "fields": {
-      "name": "fdsf",
-      "slug": "fdsf",
-      "description": "",
-      "price": 156165,
-      "stock": 1,
-      "image": "",
-      "created_at": "2025-10-24T09:36:29.602917+00:00",
+      "name": "Midmoon",
+      "slug": "midmoon",
+      "description": "Với thiết kế mang hơi hướng Nhật Bản cùng khả năng mang lại nguồn sáng đều và ấm cúng cho cả gian phòng, Midmoon đã trở thành một trong những mẫu đèn sàn bán chạy nhất của Luxora.\r\nĐèn đã bao gồm bóng led",
+      "price": 250000,
+      "stock": 18,
+      "image": "products/Midmoon.jpg",
+      "created_at": "2025-11-05T15:19:55.239857+00:00",
       "categories": [
         5
+      ]
+    }
+  },
+  {
+    "model": "products.product",
+    "pk": 14,
+    "fields": {
+      "name": "Vibrate",
+      "slug": "vibrate",
+      "description": "Vibrate đủ sức làm rung động mọi trái tim yêu nội thất. Một chiếc đèn tường xinh đẹp như thế này sẽ trở thành một điểm nhấn hoàn hảo cho mọi căn phòng hoặc hành lang của bạn.\r\nĐèn đã bao gồm bóng có 3 chế độ sáng.",
+      "price": 180000,
+      "stock": 16,
+      "image": "products/Vibrate.jpg",
+      "created_at": "2025-11-05T15:14:52.728792+00:00",
+      "categories": [
+        3
+      ]
+    }
+  },
+  {
+    "model": "products.product",
+    "pk": 13,
+    "fields": {
+      "name": "Bunker",
+      "slug": "bunker",
+      "description": "Cùng là những màu sắc đen trắng đơn giản, cùng là chất liệu phổ thông, nhưng chính thiết kế với những đường nét được tính toán kỹ lưỡng giúp Bunker khác biệt với những dòng đèn khác hiện có trên thị trường.\r\nĐèn Bunker sẽ phù hợp với các không gian rộng, hoặc những thiết kế mang xu hướng industrial... Phiên bản Bunker của Luxora là bản size lớn với đường kính đến 35cm, đã có sẵn bóng và bộ cáp treo, giá yêu thương nhất thị trường.",
+      "price": 245000,
+      "stock": 8,
+      "image": "products/Bunker.jpg",
+      "created_at": "2025-11-05T15:10:57.230552+00:00",
+      "categories": [
+        2
+      ]
+    }
+  },
+  {
+    "model": "products.product",
+    "pk": 12,
+    "fields": {
+      "name": "Mega",
+      "slug": "mega",
+      "description": "Mega thuộc series Tolomeo, mang một thiết kế tối giản nhưng đủ ấn tượng và hút mắt. Bản Mega cao 167cm với 2 arm 36cm và shade đèn đường kính 25cm. Đi sẵn với bóng led 3 chế độ",
+      "price": 200000,
+      "stock": 6,
+      "image": "products/Mega.jpg",
+      "created_at": "2025-11-05T15:05:29.596156+00:00",
+      "categories": [
+        5
+      ]
+    }
+  },
+  {
+    "model": "products.product",
+    "pk": 11,
+    "fields": {
+      "name": "Domda",
+      "slug": "domda",
+      "description": "ĐÈN TREO DOMDA (Có sẵn dây thả và bóng led)",
+      "price": 250000,
+      "stock": 8,
+      "image": "products/Domda.jpg",
+      "created_at": "2025-11-05T15:01:47.744715+00:00",
+      "categories": [
+        2
+      ]
+    }
+  },
+  {
+    "model": "products.product",
+    "pk": 10,
+    "fields": {
+      "name": "Lava",
+      "slug": "lava",
+      "description": "Một chiếc đèn chuyển động, một chiếc đèn không lần nào giống nhau mỗi khi bạn ngắm nhìn.\r\nNguyên lý hoạt động của đèn Lava:\r\n* Khi bật đèn, nhiệt độ sẽ làm nóng chất sáp đặc biệt bên trong.\r\n* Chất sáp nóng lên sẽ nhẹ hơn nước, nên nó nổi lên trên.\r\n* Khi lên đến đỉnh, nó nguội đi và nặng hơn, nên lại chìm xuống đáy.\r\nCứ thế, những khối dung nham chuyển động lên – xuống – lên – xuống như đang nhảy múa trong ánh sáng lung linh!\r\n_____\r\nChất liệu: Thuỷ tinh, Sáp, Nước, Nhôm\r\nMàu sắc: Cam/Đỏ/Xanh dương\r\nKích thước: H35cm x D9,5cm",
+      "price": 300000,
+      "stock": 20,
+      "image": "products/Lava.jpg",
+      "created_at": "2025-11-05T14:55:53.282353+00:00",
+      "categories": []
+    }
+  },
+  {
+    "model": "products.product",
+    "pk": 9,
+    "fields": {
+      "name": "Kares",
+      "slug": "kares",
+      "description": "Tên gọi của đèn Kares bắt nguồn từ nghệ thuật Vườn Thiền Karesansui của Nhật Bản. Trong nghệ thuật Karesansui, cát hoặc sỏi sẽ được dùng để mô phỏng sóng nước, thể hiện sự chuyển động sinh động của tự nhiên, đem đến tâm trạng an yên cho gia chủ.\r\nĐèn Kares với ánh sáng dịu nhẹ và các đường tròn đồng tâm nhẹ nhàng, tạo cảm giác uyển chuyển như mặt nước, sẽ vô cùng phù hợp cho các không gian tối giản hoặc theo đuổi phong cách wabisabi.",
+      "price": 230000,
+      "stock": 12,
+      "image": "products/Kares.jpg",
+      "created_at": "2025-11-05T14:52:21.561834+00:00",
+      "categories": [
+        3
+      ]
+    }
+  },
+  {
+    "model": "products.product",
+    "pk": 8,
+    "fields": {
+      "name": "Pump",
+      "slug": "pump",
+      "description": "Như một quả bóng thần kỳ phát sáng, lần này oom đem đến cho bạn chính là mẫu đèn thiết kế Pump vô cùng độc đáo. Đường kính lên đến 30cm, Pump có thể sử dụng như mẫu đèn để bàn chính đem đến ánh sáng chủ đạo cho cả không gian của bạn.",
+      "price": 250000,
+      "stock": 10,
+      "image": "products/pump.jpg",
+      "created_at": "2025-11-05T14:48:31.558088+00:00",
+      "categories": [
+        4
       ]
     }
   },
