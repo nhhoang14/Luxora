@@ -7,7 +7,7 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import update_session_auth_hash
 from .models import Address
-from .forms import CustomPasswordChangeForm 
+from .forms import CustomPasswordChangeForm, CustomSetPasswordForm 
 
 try:
     from orders.models import Order
@@ -93,9 +93,56 @@ def change_password_view(request):
     return render(request, 'accounts/partials/change_password.html', {'form': form})
 
 
-# QUÊN MẬT KHẨU (demo đơn giản)
+# QUÊN MẬT KHẨU: nhập username + email -> nếu khớp lưu user_id vào session và chuyển tới form đặt mật khẩu mới
 def password_reset_view(request):
-    return HttpResponse("Trang reset mật khẩu đang phát triển.")
+    if request.method == 'GET':
+        return render(request, 'accounts/partials/password_reset.html')
+
+    username = request.POST.get('username', '').strip()
+    email = request.POST.get('email', '').strip()
+
+    if not username or not email:
+        messages.error(request, "Vui lòng nhập tên đăng nhập và email.")
+        return render(request, 'accounts/partials/password_reset.html', {"username": username, "email": email})
+
+    user = User.objects.filter(username__iexact=username, email__iexact=email).first()
+    if not user:
+        messages.error(request, "Không tìm thấy tài khoản với thông tin cung cấp.")
+        return render(request, 'accounts/partials/password_reset.html', {"username": username, "email": email})
+
+    # lưu tạm user id vào session để authorise bước đổi mật khẩu
+    request.session['password_reset_user_id'] = user.pk
+    # optional: TTL could be implemented by storing timestamp
+    return redirect('accounts:password_reset_confirm')
+
+
+# Form đặt mật khẩu mới cho user đã verified (session-based)
+def password_reset_confirm_view(request):
+    uid = request.session.get('password_reset_user_id')
+    if not uid:
+        messages.error(request, "Phiên đặt lại mật khẩu không hợp lệ. Vui lòng thử lại.")
+        return redirect('accounts:password_reset')
+
+    user = User.objects.filter(pk=uid).first()
+    if not user:
+        request.session.pop('password_reset_user_id', None)
+        messages.error(request, "Người dùng không tồn tại.")
+        return redirect('accounts:password_reset')
+
+    if request.method == 'POST':
+        form = CustomSetPasswordForm(user, request.POST)
+        if form.is_valid():
+            form.save()
+            # kết thúc flow: remove session key và redirect login
+            request.session.pop('password_reset_user_id', None)
+            messages.success(request, "Đổi mật khẩu thành công. Vui lòng đăng nhập bằng mật khẩu mới.")
+            return redirect('accounts:login')
+        else:
+            messages.error(request, "Có lỗi, vui lòng kiểm tra lại.")
+    else:
+        form = CustomSetPasswordForm(user)
+
+    return render(request, 'accounts/partials/password_reset_confirm.html', {'form': form, 'reset_user': user})
 
 
 # ĐỊNH DẠNG ĐỊA CHỈ

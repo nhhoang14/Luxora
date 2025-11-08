@@ -1,17 +1,12 @@
 from django.contrib import admin
-from .models import Category, Product, ProductImage
+from .models import Category, Product
 from adminsortable2.admin import SortableAdminMixin
 
 @admin.register(Category)
-class CategoryAdmin(SortableAdminMixin, admin.ModelAdmin):
-    list_display = ('name', 'slug', 'order')
+class CategoryAdmin(SortableAdminMixin, admin.ModelAdmin): 
+    list_display = ('name', 'slug', 'order') 
     prepopulated_fields = {'slug': ('name',)}
     fields = ('name', 'slug', 'order')
-
-class ProductImageInline(admin.TabularInline):
-    model = ProductImage
-    extra = 1
-    fields = ('image', 'order')
 
 @admin.register(Product)
 class ProductAdmin(admin.ModelAdmin):
@@ -20,4 +15,3 @@ class ProductAdmin(admin.ModelAdmin):
     search_fields = ('name',)
     prepopulated_fields = {'slug': ('name',)}
     filter_horizontal = ('categories',)
-    inlines = [ProductImageInline]

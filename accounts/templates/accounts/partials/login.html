@@ -6,6 +6,14 @@
 <form method="post" class="space-y-4">
   {% csrf_token %}
   
+  {% if messages %}
+    {% for m in messages %}
+      {% if forloop.last %}
+        <div class="text-sm {% if m.tags %}{{ m.tags }}{% endif %}">{{ m }}</div>
+      {% endif %}
+    {% endfor %}
+  {% endif %}
+  
   <div>
     <label for="username" class="block text-sm font-medium text-gray-700">Tên đăng nhập</label>
     <input type="text" name="username" id="username" required
