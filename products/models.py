@@ -62,3 +62,14 @@ class Product(models.Model):
 
     def __str__(self):
         return self.name
+
+    # Property để lấy tất cả ảnh (bao gồm ảnh chính và ảnh phụ)
+    @property
+    def all_images(self):
+        images = list(self.images.all())
+        if self.image and not any(img.image == self.image for img in images):
+            # Tạo một ProductImage ảo cho ảnh chính nếu chưa có trong images
+            from django.core.files.images import ImageFile
+            virtual_image = ProductImage(product=self, image=self.image, order=0)
+            images.insert(0, virtual_image)
+        return images if images else [None]
