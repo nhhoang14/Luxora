@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Accounts</title>
+  <!-- Tailwind CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- HTMX CDN -->
+  <script src="https://unpkg.com/htmx.org@2.0.2"></script>
+</head>
+<body class="bg-gray-50 text-gray-900">
+  <div class="max-w-3xl mx-auto p-6">
+<h1 class='text-2xl font-semibold mb-4'>Your addresses</h1>
+
+<div class="mb-4">
+  <a class="px-3 py-2 bg-green-600 text-white rounded" href="/accounts/addresses/create/">Add address</a>
+</div>
+<div id="addr-list" hx-get="/accounts/addresses/" hx-trigger="load" hx-swap="innerHTML">
+  {% include 'accounts/partials/address_list.html' %}
+</div>
+
+  </div>
+</body>
+</html>

@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Accounts</title>
+  <!-- Tailwind CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- HTMX CDN -->
+  <script src="https://unpkg.com/htmx.org@2.0.2"></script>
+</head>
+<body class="bg-gray-50 text-gray-900">
+  <div class="max-w-3xl mx-auto p-6">
+<h1 class='text-2xl font-semibold mb-4'>Create account</h1>
+
+<form method="post" class="space-y-4">
+  {% csrf_token %}
+  {{ form.non_field_errors }}
+  <div>{{ form.username.label_tag }} {{ form.username }}</div>
+  <div>{{ form.email.label_tag }} {{ form.email }}</div>
+  <div>{{ form.password1.label_tag }} {{ form.password1 }}</div>
+  <div>{{ form.password2.label_tag }} {{ form.password2 }}</div>
+  <button class="px-4 py-2 bg-green-600 text-white rounded">Create account</button>
+</form>
+
+  </div>
+</body>
+</html>

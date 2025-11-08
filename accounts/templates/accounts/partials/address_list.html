@@ -1,0 +1,6 @@
+
+{% for a in addresses %}
+  {% include 'accounts/partials/address_item.html' %}
+{% empty %}
+  <p class="text-gray-600">No addresses yet.</p>
+{% endfor %}

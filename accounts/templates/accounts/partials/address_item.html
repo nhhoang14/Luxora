@@ -1,0 +1,19 @@
+
+<div class="p-4 border rounded mb-3">
+  <div class="font-medium">{{ a.full_name }}{% if a.is_default %} <span class="text-xs text-white bg-gray-800 px-2 py-0.5 rounded">Default</span>{% endif %}</div>
+  <div class="text-sm text-gray-700">{{ a.line1 }} {{ a.line2 }} – {{ a.city }}, {{ a.state }} {{ a.postal_code }} – {{ a.country }}</div>
+  <div class="text-sm text-gray-700">Phone: {{ a.phone }}</div>
+  <div class="mt-2 space-x-2">
+    <a class="text-blue-700 underline" href="/accounts/addresses/{{ a.id }}/edit/">Edit</a>
+    <form class="inline" method="post" action="/accounts/addresses/{{ a.id }}/delete/" hx-post="/accounts/addresses/{{ a.id }}/delete/" hx-target="closest div" hx-swap="outerHTML">
+      {% csrf_token %}
+      <button class="text-red-600">Delete</button>
+    </form>
+    {% if not a.is_default %}
+    <form class="inline" method="post" action="/accounts/addresses/{{ a.id }}/set-default/" hx-post="/accounts/addresses/{{ a.id }}/set-default/" hx-target="#addr-list" hx-swap="innerHTML">
+      {% csrf_token %}
+      <button class="text-gray-800">Set default</button>
+    </form>
+    {% endif %}
+  </div>
+</div>

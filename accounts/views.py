@@ -1,64 +1,78 @@
-from django.shortcuts import render, redirect, get_object_or_404
-from django.contrib.auth import login
+
+from django.contrib import messages
+from django.contrib.auth import login, logout
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.forms import AuthenticationForm
 from django.http import HttpResponse, HttpResponseBadRequest
-from django.db import transaction
-from django.db.models import F
-from .forms import RegisterForm, AvatarForm, AddressForm
-from .models import Address, Order
+from django.shortcuts import get_object_or_404, redirect, render
+from django.views.decorators.http import require_POST
+from .forms import RegisterForm, AddressForm, AvatarForm
+from .models import Address, Profile
 
-def home(request):
-    return render(request, 'home.html')
-
-def register(request):
+# -------------- Auth --------------
+def register_view(request):
     if request.method == 'POST':
         form = RegisterForm(request.POST)
         if form.is_valid():
-            user = form.save(commit=False)
-            user.set_password(form.cleaned_data['password'])
-            user.save()
+            user = form.save()
             login(request, user)
-            return redirect('profile')
+            messages.success(request, 'Account created.')
+            return redirect('/accounts/profile/')
     else:
         form = RegisterForm()
     return render(request, 'accounts/register.html', {'form': form})
 
-@login_required
-def profile(request):
-    avatar_form = AvatarForm(instance=request.user.profile)
-    return render(request, 'accounts/profile.html', {'avatar_form': avatar_form})
+def login_view(request):
+    if request.method == 'POST':
+        form = AuthenticationForm(request, data=request.POST)
+        if form.is_valid():
+            user = form.get_user()
+            login(request, user)
+            return redirect('/accounts/profile/')
+    else:
+        form = AuthenticationForm(request)
+    return render(request, 'accounts/login.html', {'form': form})
 
-@login_required
-def update_avatar(request):
-    if request.method != 'POST':
-        return HttpResponseBadRequest('Invalid method')
-    form = AvatarForm(request.POST, request.FILES, instance=request.user.profile)
-    if form.is_valid():
-        form.save()
-        return render(request, 'accounts/_avatar_partial.html')
-    return HttpResponseBadRequest('Invalid form')
+def logout_view(request):
+    logout(request)
+    return redirect('/accounts/login/')
 
-# ---------- Addresses ----------
+# -------------- Profile + Avatar --------------
+@login_required
+def profile_view(request):
+    prof, _ = Profile.objects.get_or_create(user=request.user)
+    if request.method == 'POST':
+        form = AvatarForm(request.POST, request.FILES, instance=prof)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Avatar updated')
+            return redirect('/accounts/profile/')
+    else:
+        form = AvatarForm(instance=prof)
+    return render(request, 'accounts/profile.html', {'form': form})
+
+# -------------- Addresses (HTMX-friendly) --------------
 @login_required
 def address_list(request):
-    form = AddressForm()
-    addresses = Address.objects.filter(user=request.user)
-    return render(request, 'accounts/addresses/list.html', {'form': form, 'addresses': addresses})
+    addrs = request.user.addresses.all()
+    return render(request, 'accounts/address.html', {'addresses': addrs})
 
 @login_required
 def address_create(request):
-    if request.method != 'POST':
-        return HttpResponseBadRequest('Invalid method')
-    form = AddressForm(request.POST)
-    if form.is_valid():
-        addr = form.save(commit=False)
-        addr.user = request.user
-        if addr.is_default:
-            Address.objects.filter(user=request.user, is_default=True).update(is_default=False)
-        addr.save()
-        addresses = Address.objects.filter(user=request.user)
-        return render(request, 'accounts/addresses/_list_partial.html', {'addresses': addresses})
-    return HttpResponseBadRequest('Invalid form')
+    if request.method == 'POST':
+        form = AddressForm(request.POST)
+        if form.is_valid():
+            addr = form.save(commit=False)
+            addr.user = request.user
+            if addr.is_default:
+                request.user.addresses.update(is_default=False)
+            addr.save()
+            if request.headers.get('HX-Request'):
+                return render(request, 'accounts/partials/address_item.html', {'a': addr})
+            return redirect('/accounts/addresses/')
+    else:
+        form = AddressForm()
+    return render(request, 'accounts/address_form.html', {'form': form})
 
 @login_required
 def address_edit(request, pk):
@@ -66,40 +80,34 @@ def address_edit(request, pk):
     if request.method == 'POST':
         form = AddressForm(request.POST, instance=addr)
         if form.is_valid():
-            obj = form.save(commit=False)
-            if obj.is_default:
-                Address.objects.filter(user=request.user, is_default=True).exclude(pk=addr.pk).update(is_default=False)
-            obj.save()
-            addresses = Address.objects.filter(user=request.user)
-            return render(request, 'accounts/addresses/_list_partial.html', {'addresses': addresses})
-        return HttpResponseBadRequest('Invalid form')
+            addr = form.save()
+            if addr.is_default:
+                request.user.addresses.exclude(pk=addr.pk).update(is_default=False)
+            if request.headers.get('HX-Request'):
+                return render(request, 'accounts/partials/address_item.html', {'a': addr})
+            return redirect('/accounts/addresses/')
     else:
         form = AddressForm(instance=addr)
-        return render(request, 'accounts/addresses/_form_partial.html', {'form': form, 'addr': addr})
+    return render(request, 'accounts/address_form.html', {'form': form, 'object': addr})
 
 @login_required
+@require_POST
 def address_delete(request, pk):
     addr = get_object_or_404(Address, pk=pk, user=request.user)
-    if request.method != 'POST':
-        return HttpResponseBadRequest('Invalid method')
     addr.delete()
-    addresses = Address.objects.filter(user=request.user)
-    return render(request, 'accounts/addresses/_list_partial.html', {'addresses': addresses})
+    if request.headers.get('HX-Request'):
+        return HttpResponse('')
+    return redirect('/accounts/addresses/')
 
 @login_required
+@require_POST
 def address_set_default(request, pk):
     addr = get_object_or_404(Address, pk=pk, user=request.user)
-    if request.method != 'POST':
-        return HttpResponseBadRequest('Invalid method')
-    with transaction.atomic():
-        Address.objects.filter(user=request.user, is_default=True).update(is_default=False)
-        addr.is_default = True
-        addr.save()
-    addresses = Address.objects.filter(user=request.user)
-    return render(request, 'accounts/addresses/_list_partial.html', {'addresses': addresses})
-
-# ---------- Orders ----------
-@login_required
-def order_list(request):
-    orders = Order.objects.filter(user=request.user)
-    return render(request, 'accounts/orders/list.html', {'orders': orders})
+    request.user.addresses.update(is_default=False)
+    addr.is_default = True
+    addr.save()
+    if request.headers.get('HX-Request'):
+        # return refreshed list
+        addrs = request.user.addresses.all()
+        return render(request, 'accounts/partials/address_list.html', {'addresses': addrs})
+    return redirect('/accounts/addresses/')
