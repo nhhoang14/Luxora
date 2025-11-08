@@ -2,13 +2,54 @@
 {% load vn_currency %}
 {% block content %}
 <section class="max-w-screen-2xl mx-auto px-4 py-8 mt-4 grid grid-cols-1 md:grid-cols-2 gap-8">
-  <!-- Ảnh sản phẩm -->
-  <div class="w-full aspect-square flex items-center justify-center bg-gray-100 overflow-hidden rounded-2xl">
+  <!-- Ảnh sản phẩm với Slider -->
+  <div class="w-full">
+    <!-- Main Image Slider -->
+    <div class="aspect-square bg-gray-100 rounded-2xl overflow-hidden relative">
+      <div id="imageSlider" class="flex h-full transition-transform duration-500 ease-in-out">
+        <!-- Ảnh chính -->
+        <div class="w-full h-full flex-shrink-0 flex items-center justify-center">
+          {% if product.image %}
+            <img src="{{ product.image.url }}" alt="{{ product.name }}"
+                 class="w-full h-full object-cover object-center">
+          {% else %}
+            <span class="text-gray-400">Không có ảnh</span>
+          {% endif %}
+        </div>
+
+        <!-- Các ảnh phụ thêm (dùng ảnh chính làm mẫu) -->
+        {% if product.image %}
+        <!-- Ảnh 2 -->
+        <div class="w-full h-full flex-shrink-0 flex items-center justify-center">
+          <img src="{{ product.image.url }}" alt="{{ product.name }} - 2"
+               class="w-full h-full object-cover object-center">
+        </div>
+        <!-- Ảnh 3 -->
+        <div class="w-full h-full flex-shrink-0 flex items-center justify-center">
+          <img src="{{ product.image.url }}" alt="{{ product.name }} - 3"
+               class="w-full h-full object-cover object-center">
+        </div>
+        {% endif %}
+      </div>
+
+      <!-- Navigation Arrows - Chỉ hiện khi có nhiều ảnh -->
+      {% if product.image %}
+      <button id="prevImage" class="absolute left-4 top-1/2 transform -translate-y-1/2 w-10 h-10 bg-white/80 hover:bg-white rounded-full flex items-center justify-center shadow-lg transition-all">
+        <span class="material-symbols-outlined !text-lg text-gray-700">chevron_left</span>
+      </button>
+      <button id="nextImage" class="absolute right-4 top-1/2 transform -translate-y-1/2 w-10 h-10 bg-white/80 hover:bg-white rounded-full flex items-center justify-center shadow-lg transition-all">
+        <span class="material-symbols-outlined !text-lg text-gray-700">chevron_right</span>
+      </button>
+      {% endif %}
+    </div>
+
+    <!-- Image Dots Indicator - Chỉ hiện khi có nhiều ảnh -->
     {% if product.image %}
-    <img src="{{ product.image.url }}" alt="{{ product.name }}"
-      class="w-full h-full object-cover object-center block" />
-    {% else %}
-    <span class="text-gray-400">Không có ảnh</span>
+    <div class="flex justify-center mt-4 space-x-2">
+      <button class="image-dot w-3 h-3 rounded-full bg-gray-700 transition-all" data-index="0"></button>
+      <button class="image-dot w-3 h-3 rounded-full bg-gray-300 transition-all" data-index="1"></button>
+      <button class="image-dot w-3 h-3 rounded-full bg-gray-300 transition-all" data-index="2"></button>
+    </div>
     {% endif %}
   </div>
 
@@ -51,7 +92,7 @@
       <p class="text-gray-600 leading-relaxed">{{ product.description }}</p>
     </div>
 
-    <form hx-post="{% url 'cart:modify' %}" hx-target="#cart-tab" hx-swap="onnerHTML" class="flex flex-col gap-4">
+    <form hx-post="{% url 'cart:modify' %}" hx-target="#cart-tab" hx-swap="innerHTML" class="flex flex-col gap-4">
       {% csrf_token %}
       <input type="hidden" name="product" value="{{ product.pk }}">
       <input type="hidden" name="action" value="add">
@@ -131,26 +172,89 @@
   const prevBtn = document.getElementById("prevBtn");
   const nextBtn = document.getElementById("nextBtn");
 
-  const totalItems = container.children.length;
-  const itemsPerView = 3;
-  const maxIndex = Math.ceil(totalItems / itemsPerView) - 1;
-  let index = 0;
+  if (container && prevBtn && nextBtn) {
+    const totalItems = container.children.length;
+    const itemsPerView = 3;
+    const maxIndex = Math.ceil(totalItems / itemsPerView) - 1;
+    let index = 0;
 
-  function updateCarousel() {
-    const translateX = -index * 100;
-    container.style.transform = `translateX(${translateX}%)`;
+    function updateCarousel() {
+      const translateX = -index * 100;
+      container.style.transform = `translateX(${translateX}%)`;
+    }
+
+    nextBtn.addEventListener("click", () => {
+      if (index < maxIndex) index++;
+      else index = 0;
+      updateCarousel();
+    });
+
+    prevBtn.addEventListener("click", () => {
+      if (index > 0) index--;
+      else index = maxIndex;
+      updateCarousel();
+    });
   }
 
-  nextBtn.addEventListener("click", () => {
-    if (index < maxIndex) index++;
-    else index = 0;
-    updateCarousel();
-  });
+  // Image Slider Functionality
+  const imageSlider = document.getElementById('imageSlider');
+  const prevImageBtn = document.getElementById('prevImage');
+  const nextImageBtn = document.getElementById('nextImage');
+  const imageDots = document.querySelectorAll('.image-dot');
 
-  prevBtn.addEventListener("click", () => {
-    if (index > 0) index--;
-    else index = maxIndex;
-    updateCarousel();
-  });
+  // Chỉ khởi tạo slider nếu có nhiều hơn 1 ảnh
+  if (imageSlider && imageSlider.children.length > 1) {
+    let currentImageIndex = 0;
+    const totalImages = imageSlider.children.length;
+
+    function updateImageSlider() {
+      imageSlider.style.transform = `translateX(-${currentImageIndex * 100}%)`;
+
+      // Update dots
+      imageDots.forEach((dot, index) => {
+        dot.classList.toggle('bg-gray-700', index === currentImageIndex);
+        dot.classList.toggle('bg-gray-300', index !== currentImageIndex);
+      });
+    }
+
+    if (prevImageBtn && nextImageBtn) {
+      prevImageBtn.addEventListener('click', () => {
+        currentImageIndex = (currentImageIndex - 1 + totalImages) % totalImages;
+        updateImageSlider();
+      });
+
+      nextImageBtn.addEventListener('click', () => {
+        currentImageIndex = (currentImageIndex + 1) % totalImages;
+        updateImageSlider();
+      });
+    }
+
+    // Dot navigation
+    imageDots.forEach(dot => {
+      dot.addEventListener('click', () => {
+        currentImageIndex = parseInt(dot.getAttribute('data-index'));
+        updateImageSlider();
+      });
+    });
+
+    // Khởi tạo slider
+    updateImageSlider();
+  }
 </script>
+
+<style>
+  .image-dot {
+    transition: all 0.3s ease;
+    cursor: pointer;
+  }
+
+  .image-dot:hover {
+    background-color: #6b7280 !important;
+  }
+
+  #imageSlider {
+    display: flex;
+    transition: transform 0.5s ease-in-out;
+  }
+</style>
 {% endblock %}

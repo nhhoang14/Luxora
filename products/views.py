@@ -60,5 +60,5 @@ def product_detail(request, slug):
 
     return render(request, 'products/detail.html', {
         'product': product,
-        'related_products': related_products,  
+        'related_products': related_products,
     })
