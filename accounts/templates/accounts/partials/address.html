@@ -14,19 +14,19 @@
             <div class="flex gap-2 ml-2 items-start">
                 {% if not address.is_default %}
                 <button hx-post="{% url 'accounts:set_default_address' address.id %}" hx-target="#shipping-list"
-                    hx-swap="innerHTML" class="text-xs px-2 py-1 border rounded-md">
+                    hx-swap="innerHTML" class="text-xs px-2 py-1 border rounded-md cursor-pointer">
                     Đặt làm mặc định
                 </button>
                 {% else %}
                 <span class="ml-2 text-xs px-2 py-1 bg-green-100 text-green-700 rounded">Mặc định</span>
                 {% endif %}
                 <button hx-get="{% url 'accounts:edit_address' address.id %}" hx-target="#shipping-form"
-                    hx-swap="innerHTML" class="text-xs px-2 py-1 border rounded-md">Sửa</button>
+                    hx-swap="innerHTML" class="text-xs px-2 py-1 border rounded-md cursor-pointer">Sửa</button>
 
                 <!-- chuyển từ hx-delete sang hx-post để tránh vấn đề method/CSRF -->
                 <button hx-post="{% url 'accounts:delete_address' address.id %}"
                     hx-confirm="Bạn có chắc muốn xóa địa chỉ này?" hx-target="#shipping-list" hx-swap="innerHTML"
-                    class="text-xs px-2 py-1 border rounded-md text-red-600">
+                    class="text-xs px-2 py-1 border rounded-md text-red-600 cursor-pointer">
                     Xóa
                 </button>
             </div>
@@ -40,7 +40,7 @@
     {% if addresses|length < 3 %}
     <div class="mt-3" id="shipping-add-btn">
         <button hx-get="{% url 'accounts:add_address' %}" hx-target="#shipping-form" hx-swap="innerHTML"
-            class="w-full mt-2 px-3 py-2 rounded-lg border border-gray-200 text-sm hover:bg-gray-50 text-center">
+            class="cursor-pointer w-full mt-2 px-3 py-2 rounded-lg border border-gray-200 text-sm hover:bg-gray-50 text-center">
             + Thêm địa chỉ
         </button>
     </div>

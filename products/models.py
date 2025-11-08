@@ -29,7 +29,6 @@ class Category(models.Model):
         verbose_name_plural = "Categories"
         ordering = ['order', 'name']
 
-
 # Sản phẩm
 class Product(models.Model):
     categories = models.ManyToManyField('Category', related_name='products', blank=True)

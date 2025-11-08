@@ -1,41 +1,59 @@
-<footer class="bg-gray-100 mt-12 py-10 border-t">
-  <div class="max-w-7xl mx-auto px-6 grid md:grid-cols-4 gap-8">
-    
-    <!-- Cột 1 -->
-    <div>
-      
-      <p class="text-sm text-gray-600">Giải pháp làm việc thông minh, kết nối và hiệu quả.</p>
+{% load static %}
+
+<footer class="bg-gray-50 border-t mt-12">
+  <div class="max-w-7xl mx-auto px-6 py-10 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+    <div class="">
+      <a href="/" class="text-2xl font-bold text-[#FF5532]">Luxora</a>
+      <p class="text-sm text-gray-600 mb-4 mt-4">Giải pháp làm việc thông minh, kết nối và hiệu quả. Sản phẩm chất lượng — giao nhanh.</p>
     </div>
 
-    <!-- Cột 2 -->
+    <!-- Company -->
     <div>
-      <h3 class="font-semibold mb-2">Công ty</h3>
-      <ul class="space-y-1 text-sm text-gray-600">
-        <li><a href="/about/" class="hover:text-blue-600">Giới thiệu</a></li>
-        <li><a href="/contact/" class="hover:text-blue-600">Liên hệ</a></li>
-        <li><a href="/policy/" class="hover:text-blue-600">Chính sách</a></li>
+      <h3 class="font-semibold mb-3">Công ty</h3>
+      <ul class="space-y-2 text-sm text-gray-600">
+        <li><a href="/about/" class="hover:text-indigo-600">Giới thiệu</a></li>
+        <li><a href="/contact/" class="hover:text-indigo-600">Liên hệ</a></li>
+        <li><a href="/careers/" class="hover:text-indigo-600">Tuyển dụng</a></li>
+        <li><a href="/policy/" class="hover:text-indigo-600">Chính sách</a></li>
       </ul>
     </div>
 
-    <!-- Cột 3 -->
+    <!-- Products -->
     <div>
-      <h3 class="font-semibold mb-2">Sản phẩm</h3>
-      <ul class="space-y-1 text-sm text-gray-600">
-        <li><a href="/products/" class="hover:text-blue-600">Danh mục</a></li>
-        <li><a href="/pricing/" class="hover:text-blue-600">Bảng giá</a></li>
-        <li><a href="/blog/" class="hover:text-blue-600">Blog</a></li>
+      <h3 class="font-semibold mb-3">Sản phẩm</h3>
+      <ul class="space-y-2 text-sm text-gray-600">
+        <li><a href="/products/" class="hover:text-indigo-600">Danh mục</a></li>
+        <li><a href="/pricing/" class="hover:text-indigo-600">Bảng giá</a></li>
+        <li><a href="/blog/" class="hover:text-indigo-600">Blog</a></li>
+        <li><a href="/faq/" class="hover:text-indigo-600">Hỏi đáp</a></li>
       </ul>
     </div>
 
-    <!-- Cột 4 -->
+    <!-- Contact & social -->
     <div>
-      <h3 class="font-semibold mb-2">Kết nối</h3>
-      <div class="flex space-x-4">
-        <a href="#" class="hover:text-blue-600"><i class="fa-brands fa-facebook"></i></a>
-        <a href="#" class="hover:text-blue-600"><i class="fa-brands fa-linkedin"></i></a>
-        <a href="#" class="hover:text-blue-600"><i class="fa-brands fa-youtube"></i></a>
+      <h3 class="font-semibold mb-3">Kết nối</h3>
+      <p class="text-sm text-gray-600 mb-3">Hỗ trợ: <a href="mailto:support@luxora.example" class="text-indigo-600">support@luxora.example</a></p>
+      <div class="flex items-center gap-3 mb-4">
+        <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" aria-label="Facebook" class="text-gray-600 hover:text-indigo-600">
+          <img class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true" src="{% static 'core/images/facebook.png' %}"/>
+        </a>
+        <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" class="text-gray-600 hover:text-indigo-600">
+          <img class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true" src="{% static 'core/images/linkedin.png' %}"/>
+        </a>
+        <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" aria-label="Instagram" class="text-gray-600 hover:text-indigo-600">
+          <img class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true" src="{% static 'core/images/instagram.png' %}"/>
+        </a>
       </div>
-      <p class="text-xs text-gray-500 mt-4">© 2025 Luxora. All rights reserved.</p>
+      <p class="text-xs text-gray-500">© 2025 Luxora. All rights reserved.</p>
+    </div>
+  </div>
+
+  <div class="max-w-7xl mx-auto px-6 py-4 border-t text-sm text-gray-500 flex flex-col sm:flex-row justify-between items-center gap-3">
+    <div>© 2025 Luxora. <span class="hidden sm:inline">Bản quyền thuộc về Luxora.</span></div>
+    <div class="flex items-center gap-4">
+      <a href="/terms/" class="hover:text-indigo-600">Điều khoản</a>
+      <a href="/privacy/" class="hover:text-indigo-600">Chính sách bảo mật</a>
+      <a href="/help/" class="hover:text-indigo-600">Trợ giúp</a>
     </div>
   </div>
 </footer>

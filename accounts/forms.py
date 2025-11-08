@@ -1,5 +1,5 @@
 from django import forms
-from django.contrib.auth.forms import UserCreationForm, AuthenticationForm, PasswordChangeForm
+from django.contrib.auth.forms import UserCreationForm, AuthenticationForm, PasswordChangeForm, SetPasswordForm
 from django.contrib.auth import get_user_model
 
 User = get_user_model()
@@ -46,3 +46,27 @@ class CustomPasswordChangeForm(PasswordChangeForm):
             'id': 'id_new_password2',
             'placeholder': 'Nhập lại mật khẩu mới',
         })
+
+
+class CustomSetPasswordForm(SetPasswordForm):
+    """SetPasswordForm styled same as CustomPasswordChangeForm."""
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        field_attrs = {
+            'class': 'mt-1 block w-full border border-gray-300 rounded-lg px-3 py-2 pr-12 focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm',
+        }
+        # new_password1 / new_password2 exist on SetPasswordForm
+        if 'new_password1' in self.fields:
+            self.fields['new_password1'].widget.attrs.update({
+                **field_attrs,
+                'id': 'id_new_password1',
+                'placeholder': 'Mật khẩu mới',
+                'autocomplete': 'new-password',
+            })
+        if 'new_password2' in self.fields:
+            self.fields['new_password2'].widget.attrs.update({
+                **field_attrs,
+                'id': 'id_new_password2',
+                'placeholder': 'Nhập lại mật khẩu mới',
+                'autocomplete': 'new-password',
+            })

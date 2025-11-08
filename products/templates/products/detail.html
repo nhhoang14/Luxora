@@ -2,13 +2,13 @@
 {% load vn_currency %}
 {% block content %}
 <section class="max-w-screen-2xl mx-auto px-4 py-8 mt-4 grid grid-cols-1 md:grid-cols-2 gap-8">
-  <!-- Ảnh sản phẩm -->
+<!-- Ảnh sản phẩm -->
   <div class="w-full aspect-square flex items-center justify-center bg-gray-100 overflow-hidden rounded-2xl">
     {% if product.image %}
-    <img src="{{ product.image.url }}" alt="{{ product.name }}"
+       <img src="{{ product.image.url }}" alt="{{ product.name }}"
       class="w-full h-full object-cover object-center block" />
     {% else %}
-    <span class="text-gray-400">Không có ảnh</span>
+      <span class="text-gray-400">Không có ảnh</span>
     {% endif %}
   </div>
 
