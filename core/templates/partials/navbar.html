@@ -3,9 +3,9 @@
 <header class="bg-white shadow w-full fixed top-0 left-0 z-50 h-20">
   <div class="container mx-auto flex items-center justify-between h-20 relative">
 
-    <!-- Left menu -->
+    <!-- Bên phải menu -->
     <nav class="hidden md:flex space-x-2 h-full items-center relative">
-      <!-- Products Mega Menu -->
+      <!-- Sản phẩm menu -->
       <div class="group/dropdown relative dropdown-group">
         <!-- Nút Products -->
         <a href="/products/" class="font-medium relative rounded-full px-5 py-2 group/btn overflow-hidden block">
@@ -20,7 +20,7 @@
           </span>
         </a>
 
-        <!-- Dropdown full width -->
+        <!-- Dropdown -->
         <div class="fixed left-0 top-20 w-full bg-white shadow-lg rounded-b-2xl opacity-0 invisible group-hover/dropdown:opacity-100 group-hover/dropdown:visible
           -translate-y-3 group-hover/dropdown:translate-y-0 transition-all duration-300 z-40 py-4">
 
@@ -31,7 +31,6 @@
               <div class="flex-1">
                 <h4 class="font-semibold text-lg mb-6">Danh mục sản phẩm</h4>
                 <ul class="space-y-2 text-gray-700 text-2xl">
-                  <!-- sửa nút trong loop: thêm data-slug và class category-btn -->
                   {% for category in categories %}
                   <li>
                     <button hx-get="{% url 'nav_category_products' category.slug %}" hx-target="#category-products-list"
@@ -71,20 +70,20 @@
                 </a>
               </div>
 
-              <!-- HTMX inject tại đây -->
+              <!-- HTMX load tại đây -->
               <div id="category-products-list" class="grid grid-cols-3 gap-6"></div>
             </div>
 
-            <!-- Cột 3: Special -->
+            <!-- Cột 3: Sale -->
             <div class="col-span-1 flex flex-col items-start justify-between">
-              <img  src="{% static 'core/images/nav_sale.png' %}" alt="Special Offer" class="w-full h-full object-cover rounded-lg mb-4">
+              <img  src="{% static 'core/images/nav_sale.png' %}" alt="Sale" class="w-full h-full object-cover rounded-lg mb-4">
             </div>
 
           </div>
         </div>
       </div>
 
-      <!-- Collab -->
+      <!-- Liên hệ -->
       <a href="/contact/" class="font-medium relative rounded-full px-5 py-2 group overflow-hidden">
         <span class="block text-black transition-opacity duration-200 group-hover:opacity-0">
           Liên hệ
@@ -98,12 +97,12 @@
       </a>
     </nav>
 
-    <!-- Logo center -->
+    <!-- Logo -->
     <div class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
       <a href="/" class="text-2xl font-bold text-[#FF5532]">Luxora</a>
     </div>
 
-    <!-- Right icons -->
+    <!-- Icons bên phải -->
     <div class="flex items-center space-x-4 h-full">
       <!-- User -->
       <div class="btn btn-xl btn-ghost btn-circle p-0">
@@ -178,14 +177,14 @@
         if(!cartToggleLabel) return;
         const cartUrl = "{% url 'cart:cart' %}";
         const checkoutUrl = "{% url 'orders:checkout' %}";
-        const path = window.location.pathname.replace(/\/+$/, ''); // remove trailing slash
+        const path = window.location.pathname.replace(/\/+$/, ''); // bỏ dấu / cuối nếu có
 
-        // normalize urls without trailing slash for comparison
+        // Bình thường hóa URL để so sánh
         const normalizedCartUrl = cartUrl.replace(/\/+$/, '');
         const normalizedCheckoutUrl = checkoutUrl.replace(/\/+$/, '');
 
         if (path === normalizedCartUrl || path === normalizedCheckoutUrl) {
-          // replace label (which toggles drawer) by an anchor to cart page
+          // Chuyển label thành thẻ a
           const a = document.createElement('a');
           a.href = cartUrl;
           a.className = cartToggleLabel.className;

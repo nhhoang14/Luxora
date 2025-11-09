@@ -5,12 +5,12 @@
 
 {% block content %}
 
-<!-- banner section -->
+<!-- Banner -->
 <section class="flex flex-col items-center justify-center w-full aspect-[8/3] bg-cover bg-center text-white"
   style="background-image: url({% static 'core/images/banner.png' %});">
 </section>
 
-<!-- Danh mục (Category Slider) -->
+<!-- Danh mục -->
 <section class="max-w-screen-2xl mx-auto px-4 py-8 mt-4">
   <p class="text-base font-bold mb-4 text-gray-800">Chúng tôi có gì?</p>
   <h2 class="text-4xl font-bold mb-10 text-gray-800">Danh mục sản phẩm</h2>
@@ -33,7 +33,7 @@
   </div>
 </section>
 
-<!-- Special Offer Section -->
+<!-- Sale -->
 <section class="max-w-screen-2xl mx-auto px-8 py-20 rounded-3xl mt-16 text-center 
                 bg-gradient-to-r from-[#111111] via-[#1a1a1a] to-[#000000] text-white shadow-lg relative overflow-hidden">
 
@@ -58,7 +58,7 @@
 
 <!-- Sản phẩm mới lên kệ -->
 <section class="max-w-screen-2xl mx-auto px-4 py-8">
-  <!-- Xem thêm button -->
+  <!-- Nút xem thêm -->
   <div class="flex justify-between items-center mb-10">
     <h2 class="text-4xl font-bold text-gray-800">Mới lên kệ</h2>
     <a href="{% url 'products:list' %}" class="text-gray-600 font-bold flex items-center gap-2 group">
@@ -75,7 +75,7 @@
     </a>
   </div>
 
-  <!-- Slider container -->
+  <!-- Danh sách sản phẩm -->
   <div class="grid grid-cols-5 gap-6">
     {% for product in new_products|slice:":10" %}
     {% include 'products/partials/product_card.html' with product=product %}
@@ -83,7 +83,7 @@
   </div>
 </section>
 
-<!-- Contact section -->
+<!-- Liên hệ -->
 <section
   class="max-w-screen-2xl mx-auto px-12 py-16 bg-gradient-to-r from-[#FDF2EF] to-[#F3F4F6] rounded-3xl grid md:grid-cols-[6fr_4fr] items-center gap-10">
 

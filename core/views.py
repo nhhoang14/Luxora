@@ -4,8 +4,8 @@ from products.models import Category, Product
 from .models import ContactMessage
 
 def home_view(request):
-    categories = Category.objects.all().order_by('order')  # nếu có field order
-    new_products = Product.objects.order_by('-created_at')[:10]  # 8 sản phẩm mới nhất
+    categories = Category.objects.all().order_by('order')
+    new_products = Product.objects.order_by('-created_at')[:10]  # lấy 10 sản phẩm mới nhất
     return render(request, 'home.html', {
         'categories': categories,
         'new_products': new_products,
@@ -21,7 +21,6 @@ def contact_submit(request):
         message = request.POST.get("message")
         # lưu vào DB
         ContactMessage.objects.create(name=name, email=email, message=message)
-        # trả empty response và bắn sự kiện để client reset form (hx-on trên form)
         res = HttpResponse('', status=204)
         res['HX-Trigger'] = 'contactSuccess'
         return res
