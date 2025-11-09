@@ -1,5 +1,5 @@
 from django.db import models
-from django.conf import settings   # ✅ dùng settings.AUTH_USER_MODEL
+from django.conf import settings
 from products.models import Product
 
 

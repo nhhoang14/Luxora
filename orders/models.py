@@ -1,5 +1,5 @@
 from django.db import models
-from django.conf import settings  # 👈 dùng để tham chiếu tới AUTH_USER_MODEL
+from django.conf import settings
 from products.models import Product
 
 
@@ -12,9 +12,8 @@ class Order(models.Model):
     ]
 
     user = models.ForeignKey(
-        settings.AUTH_USER_MODEL,  # 👈 thay vì import User mặc định
+        settings.AUTH_USER_MODEL, 
         on_delete=models.SET_NULL,
-        null=True,
         blank=True,
         related_name='orders'
     )
@@ -35,11 +34,9 @@ class Order(models.Model):
 
     @property
     def total_amount(self):
-        """Tổng tiền của đơn hàng (tính từ OrderItem)."""
         return sum(item.subtotal for item in self.items.all())
 
     def can_cancel(self):
-        """Chỉ cho phép hủy nếu chưa giao."""
         return self.status in ('pending', 'shipping')
 
 

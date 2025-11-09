@@ -6,7 +6,6 @@ def user_avatar_path(instance, filename):
     return f"avatars/{instance.username}/{filename}"
 
 class User(AbstractUser):
-    # có sẵn: username, email, password, first_name, last_name
     avatar = models.ImageField(upload_to=user_avatar_path, blank=True, null=True)
 
     def __str__(self):
@@ -27,13 +26,11 @@ class Address(models.Model):
         return f"{self.recipient_name} · {self.address}"
 
     def clean(self):
-        """Giới hạn tối đa 3 địa chỉ / user."""
         if not self.pk and self.user.addresses.count() >= 3:
             raise ValidationError("Bạn chỉ có thể lưu tối đa 3 địa chỉ giao hàng.")
 
     def save(self, *args, **kwargs):
-        self.full_clean()  # kiểm tra giới hạn trước khi lưu
+        self.full_clean()
         super().save(*args, **kwargs)
-        # Nếu đánh dấu mặc định thì bỏ mặc định ở các địa chỉ khác
         if self.is_default:
             Address.objects.filter(user=self.user, is_default=True).exclude(pk=self.pk).update(is_default=False)
